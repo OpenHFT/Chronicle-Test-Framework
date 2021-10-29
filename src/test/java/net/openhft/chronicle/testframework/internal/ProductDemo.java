@@ -17,9 +17,16 @@
 package net.openhft.chronicle.testframework.internal;
 
 import net.openhft.chronicle.testframework.Product;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
-import java.util.Arrays;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ProductDemo {
 
@@ -28,5 +35,28 @@ final class ProductDemo {
         Product.of(Arrays.asList("A", "B", "C"), Arrays.asList(1, 2, 3))
                 .forEach(System.out::println);
     }
+
+    @TestFactory
+    // Exhaustively tests if various empty collections invariants holds
+    Stream<DynamicTest> demo() {
+        // Operations
+        final List<Collection<Integer>> collections = Arrays.asList(new LinkedList<>(), new ArrayList<>(), new HashSet<>());
+        // Operations
+        final Consumer<Collection<Integer>> empty =
+                c -> assertTrue(c.isEmpty(), c.getClass() + ".empty() was false");
+        final Consumer<Collection<Integer>> size =
+                c -> assertEquals(0, c.size(), c.getClass() + ".size() != 0");
+        final Consumer<Collection<Integer>> streamCount =
+                c -> assertEquals(0, c.stream().count(), c.getClass() + ".stream().count() != 0");
+        final List<Consumer<Collection<Integer>>> operations = Arrays.asList(empty, size, streamCount);
+
+                // DynamicTests
+        return DynamicTest.stream(Product.of(collections, operations),
+                Objects::toString,
+                tuple -> {
+                    tuple.second().accept(tuple.first());
+                });
+    }
+
 
 }
