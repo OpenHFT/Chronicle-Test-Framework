@@ -134,3 +134,33 @@ This will produce the following output:
 [C, A, B]
 [C, B, A]
 ----
+
+== Products
+
+Products are equvalent to nested loops:
+
+[source, java]
+----
+    @Test
+    void print() {
+        Product.of(Arrays.asList("A", "B", "C"), Arrays.asList(1, 2, 3))
+                .forEach(System.out::println);
+    }
+----
+
+This will produce the following output:
+
+[source, text]
+----
+Product2Impl{first=A, second=1}
+Product2Impl{first=A, second=2}
+Product2Impl{first=A, second=3}
+Product2Impl{first=B, second=1}
+Product2Impl{first=B, second=2}
+Product2Impl{first=B, second=3}
+Product2Impl{first=C, second=1}
+Product2Impl{first=C, second=2}
+Product2Impl{first=C, second=3}
+----
+
+Products can use built-in tuples like `Product2Impl` or we can provide custom constructors to use our own.
