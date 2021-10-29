@@ -1,0 +1,100 @@
+= Chronicle-Test-Framework
+
+This library provides support classes for writing JUnit tests.
+
+
+== Permutations
+
+Permutaions work like this:
+
+[source, java]
+----
+@Test
+void print() {
+    Permutation.of("A", "B", "C")
+            .forEach(System.out::println);
+}
+----
+
+This will produce the following output:
+
+[source, text]
+----
+[A, B, C]
+[A, C, B]
+[B, A, C]
+[B, C, A]
+[C, A, B]
+[C, B, A]
+----
+
+Testing using permutations:
+
+[source, java]
+----
+@TestFactory
+// Exhaustively tests if the order of setter invocation does not matter
+Stream<DynamicTest> demo() {
+    // Operations
+    final Consumer<MyBean> setA = myBean -> myBean.setA(1);
+    final Consumer<MyBean> setB = myBean -> myBean.setB(2);
+    final Consumer<MyBean> setC = myBean -> myBean.setC(3);
+    final MyBean expected = new MyBean(1, 2, 3);
+    // DynamicTests
+    return DynamicTest.stream(Permutation.of(setA, setB, setC),
+            Objects::toString,
+            operations -> {
+                final MyBean actual = new MyBean();
+                operations.forEach(oper -> oper.accept(actual));
+                assertEquals(expected, actual);
+            });
+}
+----
+
+== Combinations
+
+Combinations work like this:
+
+[source, java]
+----
+@Test
+void print() {
+    Combination.of("A", "B", "C")
+            .forEach(System.out::println);
+}
+----
+
+This will produce the following output:
+
+[source, text]
+----
+[A]
+[B]
+[C]
+[A, B]
+[A, C]
+[B, C]
+[A, B, C]
+----
+
+Testing using combinations:
+
+[source, java]
+----
+@TestFactory
+// Try all combinations of cosmic ray interference
+    @TestFactory
+        // Try all combinations of the Robot state machine
+    Stream<DynamicTest> demo() {
+        return DynamicTest.stream(Combination.<Consumer<FaultTolerantBitSet>>of(
+                        FaultTolerantBitSet::cosmicRayBit3,
+                        FaultTolerantBitSet::cosmicRayBit23,
+                        FaultTolerantBitSet::cosmicRayBit13),
+                Objects::toString,
+                operations -> {
+                    final FaultTolerantBitSet bitSet = new FaultTolerantBitSet();
+                    operations.forEach(oper -> oper.accept(bitSet));
+                    assertTrue(bitSet.isValid());
+                });
+    }
+----
