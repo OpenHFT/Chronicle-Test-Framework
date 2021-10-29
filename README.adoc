@@ -137,7 +137,7 @@ This will produce the following output:
 
 == Products
 
-Products are equvalent to nested loops:
+Products are equivalent to nested loops but are easier to convert to a `Stream` of `DynamicTest` objects:
 
 [source, java]
 ----
