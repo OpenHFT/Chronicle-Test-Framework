@@ -17,11 +17,8 @@
 package net.openhft.chronicle.testframework;
 
 import net.openhft.chronicle.testframework.internal.PermutationUtil;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.function.ThrowingConsumer;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
