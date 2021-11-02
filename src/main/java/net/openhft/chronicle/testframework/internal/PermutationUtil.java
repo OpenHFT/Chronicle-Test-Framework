@@ -37,7 +37,7 @@ public final class PermutationUtil {
         return LongStream.rangeClosed(2, n).reduce(1, (a, b) -> a * b);
     }
 
-    public static <T> List<T> permutation(final long no, final List<T> items) {
+    public static <T> List<T> permutation(final long no, final Collection<T> items) {
         return permutationHelper(no,
             new LinkedList<>(Objects.requireNonNull(items)),
             new ArrayList<>());
@@ -58,7 +58,7 @@ public final class PermutationUtil {
         return of(Arrays.asList(items));
     }
 
-    public static <T> Stream<List<T>> of(final List<T> items) {
+    public static <T> Stream<List<T>> of(final Collection<T> items) {
         return LongStream.range(0, factorial(items.size()))
             .mapToObj(no -> permutation(no, items));
     }

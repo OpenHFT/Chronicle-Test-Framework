@@ -19,15 +19,15 @@ package net.openhft.chronicle.testframework.internal;
 import net.openhft.chronicle.testframework.Combination;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Per Minborg
@@ -39,7 +39,9 @@ final class CombinationTest {
         final List<Set<String>> actual = Combination.<String>of()
                 .collect(toList());
 
-        assertTrue(actual.isEmpty());
+        final List<Set<String>> expected = singletonList(emptySet());
+
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -48,7 +50,8 @@ final class CombinationTest {
                 .collect(toList());
 
         assertEquals(
-                singletonList(
+                asList(
+                        emptySet(),
                         singleton("a")
                 ),
                 actual
@@ -57,25 +60,26 @@ final class CombinationTest {
 
     @Test
     void testOfTwo() {
-        final Set<Set<String>> actual = Combination.of("a", "b")
-                .collect(toSet());
+        final List<Set<String>> actual = Combination.of("a", "b")
+                .collect(toList());
 
-        final Set<Set<String>> expected = new HashSet<>(asList(
+        final List<Set<String>> expected = asList(
+                emptySet(),
                 singleton("a"),
                 singleton("b"),
                 new LinkedHashSet<>(asList("a", "b"))
-        ));
+        );
 
         assertEquals(expected, actual);
-
     }
 
     @Test
     void testOfThree() {
-        final Set<Set<String>> actual = Combination.of("a", "b", "c")
-                .collect(toSet());
+        final List<Set<String>> actual = Combination.of("a", "b", "c")
+                .collect(toList());
 
-        final Set<Set<String>> expected = new HashSet<>(asList(
+        final List<Set<String>> expected = asList(
+                emptySet(),
                 singleton("a"),
                 singleton("b"),
                 singleton("c"),
@@ -83,23 +87,23 @@ final class CombinationTest {
                 new LinkedHashSet<>(asList("a", "c")),
                 new LinkedHashSet<>(asList("b", "c")),
                 new LinkedHashSet<>(asList("a", "b", "c"))
-        ));
+        );
 
         assertEquals(expected, actual);
     }
 
     @Test
     void testOfTwoList() {
-        final Set<Set<String>> actual = Combination.of(Arrays.asList("a", "b"))
-                .collect(toSet());
+        final List<Set<String>> actual = Combination.of(Arrays.asList("a", "b"))
+                .collect(toList());
 
-        final Set<Set<String>> expected = new HashSet<>(asList(
+        final List<Set<String>> expected = asList(
+                emptySet(),
                 singleton("a"),
                 singleton("b"),
                 new LinkedHashSet<>(asList("a", "b"))
-        ));
+        );
 
         assertEquals(expected, actual);
-
     }
 }

@@ -47,7 +47,7 @@ public final class CombinationUtil {
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a List from an array is safe
     public static <T> Stream<Set<T>> of(final T... items) {
-        return IntStream.rangeClosed(1, items.length)
+        return IntStream.rangeClosed(0, items.length)
             .mapToObj(r -> {
                 @SuppressWarnings("unchecked")
                 final T[] data = (T[]) new Object[r];

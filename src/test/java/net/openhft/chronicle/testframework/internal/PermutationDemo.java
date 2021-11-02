@@ -35,14 +35,17 @@ final class PermutationDemo {
                 .forEach(System.out::println);
     }
 
+    /**
+     * Tests exhaustively the order of setter invocation does not matter
+     */
     @TestFactory
-    // Exhaustively tests that the order of setter invocation does not matter
     Stream<DynamicTest> demo() {
+        final MyBean expected = new MyBean(1, 2, 3);
         // Operations
         final Consumer<MyBean> setA = myBean -> myBean.setA(1);
         final Consumer<MyBean> setB = myBean -> myBean.setB(2);
         final Consumer<MyBean> setC = myBean -> myBean.setC(3);
-        final MyBean expected = new MyBean(1, 2, 3);
+
         // DynamicTests
         return DynamicTest.stream(Permutation.of(setA, setB, setC),
                 Objects::toString,

@@ -18,6 +18,7 @@ package net.openhft.chronicle.testframework;
 
 import net.openhft.chronicle.testframework.internal.PermutationUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -87,7 +88,7 @@ public final class Permutation {
      * @return a Stream of all permutations of the provided {@code items} list
      * @throws NullPointerException is the provided {@code items} list is {@code null}.
      */
-    public static <T> Stream<List<T>> of(final List<T> items) {
+    public static <T> Stream<List<T>> of(final Collection<T> items) {
         return PermutationUtil.of(items);
     }
 
