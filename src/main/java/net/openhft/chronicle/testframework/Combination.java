@@ -19,7 +19,7 @@ package net.openhft.chronicle.testframework;
 import net.openhft.chronicle.testframework.internal.CombinationUtil;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -41,8 +41,8 @@ public final class Combination {
      * @return all possible combinations of the given elements
      */
     @SafeVarargs
-    @SuppressWarnings("varargs") // Creating a List from an array is safe
-    public static <T> Stream<List<T>> of(final T... items) {
+    @SuppressWarnings("varargs") // Creating a Set from an array is safe
+    public static <T> Stream<Set<T>> of(final T... items) {
         return CombinationUtil.of(items);
     }
 
@@ -55,7 +55,7 @@ public final class Combination {
      * @param items to combine
      * @return all possible combinations of the given elements
      */
-    public static <T> Stream<List<T>> of(final Collection<T> items) {
+    public static <T> Stream<Set<T>> of(final Collection<T> items) {
         return CombinationUtil.of(items);
     }
 

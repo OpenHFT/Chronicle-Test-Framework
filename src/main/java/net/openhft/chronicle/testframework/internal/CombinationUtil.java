@@ -17,7 +17,9 @@
 package net.openhft.chronicle.testframework.internal;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -44,7 +46,7 @@ public final class CombinationUtil {
      */
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a List from an array is safe
-    public static <T> Stream<List<T>> of(final T... items) {
+    public static <T> Stream<Set<T>> of(final T... items) {
         return IntStream.rangeClosed(1, items.length)
             .mapToObj(r -> {
                 @SuppressWarnings("unchecked")
@@ -63,18 +65,18 @@ public final class CombinationUtil {
      * @return all possible combinations of the given elements
      */
     @SuppressWarnings("unchecked")
-    public static <T> Stream<List<T>> of(final Collection<T> items) {
+    public static <T> Stream<Set<T>> of(final Collection<T> items) {
         return of((T[]) items.toArray());
     }
 
-    private static <T> Stream<List<T>> combinationHelper(
+    private static <T> Stream<Set<T>> combinationHelper(
             T[] arr, T[] data,
             int start, int end,
             int index, int r) {
 
         // Current combination is ready to be printed, print it
         if (index == r) {
-            return Stream.of(asList(data, r));
+            return Stream.of(asSet(data, r));
         }
 
         // replace index with all possible elements. The condition
@@ -89,10 +91,10 @@ public final class CombinationUtil {
             }).flatMap(identity());
     }
 
-    private static <T> List<T> asList(T[] array, int newSize) {
+    private static <T> Set<T> asSet(T[] array, int newSize) {
         return Stream.of(array)
             .limit(newSize)
-            .collect(Collectors.toList());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

@@ -16,13 +16,11 @@
  */
 package net.openhft.chronicle.testframework.internal;
 
-import net.openhft.chronicle.testframework.Combination;
 import net.openhft.chronicle.testframework.Permutation;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -38,7 +36,7 @@ final class PermutationDemo {
     }
 
     @TestFactory
-    // Exhaustively tests if the order of setter invocation does not matter
+    // Exhaustively tests that the order of setter invocation does not matter
     Stream<DynamicTest> demo() {
         // Operations
         final Consumer<MyBean> setA = myBean -> myBean.setA(1);

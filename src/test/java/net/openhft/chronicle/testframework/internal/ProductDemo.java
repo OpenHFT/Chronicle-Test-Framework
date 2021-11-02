@@ -36,8 +36,8 @@ final class ProductDemo {
                 .forEach(System.out::println);
     }
 
-    @TestFactory
     // Exhaustively tests if various empty collections invariants holds
+    @TestFactory
     Stream<DynamicTest> demo() {
         // Operations
         final List<Collection<Integer>> collections = Arrays.asList(new LinkedList<>(), new ArrayList<>(), new HashSet<>());
@@ -50,12 +50,11 @@ final class ProductDemo {
                 c -> assertEquals(0, c.stream().count(), c.getClass() + ".stream().count() != 0");
         final List<Consumer<Collection<Integer>>> operations = Arrays.asList(empty, size, streamCount);
 
-                // DynamicTests
+        // DynamicTests
         return DynamicTest.stream(Product.of(collections, operations),
                 Objects::toString,
-                tuple -> {
-                    tuple.second().accept(tuple.first());
-                });
+                tuple -> tuple.second().accept(tuple.first())
+                );
     }
 
 
