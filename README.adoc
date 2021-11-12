@@ -16,7 +16,6 @@ toc::[]
 
 == About
 
-
 This library provides support classes for writing JUnit tests. It supports both Junit4 and JUnit5.
 
 == Permutations
