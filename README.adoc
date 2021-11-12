@@ -181,6 +181,7 @@ Product2Impl{first=C, second=3}
 
 Products can use built-in tuples like `Product2Impl` or we can provide custom constructors to use our own.
 
+
 Testing using combinations:
 
 [source, java]
