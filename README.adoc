@@ -6,12 +6,12 @@ Chronicle Software
 :toclevels: 2
 :icons: font
 
-image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-bytes/badge.svg[caption="",link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-bytes]
-image:https://javadoc.io/badge2/net.openhft/chronicle-bytes/javadoc.svg[link="https://www.javadoc.io/doc/net.openhft/chronicle-bytes/latest/index.html"]
-//image:https://javadoc-badge.appspot.com/net.openhft/chronicle-bytes.svg?label=javadoc[JavaDoc, link=https://www.javadoc.io/doc/net.openhft/chronicle-bytes]
-image:https://img.shields.io/github/license/OpenHFT/Chronicle-Bytes[GitHub]
+image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework/badge.svg[caption="",link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework]
+image:https://javadoc.io/badge2/net.openhft/chronicle-test-framework/javadoc.svg[link="https://www.javadoc.io/doc/net.openhft/chronicle-bytes/latest/index.html"]
+//image:https://javadoc-badge.appspot.com/net.openhft/chronicle-test-framework.svg?label=javadoc[JavaDoc, link=https://www.javadoc.io/doc/net.openhft/chronicle-test-framework]
+image:https://img.shields.io/github/license/OpenHFT/Chronicle-Test-Framework[GitHub]
 image:https://img.shields.io/badge/release%20notes-subscribe-brightgreen[link="https://chronicle.software/release-notes/"]
-image:https://sonarcloud.io/api/project_badges/measure?project=OpenHFT_Chronicle-Bytes&metric=alert_status[link="https://sonarcloud.io/dashboard?id=OpenHFT_Chronicle-Bytes"]
+image:https://sonarcloud.io/api/project_badges/measure?project=OpenHFT_ChronicleTestFramework&metric=alert_status[link="https://sonarcloud.io/dashboard?id=OpenHFT_Chronicle-Test-Framework"]
 
 toc::[]
 
