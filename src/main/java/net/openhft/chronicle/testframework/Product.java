@@ -10,6 +10,7 @@ import static java.util.Objects.requireNonNull;
 
 public final class Product {
 
+    // Suppresses default constructor, ensuring non-instantiability.
     private Product() {
     }
 

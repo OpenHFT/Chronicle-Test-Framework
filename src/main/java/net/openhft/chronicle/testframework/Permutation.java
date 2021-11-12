@@ -30,6 +30,7 @@ import java.util.stream.Stream;
  */
 public final class Permutation {
 
+    // Suppresses default constructor, ensuring non-instantiability.
     private Permutation() {
     }
 

@@ -29,6 +29,7 @@ import java.util.stream.Stream;
  */
 public final class Combination {
 
+    // Suppresses default constructor, ensuring non-instantiability.
     private Combination() {}
 
     /**
