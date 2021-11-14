@@ -31,6 +31,11 @@
     <description>Chronicle-Test-Framework</description>
     <packaging>jar</packaging>
 
+    <properties>
+       <sonar.organization>openhft</sonar.organization>
+       <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
+  
     <dependencyManagement>
         <dependencies>
             <dependency>
