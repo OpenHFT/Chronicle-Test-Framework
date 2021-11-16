@@ -17,4 +17,5 @@
  */
 module chronicle.testframework {
     exports net.openhft.chronicle.testframework;
+    exports net.openhft.chronicle.testframework.function;
 }
