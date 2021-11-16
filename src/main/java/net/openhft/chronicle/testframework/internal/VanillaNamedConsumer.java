@@ -27,4 +27,8 @@ public final class VanillaNamedConsumer<T> implements NamedConsumer<T> {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
