@@ -17,8 +17,6 @@ public interface NamedConsumer<T> extends HasName, Consumer<T> {
 
     static <T> NamedConsumer<T> ofThrowing(final ThrowingConsumer<T, ?> consumer,
                                            final String name) {
-        requireNonNull(consumer);
-        requireNonNull(name);
-        return new VanillaNamedConsumer<>(ThrowingConsumer.of(consumer), name);
+        return of(ThrowingConsumer.of(consumer), name);
     }
 }
