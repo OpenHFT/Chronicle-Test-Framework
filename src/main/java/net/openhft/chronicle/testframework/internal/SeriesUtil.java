@@ -3,7 +3,7 @@ package net.openhft.chronicle.testframework.internal;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-public class SeriesUtil {
+public final class SeriesUtil {
 
     private SeriesUtil() {
     }
