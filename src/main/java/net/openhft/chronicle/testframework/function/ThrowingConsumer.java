@@ -27,9 +27,16 @@ public interface ThrowingConsumer<T, X extends Exception> {
      */
     void accept(T t) throws X;
 
-    static <T> Consumer<T> of(final ThrowingConsumer<T, ?> consumer) {
-        requireNonNull(consumer);
-        return new VanillaThrowingConsumer<>(consumer);
+    /**
+     * Creates and returns a new Consumer that will wrap any exceptions thrown by the
+     * provided {@code throwingConsumer} in a {@link ThrowingConsumerException}
+     * @param throwingConsumer to wrap (non-null)
+     * @param <T> consumed type
+     * @return a wrapped Consumer
+     */
+    static <T> Consumer<T> of(final ThrowingConsumer<T, ?> throwingConsumer) {
+        requireNonNull(throwingConsumer);
+        return new VanillaThrowingConsumer<>(throwingConsumer);
     }
 
 }

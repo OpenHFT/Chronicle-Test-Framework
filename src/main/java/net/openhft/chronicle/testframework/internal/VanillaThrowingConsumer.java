@@ -1,6 +1,7 @@
 package net.openhft.chronicle.testframework.internal;
 
 import net.openhft.chronicle.testframework.function.ThrowingConsumer;
+import net.openhft.chronicle.testframework.function.ThrowingConsumerException;
 
 import java.util.function.Consumer;
 
@@ -19,7 +20,7 @@ public final class VanillaThrowingConsumer<T> implements Consumer<T> {
         try {
             delegate.accept(t);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ThrowingConsumerException(e);
         }
     }
 
