@@ -20,8 +20,8 @@ public final class InternalProcessRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalProcessRunner.class);
 
-    // Suppresses default constructor, ensuring non-instantiability.
-    public InternalProcessRunner() {
+    private InternalProcessRunner() {
+        // Suppresses default constructor, ensuring non-instantiability.
     }
 
     /**
@@ -81,12 +81,13 @@ public final class InternalProcessRunner {
      * https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream
      */
     public static void printProcessOutput(String processName, Process process) {
-        LOGGER.info("\n"
-                + "Output for " + processName + "\n"
-                + "stdout:\n"
-                + copyStreamToString(process.getInputStream()) + "\n"
-                + "stderr:\n"
-                + copyStreamToString(process.getErrorStream()));
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info(
+                    String.format("%n Output for %s%n stdout:%n%s stderr:%n%s",
+                            processName,
+                            copyStreamToString(process.getInputStream()),
+                            copyStreamToString(process.getErrorStream()))
+            );
     }
 
     /**

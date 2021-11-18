@@ -1,28 +1,15 @@
 package net.openhft.chronicle.testframework.process;
 
 import net.openhft.chronicle.testframework.internal.process.InternalProcessRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
 public final class ProcessRunner {
 
-    // Suppresses default constructor, ensuring non-instantiability.
-    public ProcessRunner() {
+    private ProcessRunner() {
+        // Suppresses default constructor, ensuring non-instantiability.
     }
 
     /**
