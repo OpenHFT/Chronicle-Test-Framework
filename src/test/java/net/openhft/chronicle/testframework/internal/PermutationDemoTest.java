@@ -27,12 +27,14 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-final class PermutationDemo {
+final class PermutationDemoTest {
 
     @Test
     void print() {
-        Permutation.of("A", "B", "C")
-                .forEach(System.out::println);
+        assertEquals(6,
+                Permutation.of("A", "B", "C")
+                        .peek(System.out::println)
+                        .count());
     }
 
     /**

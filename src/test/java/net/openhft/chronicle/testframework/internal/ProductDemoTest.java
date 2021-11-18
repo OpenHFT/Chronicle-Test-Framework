@@ -28,12 +28,14 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-final class ProductDemo {
+final class ProductDemoTest {
 
     @Test
     void print() {
-        Product.of(Arrays.asList("A", "B", "C"), Arrays.asList(1, 2, 3))
-                .forEach(System.out::println);
+        assertEquals(9,
+                Product.of(Arrays.asList("A", "B", "C"), Arrays.asList(1, 2, 3))
+                        .peek(System.out::println)
+                        .count());
     }
 
     // Exhaustively tests if various empty collections invariants holds
@@ -54,7 +56,7 @@ final class ProductDemo {
         return DynamicTest.stream(Product.of(collections, operations),
                 Objects::toString,
                 tuple -> tuple.second().accept(tuple.first())
-                );
+        );
     }
 
 

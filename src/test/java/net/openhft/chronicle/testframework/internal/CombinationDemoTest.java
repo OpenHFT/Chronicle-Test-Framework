@@ -25,21 +25,24 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Per Minborg
  */
-final class CombinationDemo {
+final class CombinationDemoTest {
 
     @Test
     void print() {
-        Combination.of("A", "B", "C")
-                .forEach(System.out::println);
+        assertEquals(8,
+                Combination.of("A", "B", "C")
+                        .peek(System.out::println)
+                        .count());
     }
 
-    @TestFactory
     // Try all combinations of cosmic ray interference
+    @TestFactory
     Stream<DynamicTest> demo() {
         return DynamicTest.stream(Combination.<Consumer<FaultTolerantBitSet>>of(
                         FaultTolerantBitSet::cosmicRayBit3,
@@ -64,13 +67,10 @@ final class CombinationDemo {
         public void cosmicRayBit13() {
         }
 
-
         boolean isValid() {
             return true;
         }
 
     }
 
-
 }
-

@@ -32,9 +32,9 @@ public final class Product {
     }
 
 
-    public static <T, U, V, R> Stream<Product3<T, U, V>> of(Collection<T> ts,
-                                                            Collection<U> us,
-                                                            Collection<V> vs) {
+    public static <T, U, V> Stream<Product3<T, U, V>> of(Collection<T> ts,
+                                                         Collection<U> us,
+                                                         Collection<V> vs) {
         requireNonNull(ts);
         requireNonNull(us);
         requireNonNull(vs);

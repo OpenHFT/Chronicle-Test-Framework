@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.LongStream;
 
-public class SeriesDemo {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class SeriesDemoTest {
 
     @Test
     void demo() {
@@ -22,6 +24,8 @@ public class SeriesDemo {
 
         System.out.println("Primes (20):");
         print(() -> Series.primes().limit(20));
+
+        assertEquals(64, Series.powersOfTwo().count());
     }
 
     private static void print(Supplier<LongStream> supplier) {
