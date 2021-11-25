@@ -33,19 +33,20 @@ public final class InternalProcessRunner {
      * @throws IOException if there is an error starting the process
      */
     public static Process runClass(Class<?> clazz, String... args) throws IOException {
-        return runClass(clazz, new String[]{}, args);
+        return runClass(clazz, new String[]{}, args, null);
     }
 
     /**
      * Spawn a process running the main method of a specified class
      *
-     * @param clazz       The class to execute
-     * @param jvmArgs     Any arguments to pass to the process
-     * @param programArgs Any arguments to pass to the process
+     * @param clazz            The class to execute
+     * @param jvmArgs          Any JVM arguments to pass to the process
+     * @param programArgs      Any arguments to pass to the process
+     * @param classPathEntries Classpath for the process, {code null} for default
      * @return the Process spawned
      * @throws IOException if there is an error starting the process
      */
-    public static Process runClass(Class<?> clazz, String[] jvmArgs, String[] programArgs) throws IOException {
+    public static Process runClass(Class<?> clazz, String[] jvmArgs, String[] programArgs, String[] classPathEntries) throws IOException {
         // Because Java17 must be run using various module flags, these must be propagated
         // to the child processes
         // https://stackoverflow.com/questions/1490869/how-to-get-vm-arguments-from-inside-of-java-application
@@ -57,7 +58,13 @@ public final class InternalProcessRunner {
                 .filter(arg -> !arg.startsWith("-agentlib:"))
                 .collect(Collectors.toList());
 
-        String classPath = System.getProperty("java.class.path");
+        String classPath;
+        if (classPathEntries == null || classPathEntries.length == 0) {
+            classPath = System.getProperty("java.class.path");
+        } else {
+            classPath = String.join(":", classPathEntries);
+        }
+
         String className = clazz.getName();
         String javaBin = findJavaBinPath().toString();
         List<String> allArgs = new ArrayList<>();

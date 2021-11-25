@@ -27,10 +27,10 @@ public final class ProcessRunner {
     }
 
     /**
-     * Spawn a process running the main method of a specified class
+     * Spawn a process running the main method of a specified class with custom JVM args
      *
      * @param clazz       The class to execute
-     * @param jvmArgs     Any arguments to pass to the process
+     * @param jvmArgs     Any JVM arguments to pass to the process
      * @param programArgs Any arguments to pass to the process
      * @return the Process spawned
      * @throws IOException if there is an error starting the process
@@ -39,7 +39,25 @@ public final class ProcessRunner {
         requireNonNull(clazz);
         requireNonNull(jvmArgs);
         requireNonNull(programArgs);
-        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs);
+        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs, null);
+    }
+
+    /**
+     * Spawn a process running the main method of a specified class with custom JVM args and classpath
+     *
+     * @param clazz       The class to execute
+     * @param jvmArgs     Any JVM arguments to pass to the process
+     * @param programArgs Any arguments to pass to the process
+     * @param classPath   Classpath entries for the process
+     * @return the Process spawned
+     * @throws IOException if there is an error starting the process
+     */
+    public static Process runClass(Class<?> clazz, String[] jvmArgs, String[] programArgs, String[] classPath) throws IOException {
+        requireNonNull(clazz);
+        requireNonNull(jvmArgs);
+        requireNonNull(programArgs);
+        requireNonNull(classPath);
+        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs, classPath);
     }
 
     /**
