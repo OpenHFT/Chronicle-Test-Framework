@@ -21,7 +21,7 @@ public final class StandardAccumulators {
         return Stream.of(PER_METRIC, PER_PACKAGE, PER_CLASS, PER_METHOD_REFERENCE);
     }
 
-    public static final Supplier<Accumulator> PER_METHOD = () -> Accumulator.of("method reference", (m, ci, l) -> ((MethodInfo) l).getClassName() + "." + l.getName() + ((MethodInfo) l).getTypeSignatureOrTypeDescriptorStr(), (m, ci, l) -> l instanceof MethodInfo);
+    public static final Supplier<Accumulator> PER_METHOD = () -> Accumulator.of("method", (m, ci, l) -> ((MethodInfo) l).getClassName() + "." + l.getName() + ((MethodInfo) l).getTypeSignatureOrTypeDescriptorStr(), (m, ci, l) -> l instanceof MethodInfo);
     public static final Supplier<Accumulator> PER_CLASS_AND_METRIC = () -> Accumulator.of(
             "class",
             (m, ci, l) -> ci.loadClass().getName(),

@@ -14,15 +14,24 @@ import static java.util.Objects.requireNonNull;
 public final class StandardApiMetrics implements ApiMetrics {
 
     private final Set<Accumulator> accumulators;
+    private final Set<Accumulator> internalAccumulators;
 
-    public StandardApiMetrics(final Set<Accumulator> accumulators) {
+    public StandardApiMetrics(final Set<Accumulator> accumulators,
+                              final Set<Accumulator> internalAccumulators) {
         requireNonNull(accumulators);
+        requireNonNull(internalAccumulators);
         this.accumulators = new LinkedHashSet<>(accumulators);
+        this.internalAccumulators = new LinkedHashSet<>(internalAccumulators);
     }
 
     @Override
     public Stream<Accumulator> accumulators() {
         return accumulators.stream();
+    }
+
+    @Override
+    public Stream<Accumulator> internalAccumulators() {
+        return internalAccumulators.stream();
     }
 
     @Override

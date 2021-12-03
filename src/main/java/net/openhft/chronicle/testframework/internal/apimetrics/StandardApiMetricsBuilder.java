@@ -14,16 +14,22 @@ public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBui
 
     // Configurations
     private final List<String> packageNames = new ArrayList<>();
+    private final List<String> packageNameExclusions = new ArrayList<>();
     private final Map<Class<?>, Set<Metric<?>>> metrics = new HashMap<>();
     private final Set<Accumulator> accumulators = new LinkedHashSet<>();
-/*    // Accumulators
-    private final Map<Metric<?>, Double> metricSums = new HashMap<>();
-    private final Map<Class<?>, Double> classSums = new HashMap<>();*/
+    private final Set<Accumulator> internalAccumulators = new LinkedHashSet<>();
 
     @Override
     public StandardApiMetricsBuilder addPackage(final String packageName) {
         requireNonNull(packageName);
         packageNames.add(packageName);
+        return this;
+    }
+
+    @Override
+    public ApiMetrics.ApiMetricsBuilder addPackageExclusion(String paketName) {
+        requireNonNull(paketName);
+        packageNameExclusions.add(paketName);
         return this;
     }
 
@@ -57,40 +63,55 @@ public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBui
     @Override
     public ApiMetrics build() {
         if (metrics.isEmpty())
-            throw new IllegalStateException("There are no Metrics provided");
+            throw new IllegalStateException("No Metrics provided");
+
+        ClassInfoList.ClassInfoFilter filter = ci -> !ci.getPackageName().contains(".internal.") && !ci.getPackageName().contains(".internal");
+        computeFor(accumulators, filter);
+
+        ClassInfoList.ClassInfoFilter internalFilter = ci -> ci.getPackageName().contains(".internal.") || ci.getPackageName().contains(".internal");
+        computeFor(internalAccumulators, internalFilter);
+
+        return new StandardApiMetrics(accumulators, internalAccumulators);
+    }
+
+    private void computeFor(final Set<Accumulator> accumulators,
+                                     final ClassInfoList.ClassInfoFilter filter) {
         try (ScanResult scanResult = new ClassGraph().enableAllInfo().enableAllInfo().scan()) {
             final ClassInfoList exposedClassInfoList = scanResult.getAllClasses()
-                    .filter(ci -> !ci.getPackageName().contains(".internal."))
-                    .filter(ci -> packageNames.stream().anyMatch(pn -> ci.getPackageInfo().getName().startsWith(pn)));
+                    .filter(filter)
+                    .filter(ci -> packageNames.stream().anyMatch(pn -> ci.getPackageInfo().getName().startsWith(pn)))
+                    .filter(ci -> packageNameExclusions.stream().noneMatch(pn -> ci.getPackageInfo().getName().startsWith(pn)));
 
             exposedClassInfoList.forEach(ci -> {
-                this.accumulateApplicableMetrics(ci);
-                ci.getMethodInfo().forEach(this::accumulateApplicableMetrics);
-                ci.getFieldInfo().forEach(this::accumulateApplicableMetrics);
+                this.accumulateApplicableMetrics(accumulators, ci);
+                ci.getMethodInfo().forEach(mi -> accumulateApplicableMetrics(accumulators, mi));
+                ci.getFieldInfo().forEach(fi -> accumulateApplicableMetrics(accumulators, fi));
             });
         }
-        return new StandardApiMetrics(accumulators);
     }
 
-    void accumulateApplicableMetrics(final FieldInfo fieldInfo) {
+    void accumulateApplicableMetrics(final Set<Accumulator> accumulators,
+                                     final FieldInfo fieldInfo) {
         metricsFor(FieldInfo.class).stream()
                 .filter(m -> m.isApplicable(fieldInfo))
-                .forEach(m -> accumulate(m, fieldInfo.getClassInfo(), fieldInfo));
+                .forEach(m -> accumulate(accumulators, m, fieldInfo.getClassInfo(), fieldInfo));
     }
 
-    void accumulateApplicableMetrics(final MethodInfo methodInfo) {
+    void accumulateApplicableMetrics(final Set<Accumulator> accumulators,
+                                     final MethodInfo methodInfo) {
         metricsFor(MethodInfo.class).stream()
                 .filter(m -> m.isApplicable(methodInfo))
-                .forEach(m -> accumulate(m, methodInfo.getClassInfo(), methodInfo));
+                .forEach(m -> accumulate(accumulators, m, methodInfo.getClassInfo(), methodInfo));
     }
 
-    void accumulateApplicableMetrics(final ClassInfo classInfo) {
+    void accumulateApplicableMetrics(final Set<Accumulator> accumulators,
+                                     final ClassInfo classInfo) {
         metricsFor(ClassInfo.class).stream()
                 .filter(m -> m.isApplicable(classInfo))
-                .forEach(m -> accumulate(m, classInfo, classInfo));
+                .forEach(m -> accumulate(accumulators, m, classInfo, classInfo));
     }
 
-    void accumulate(Metric<?> metric, ClassInfo classInfo, HasName leaf) {
+    void accumulate(Set<Accumulator> accumulators, Metric<?> metric, ClassInfo classInfo, HasName leaf) {
         accumulators.forEach(a -> a.accept(metric, classInfo, leaf));
     }
 

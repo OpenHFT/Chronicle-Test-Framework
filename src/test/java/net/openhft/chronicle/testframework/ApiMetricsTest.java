@@ -21,6 +21,13 @@ class ApiMetricsTest {
         System.out.println(apiMetrics);
 
         assertNotEquals(0, apiMetrics.accumulators().count());
+
+        System.out.println("\"*******\" = " + "*******");
+
+        apiMetrics.internalAccumulators()
+                .forEach(System.out::println);
+
+
     }
 
 }

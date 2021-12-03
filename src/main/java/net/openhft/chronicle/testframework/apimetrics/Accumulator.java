@@ -15,8 +15,20 @@ import static java.util.Objects.requireNonNull;
 
 public interface Accumulator {
 
+    /**
+     * Returns an unmodifiable list of names used in one or more aggregation depths.
+     *
+     * @return list of names
+     */
     List<String> aggregationNames();
 
+    /**
+     * Merges the provided parameter into this accumulator mutating itself.
+     *
+     * @param metric applicable
+     * @param classInfo ClassInfo applicable for the leaf
+     * @param leaf ClassInfo, MethodInfo or FieldInfo provided
+     */
     void accept(Metric<?> metric, ClassInfo classInfo, HasName leaf);
 
     Double result();
@@ -24,6 +36,7 @@ public interface Accumulator {
     Map<String, Double> result1();
 
     Map<String, Map<String, Double>> result2();
+
 
     static Accumulator of(String columnName,
                           Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor) {
