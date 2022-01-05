@@ -24,14 +24,14 @@ public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyT
                 try {
                     builder.action.run();
                     if (i > 0) {
-                        builder.infoLogger.println("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
+                        builder.infoLogger.accept("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
                     }
                     break;
                 } catch (Throwable x) {
                     if (i == (builder.maxIterations - 1)) {
                         throw x;
                     }
-                    builder.errorLogger.println("Rerunning failing test run " + (i + 2));
+                    builder.errorLogger.accept("Rerunning failing test run " + (i + 2));
                     if (builder.interIterationGc) {
                         System.gc();
                     }

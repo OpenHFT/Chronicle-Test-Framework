@@ -4,6 +4,7 @@ import net.openhft.chronicle.testframework.internal.VanillaFlakyTestRunnerBuilde
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
+import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -126,22 +127,22 @@ public final class FlakyTestRunner {
         /**
          * Sets the info logger to use for messages.
          * <p>
-         * Default value: System.out
+         * Default value: System.out::println
          *
          * @param infoLogger to use
          * @return this Builder
          */
-        Builder<X> withInfoLogger(PrintStream infoLogger);
+        Builder<X> withInfoLogger(Consumer<? super String> infoLogger);
 
         /**
          * Sets the error logger to use for messages.
          * <p>
-         * Default value: System.err
+         * Default value: System.err::println
          *
          * @param errorLogger to use
          * @return this Builder
          */
-        Builder<X> withErrorLogger(PrintStream errorLogger);
+        Builder<X> withErrorLogger(Consumer<? super String> errorLogger);
 
         /**
          * Creates a Runnable that runs the provided runnable according to the
