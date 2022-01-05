@@ -49,6 +49,27 @@ class VanillaFlakyTestRunnerTest {
         );
     }
 
+    @Test
+    void demo() {
+        RunnableThrows<IllegalStateException> action = new MyAction(2);
+
+        assertThrows(IllegalStateException.class, () ->
+                FlakyTestRunner.builder(action)
+                        .withFlakyOnThisArchitecture(isWindows())
+                        .withMaxIterations(2)
+                        .withInterIterationGc(false)
+                        .withIterationDelay(200)
+                        // Use Standard.out rather than the default System.err
+                        .withErrorLogger(System.out)
+                        .build()
+                        .run()
+        );
+    }
+
+    private boolean isWindows() {
+        return false;
+    }
+
     private static final class MyAction implements RunnableThrows<IllegalStateException> {
 
         private int countDown;
