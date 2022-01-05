@@ -6,34 +6,37 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Objects.requireNonNull;
 
-public final class VanillaFlakyTestRunner {
+public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyTestRunner.RunnableThrows<X> {
 
     private final AtomicBoolean inRun = new AtomicBoolean();
+    private final VanillaFlakyTestRunnerBuilder<X> builder;
 
-    public <X extends Throwable> void run(final FlakyTestRunner.RunnableThrows<X> action,
-                                          final int maxIterations) throws X {
-        requireNonNull(action);
-        if (maxIterations <= 0) {
-            throw new IllegalArgumentException("maxIterations is non positive " + maxIterations);
-        }
+    public VanillaFlakyTestRunner(final VanillaFlakyTestRunnerBuilder<X> builder) {
+        this.builder = requireNonNull(builder);
+    }
+
+    @Override
+    public void run() throws X {
         if (!inRun.compareAndSet(false, true))
             throw new AssertionError("Can't run nested");
         try {
-            for (int i = 0; i < maxIterations; i++) {
+            for (int i = 0; i < builder.maxIterations; i++) {
                 try {
-                    action.run();
+                    builder.action.run();
                     if (i > 0) {
-                        System.out.println("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
+                        builder.infoLogger.println("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
                     }
                     break;
-                } catch (Throwable t) {
-                    if (i == (maxIterations - 1)) {
-                        throw t;
+                } catch (Throwable x) {
+                    if (i == (builder.maxIterations - 1)) {
+                        throw x;
                     }
-                    System.err.println("Rerunning failing test run " + (i + 2));
-                    System.gc();
+                    builder.errorLogger.println("Rerunning failing test run " + (i + 2));
+                    if (builder.interIterationGc) {
+                        System.gc();
+                    }
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(builder.delayMs);
                     } catch (InterruptedException ignore) {
                         // do nothing
                     }

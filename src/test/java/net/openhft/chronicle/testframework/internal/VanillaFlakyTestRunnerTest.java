@@ -1,37 +1,51 @@
 package net.openhft.chronicle.testframework.internal;
 
+import net.openhft.chronicle.testframework.FlakyTestRunner;
 import net.openhft.chronicle.testframework.FlakyTestRunner.RunnableThrows;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class VanillaFlakyTestRunnerTest {
 
     @Test
     void runZero() {
-        RunnableThrows<IllegalStateException> action = new MyAction(0);
-        assertThrows(IllegalArgumentException.class, () ->
-                new VanillaFlakyTestRunner().run(action, 0)
+        final MyAction action = new MyAction(0);
+        assertDoesNotThrow(() ->
+                        FlakyTestRunner.builder(action)
+                                .withMaxIterations(0)
+                                .build()
+                                .run()
         );
+        assertEquals(0, action.countDown);
     }
 
     @Test
     void run() {
         RunnableThrows<IllegalStateException> action = new MyAction(0);
-        new VanillaFlakyTestRunner().run(action, 1);
+        FlakyTestRunner.builder(action)
+                .withMaxIterations(1)
+                .build()
+                .run();
     }
 
     @Test
     void runTry2() {
         RunnableThrows<IllegalStateException> action = new MyAction(1);
-        new VanillaFlakyTestRunner().run(action, 2);
+        FlakyTestRunner.builder(action)
+                .withMaxIterations(2)
+                .build()
+                .run();
     }
 
     @Test
     void runTry3() {
         RunnableThrows<IllegalStateException> action = new MyAction(2);
         assertThrows(IllegalStateException.class, () ->
-                new VanillaFlakyTestRunner().run(action, 2)
+                FlakyTestRunner.builder(action)
+                        .withMaxIterations(2)
+                        .build()
+                        .run()
         );
     }
 
