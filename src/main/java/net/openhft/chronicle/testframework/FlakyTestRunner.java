@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -75,6 +76,29 @@ public final class FlakyTestRunner {
          * @throws T if an underlying exception is thrown
          */
         void run() throws T;
+
+        /**
+         * Performs the action wrapping any thrown Throwable in an IllegalStateException.
+         *
+         * @throws IllegalStateException if an underlying Throwable is thrown
+         */
+        default void runOrThrow() {
+            runOrThrow(IllegalStateException::new);
+        }
+
+        /**
+         * Performs the action wrapping any thrown Throwable using the provided {@code exceptionMapper}.
+         *
+         * @throws RuntimeException if an underlying Throwable is thrown
+         */
+        default void runOrThrow(Function<? super Throwable, ? extends RuntimeException> exceptionMapper) {
+            requireNonNull(exceptionMapper);
+            try {
+                run();
+            } catch (Throwable x) {
+                throw exceptionMapper.apply(x);
+            }
+        }
     }
 
     public static <X extends Throwable> Builder<X> builder(@NotNull final RunnableThrows<X> action) {

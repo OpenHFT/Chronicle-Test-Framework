@@ -53,6 +53,17 @@ class VanillaFlakyTestRunnerTest {
     }
 
     @Test
+    void testNoThrow() {
+      FlakyTestRunner.builder(this::foo)
+              .build()
+              .runOrThrow();
+    }
+
+    void foo() {
+        // Do nothing and throw nothing
+    }
+
+    @Test
     void demo() {
         RunnableThrows<IllegalStateException> action = new MyAction(2);
 
