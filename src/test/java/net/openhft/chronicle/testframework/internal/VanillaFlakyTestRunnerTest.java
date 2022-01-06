@@ -64,7 +64,7 @@ class VanillaFlakyTestRunnerTest {
                         .withMaxIterations(2)
                         .withInterIterationGc(false)
                         .withIterationDelay(200)
-                        // Use Standard.out rather than the default System.err
+                        // Use a list rather than the default System.err
                         .withErrorLogger(errors::add)
                         .build()
                         .run()
