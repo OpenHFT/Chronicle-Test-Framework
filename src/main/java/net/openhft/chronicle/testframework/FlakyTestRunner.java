@@ -3,7 +3,6 @@ package net.openhft.chronicle.testframework;
 import net.openhft.chronicle.testframework.internal.VanillaFlakyTestRunnerBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -101,9 +100,31 @@ public final class FlakyTestRunner {
         }
     }
 
+    /**
+     * Creates and returns a new Builder for the provided {@code action} that might throw checked Exceptions.
+     *
+     * @param action to perform
+     * @param <X> exception type
+     * @return a new builder
+     */
     public static <X extends Throwable> Builder<X> builder(@NotNull final RunnableThrows<X> action) {
         requireNonNull(action);
         return new VanillaFlakyTestRunnerBuilder<>(action);
+    }
+
+    /**
+     * Creates and returns a new Builder for the provided {@code action} that might throw un-checked Exceptions only.
+     *
+     * @param action to perform
+     * @return a new builder
+     */
+    public static Builder<RuntimeException> builderUnchecked(@NotNull final Runnable action) {
+        requireNonNull(action);
+        return new VanillaFlakyTestRunnerBuilder<>(asRunnableThrows(action));
+    }
+
+    private static RunnableThrows<RuntimeException> asRunnableThrows(Runnable runnable) {
+        return runnable::run;
     }
 
     public interface Builder<X extends Throwable> {

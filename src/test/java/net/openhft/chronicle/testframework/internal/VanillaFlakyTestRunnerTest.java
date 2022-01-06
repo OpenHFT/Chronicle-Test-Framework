@@ -59,6 +59,13 @@ class VanillaFlakyTestRunnerTest {
               .runOrThrow();
     }
 
+    @Test
+    void testUnchecked() {
+      FlakyTestRunner.builderUnchecked(this::foo)
+              .build()
+              .run();
+    }
+
     void foo() {
         // Do nothing and throw nothing
     }
