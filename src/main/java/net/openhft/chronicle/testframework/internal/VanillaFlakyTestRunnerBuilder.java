@@ -3,7 +3,6 @@ package net.openhft.chronicle.testframework.internal;
 import net.openhft.chronicle.testframework.FlakyTestRunner;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;

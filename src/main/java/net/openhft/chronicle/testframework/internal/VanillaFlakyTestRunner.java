@@ -28,6 +28,7 @@ public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyT
                     }
                     break;
                 } catch (Throwable x) {
+                    // Using Throwable above allows AssertionError to be retried
                     if (i == (builder.maxIterations - 1)) {
                         throw x;
                     }
@@ -38,7 +39,7 @@ public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyT
                     try {
                         Thread.sleep(builder.delayMs);
                     } catch (InterruptedException ignore) {
-                        // do nothing
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

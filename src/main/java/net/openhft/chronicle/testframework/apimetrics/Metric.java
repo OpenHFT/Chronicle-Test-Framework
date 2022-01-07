@@ -12,8 +12,6 @@ public interface Metric<T> {
 
     double weight();
 
-    // double factor();
-
     static <T> Metric<T> of(final Class<T> nodeType,
                             final Predicate<? super T> filter,
                             final String name,

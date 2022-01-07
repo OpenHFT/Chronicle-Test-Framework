@@ -25,45 +25,48 @@ class VanillaFlakyTestRunnerTest {
 
     @Test
     void run() {
-        RunnableThrows<IllegalStateException> action = new MyAction(0);
-        FlakyTestRunner.builder(action)
+        final RunnableThrows<IllegalStateException> action = new MyAction(0);
+        final RunnableThrows<IllegalStateException> runner = FlakyTestRunner.builder(action)
                 .withMaxIterations(1)
-                .build()
-                .run();
+                .build();
+
+        assertDoesNotThrow(runner::run);
     }
 
     @Test
     void runTry2() {
-        RunnableThrows<IllegalStateException> action = new MyAction(1);
-        FlakyTestRunner.builder(action)
+        final RunnableThrows<IllegalStateException> action = new MyAction(1);
+        final RunnableThrows<IllegalStateException> runner = FlakyTestRunner.builder(action)
                 .withMaxIterations(2)
-                .build()
-                .run();
+                .build();
+
+        assertDoesNotThrow(runner::run);
     }
 
     @Test
     void runTry3() {
-        RunnableThrows<IllegalStateException> action = new MyAction(2);
-        assertThrows(IllegalStateException.class, () ->
-                FlakyTestRunner.builder(action)
-                        .withMaxIterations(2)
-                        .build()
-                        .run()
-        );
+        final RunnableThrows<IllegalStateException> action = new MyAction(2);
+        final RunnableThrows<IllegalStateException> runner = FlakyTestRunner.builder(action)
+                .withMaxIterations(2)
+                .build();
+
+        assertThrows(IllegalStateException.class, runner::run);
     }
 
     @Test
     void testNoThrow() {
-      FlakyTestRunner.builder(this::foo)
-              .build()
-              .runOrThrow();
+        final RunnableThrows<?> runner = FlakyTestRunner.builder(this::foo)
+                .build();
+
+        assertDoesNotThrow(() -> runner.runOrThrow());
     }
 
     @Test
     void testUnchecked() {
-      FlakyTestRunner.builderUnchecked(this::foo)
-              .build()
-              .run();
+        final RunnableThrows<RuntimeException> runner = FlakyTestRunner.builderUnchecked(this::foo)
+                .build();
+
+        assertDoesNotThrow(runner::run);
     }
 
     void foo() {
