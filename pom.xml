@@ -26,7 +26,7 @@
         <relativePath />
     </parent>
     <artifactId>chronicle-test-framework</artifactId>
-    <version>1.22ea7-SNAPSHOT</version>
+    <version>1.22ea8-SNAPSHOT</version>
     <name>OpenHFT/Chronicle-Test-Framework</name>
     <description>Chronicle-Test-Framework</description>
     <packaging>jar</packaging>
