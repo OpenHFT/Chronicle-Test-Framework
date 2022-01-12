@@ -26,7 +26,7 @@
         <relativePath />
     </parent>
     <artifactId>chronicle-test-framework</artifactId>
-    <version>1.22ea8-SNAPSHOT</version>
+    <version>1.22ea8</version>
     <name>OpenHFT/Chronicle-Test-Framework</name>
     <description>Chronicle-Test-Framework</description>
     <packaging>jar</packaging>
@@ -249,7 +249,7 @@
         <connection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git</connection>
         <developerConnection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git
         </developerConnection>
-        <tag>master</tag>
+        <tag>chronicle-test-framework-1.22ea8</tag>
     </scm>
 
 </project>
