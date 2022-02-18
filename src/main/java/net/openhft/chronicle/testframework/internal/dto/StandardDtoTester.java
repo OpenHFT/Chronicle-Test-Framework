@@ -70,7 +70,8 @@ final class StandardDtoTester<T> implements DtoTester {
         for (NamedMutator<T> namedMutator : builder.mandatoryMutators()) {
             try {
                 builder.validator().accept(t);
-                throw new AssertionError("There are mandatory mutators but the validator passed without throwing an Exception on using only " + applied + " applied on a fresh instance");
+                throw new AssertionError("There are mandatory mutators but the validator passed without throwing " +
+                        "an Exception on using only " + applied + " applied on a fresh instance -> " + t);
             } catch (Exception e) {
                 // Happy path
             }
