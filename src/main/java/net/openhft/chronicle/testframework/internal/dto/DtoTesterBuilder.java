@@ -78,6 +78,7 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         }
         return this;
     }
+/*
 
     @Override
     @NotNull
@@ -86,6 +87,8 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         validations.add(new NamedPredicate<>(ruleName, validator));
         return this;
     }
+
+ */
 
     @Override
     public DtoTester build() {

@@ -4,7 +4,10 @@ import net.openhft.chronicle.testframework.internal.dto.DtoTesterBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -44,6 +47,7 @@ public interface DtoTester {
         }
 
 
+        /*
         @NotNull Builder<T> addValidationRule(@NotNull String ruleName,
                                               @NotNull Predicate<? super T> validator);
 
@@ -54,6 +58,7 @@ public interface DtoTester {
             requireNonNull(getter);
             return addValidationRule(ruleName, t -> !getter.apply(t).equals(unexpected));
         }
+         */
 
         DtoTester build();
 

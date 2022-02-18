@@ -26,7 +26,9 @@ class DtoTesterDemoTest {
                 .withResetter(MyDto::reset)
 
                 // Setup validation rules
+                /*
                 .addValidationRule("name", MyDto::name, null)
+                */
 
                 // Assert the validation rules when all mandatory mutators have been invoked and with a
                 // combination of optional ones
