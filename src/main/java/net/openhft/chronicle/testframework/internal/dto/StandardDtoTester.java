@@ -78,7 +78,12 @@ final class StandardDtoTester<T> implements DtoTester {
             applied.add(namedMutator.name());
         }
         // We should now pass as all mandatory mutators are applied
-        builder.validator().accept(t);
+        try {
+            builder.validator().accept(t);
+        } catch (Exception e) {
+            throw new AssertionError("Validation did not pass despite having applied " + applied + " -> " + t, e);
+        }
+
 
         for (NamedMutator<T> namedMutator : builder.optionalMutators()) {
             namedMutator.mutator().accept(t);
