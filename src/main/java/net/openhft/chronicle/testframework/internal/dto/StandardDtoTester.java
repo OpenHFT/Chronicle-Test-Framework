@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework.internal.dto;
 
+import net.openhft.chronicle.testframework.Combination;
 import net.openhft.chronicle.testframework.dto.DtoTester;
 import net.openhft.chronicle.testframework.internal.dto.DtoTesterBuilder.NamedMutator;
 import org.jetbrains.annotations.NotNull;
@@ -49,21 +50,60 @@ final class StandardDtoTester<T> implements DtoTester {
         if (builder.resetter() == null)
             // Nothing to assert
             return;
-        final Collection<String> failed = check(t -> builder.resetter().accept(t), (fresh, mutated) -> !fresh.equals(mutated));
+
+        final T fresh = createInstance();
+        final List<String> failed = newList();
+        for (NamedMutator<T> namedMutator : builder.allMutators()) {
+            final T t = createInstance();
+            namedMutator.mutator().accept(t);
+            builder.resetter().accept(t);
+            if (!fresh.equals(t)) {
+                failed.add(namedMutator.name());
+            }
+        }
         if (!failed.isEmpty())
-            throw new AssertionError("Resettable: The mutators " + failed + " were applied but the resetter did not reset the mutations");
+            throw new AssertionError("Resettable: The mutators " + failed + " were applied but the resetter did not reset these mutations");
     }
 
     private void checkHashCode() {
-        check(t -> {
-        }, (fresh, mutated) -> fresh.hashCode() == mutated.hashCode())
-                .forEach(n -> System.err.println("WARNING: hashCode() for the mutator " + n + " was not changed"));
+        final T fresh = createInstance();
+        final List<String> failed = newList();
+        for (NamedMutator<T> namedMutator : builder.allMutators()) {
+            final T t = createInstance();
+            namedMutator.mutator().accept(t);
+            if (fresh.hashCode() == t.hashCode()) {
+                failed.add(namedMutator.name());
+            }
+        }
+        failed.forEach(n -> System.err.println("WARNING: hashCode() for the mutator " + n + " was not changed"));
     }
 
     private void assertValidationRules() {
         if (builder.validator() == null)
             // Nothing to assert
             return;
+
+        if (!builder.mandatoryMutators().isEmpty()) {
+            // If there is at least one mandatory mutator,
+            // there should be no combination of optional mutators
+            // that puts the instance in a valid state
+            Combination.of(builder.optionalMutators()).forEach(mutators -> {
+                final List<String> optionalApplied = newList();
+                final T optionalTarget = createInstance();
+                for (NamedMutator<T> namedMutator : mutators) {
+                    namedMutator.mutator().accept(optionalTarget);
+                    // We shall never pass when an optional mutator is passed
+                    try {
+                        builder.validator().accept(optionalTarget);
+                        throw new AssertionError("There are at least one mandatory mutator but the validator passed without throwing " +
+                                "an Exception on using only optional mutators " + optionalApplied + " applied on a fresh instance -> " + optionalTarget);
+                    } catch (Exception e) {
+                        // Happy path
+                    }
+                }
+
+            });
+        }
 
         final List<String> applied = newList();
         final T t = createInstance();
