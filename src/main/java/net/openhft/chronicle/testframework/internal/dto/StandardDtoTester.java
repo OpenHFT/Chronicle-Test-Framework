@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -110,8 +111,10 @@ final class StandardDtoTester<T> implements DtoTester {
         for (NamedMutator<T> namedMutator : builder.mandatoryMutators()) {
             try {
                 builder.validator().accept(t);
-                throw new AssertionError("There are mandatory mutators but the validator passed without throwing " +
-                        "an Exception on using only " + applied + " applied on a fresh instance -> " + t);
+                throw new AssertionError("The mandatory mutators are " +
+                        builder.mandatoryMutators().stream().map(DtoTesterBuilder.AbstractNamedHolderRecord::name).collect(Collectors.joining(", ", "[", "]")) +
+                        " but the validator passed without throwing" +
+                        " an Exception on using only " + applied + " applied on a fresh instance -> " + t);
             } catch (Exception e) {
                 // Happy path
             }
