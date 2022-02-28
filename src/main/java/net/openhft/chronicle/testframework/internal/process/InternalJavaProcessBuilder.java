@@ -32,55 +32,29 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         this.mainClass = mainClass;
     }
 
-    /**
-     * Provide program arguments to execute with
-     *
-     * @param programArguments The list of program arguments
-     * @return this builder
-     */
     @Override
     public InternalJavaProcessBuilder withProgramArguments(String... programArguments) {
         this.programArguments = programArguments;
         return this;
     }
 
-    /**
-     * Provide JVM arguments to execute with
-     *
-     * @param jvmArguments The list of JVM arguments
-     * @return this builder
-     */
     @Override
     public InternalJavaProcessBuilder withJvmArguments(String... jvmArguments) {
         this.jvmArguments = jvmArguments;
         return this;
     }
 
-    /**
-     * Provide classpath entries to run with, by default uses classpath of spawning process
-     *
-     * @param classpathEntries The classpath entries to run with
-     * @return this builder
-     */
     @Override
     public InternalJavaProcessBuilder withClasspathEntries(String... classpathEntries) {
         this.classpathEntries = classpathEntries;
         return this;
     }
 
-    /**
-     * Make the spawned process inherit the IO streams of the spawning process
-     * <p>
-     * Note: good for testing locally, shouldn't be done in CI because it breaks Maven surefire
-     *
-     * @return this builder
-     */
     @Override
     public InternalJavaProcessBuilder inheritingIO() {
         this.inheritIO = true;
         return this;
     }
-
 
     @Override
     public Runner build() {
