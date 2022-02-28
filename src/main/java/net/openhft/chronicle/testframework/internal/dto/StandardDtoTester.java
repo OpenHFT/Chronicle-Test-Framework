@@ -5,9 +5,7 @@ import net.openhft.chronicle.testframework.dto.DtoTester;
 import net.openhft.chronicle.testframework.internal.dto.DtoTesterBuilder.NamedMutator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -15,6 +13,8 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 final class StandardDtoTester<T> implements DtoTester {
+
+    private static final int MAX_COMBINATION_INPUT = 14;
 
     private final DtoTesterBuilder<T> builder;
 
@@ -88,22 +88,13 @@ final class StandardDtoTester<T> implements DtoTester {
             // If there is at least one mandatory mutator,
             // there should be no combination of optional mutators
             // that puts the instance in a valid state
-            Combination.of(builder.optionalMutators()).forEach(mutators -> {
-                final List<String> optionalApplied = newList();
-                final T optionalTarget = createInstance();
-                for (NamedMutator<T> namedMutator : mutators) {
-                    namedMutator.mutator().accept(optionalTarget);
-                    // We shall never pass when an optional mutator is passed
-                    try {
-                        builder.validator().accept(optionalTarget);
-                        throw new AssertionError("There are at least one mandatory mutator but the validator passed without throwing " +
-                                "an Exception on using only optional mutators " + optionalApplied + " applied on a fresh instance -> " + optionalTarget);
-                    } catch (Exception e) {
-                        // Happy path
-                    }
-                }
-
-            });
+            final List<NamedMutator<T>> optionalMutators = builder.optionalMutators();
+            if (optionalMutators.size() > MAX_COMBINATION_INPUT) {
+                System.out.println("Warning: Fallback to simpler testing because there are so many (" + optionalMutators.size() + ") optional mutators which is more than " + MAX_COMBINATION_INPUT);
+                optionalMutators.stream().map(Collections::singleton).forEach(this::assertOptionalsDoesNotPass);
+            } else {
+                Combination.of(optionalMutators).forEach(this::assertOptionalsDoesNotPass);
+            }
         }
 
         final List<String> applied = newList();
@@ -134,6 +125,25 @@ final class StandardDtoTester<T> implements DtoTester {
             // We shall also pass validation using any and all optional mutators
             builder.validator().accept(t);
         }
+
+    }
+
+    private void assertOptionalsDoesNotPass(@NotNull final Set<NamedMutator<T>> set) {
+        requireNonNull(set);
+        final List<String> optionalApplied = newList();
+        final T optionalTarget = createInstance();
+        for (NamedMutator<T> namedMutator : set) {
+            namedMutator.mutator().accept(optionalTarget);
+            // We shall never pass when an optional mutator is passed
+            try {
+                builder.validator().accept(optionalTarget);
+                throw new AssertionError("There are at least one mandatory mutator but the validator passed without throwing " +
+                        "an Exception on using only optional mutators " + optionalApplied + " applied on a fresh instance -> " + optionalTarget);
+            } catch (Exception e) {
+                // Happy path
+            }
+        }
+
 
     }
 
