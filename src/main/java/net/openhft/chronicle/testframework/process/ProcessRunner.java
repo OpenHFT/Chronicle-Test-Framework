@@ -1,11 +1,17 @@
 package net.openhft.chronicle.testframework.process;
 
 import net.openhft.chronicle.testframework.internal.process.InternalProcessRunner;
+import net.openhft.chronicle.testframework.internal.process.InternalJavaProcessBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @deprecated for removal. Use the JavaProcessBuilder instead.
+ */
+@Deprecated
 public final class ProcessRunner {
 
     private ProcessRunner() {
@@ -19,7 +25,9 @@ public final class ProcessRunner {
      * @param args  Any arguments to pass to the process
      * @return the Process spawned
      * @throws IOException if there is an error starting the process
+     * @deprecated for removal. Use {@link JavaProcessBuilder}
      */
+    @Deprecated
     public static Process runClass(Class<?> clazz, String... args) throws IOException {
         requireNonNull(clazz);
         requireNonNull(args);

@@ -1,5 +1,7 @@
 package net.openhft.chronicle.testframework.internal.process;
 
+import net.openhft.chronicle.testframework.process.JavaProcessBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class JavaProcessBuilder {
+public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaProcessBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InternalJavaProcessBuilder.class);
 
     private final Class<?> mainClass;
     private String[] jvmArguments;
@@ -26,12 +28,8 @@ public final class JavaProcessBuilder {
     private String[] classpathEntries;
     private boolean inheritIO = false;
 
-    private JavaProcessBuilder(Class<?> mainClass) {
+    public InternalJavaProcessBuilder(@NotNull final Class<?> mainClass) {
         this.mainClass = mainClass;
-    }
-
-    public static JavaProcessBuilder forMainClass(Class<?> mainClass) {
-        return new JavaProcessBuilder(mainClass);
     }
 
     /**
@@ -40,7 +38,8 @@ public final class JavaProcessBuilder {
      * @param programArguments The list of program arguments
      * @return this builder
      */
-    public JavaProcessBuilder withProgramArguments(String... programArguments) {
+    @Override
+    public InternalJavaProcessBuilder withProgramArguments(String... programArguments) {
         this.programArguments = programArguments;
         return this;
     }
@@ -51,7 +50,8 @@ public final class JavaProcessBuilder {
      * @param jvmArguments The list of JVM arguments
      * @return this builder
      */
-    public JavaProcessBuilder withJvmArguments(String... jvmArguments) {
+    @Override
+    public InternalJavaProcessBuilder withJvmArguments(String... jvmArguments) {
         this.jvmArguments = jvmArguments;
         return this;
     }
@@ -62,7 +62,8 @@ public final class JavaProcessBuilder {
      * @param classpathEntries The classpath entries to run with
      * @return this builder
      */
-    public JavaProcessBuilder withClasspathEntries(String... classpathEntries) {
+    @Override
+    public InternalJavaProcessBuilder withClasspathEntries(String... classpathEntries) {
         this.classpathEntries = classpathEntries;
         return this;
     }
@@ -74,9 +75,16 @@ public final class JavaProcessBuilder {
      *
      * @return this builder
      */
-    public JavaProcessBuilder inheritingIO() {
+    @Override
+    public InternalJavaProcessBuilder inheritingIO() {
         this.inheritIO = true;
         return this;
+    }
+
+
+    @Override
+    public Runner build() {
+        return this::start;
     }
 
     /**
@@ -84,7 +92,7 @@ public final class JavaProcessBuilder {
      *
      * @return The executing {@link Process}
      */
-    public Process start() {
+    Process start() {
         // Because Java17 must be run using various module flags, these must be propagated
         // to the child processes
         // https://stackoverflow.com/questions/1490869/how-to-get-vm-arguments-from-inside-of-java-application

@@ -3,7 +3,7 @@ package net.openhft.chronicle.testframework.internal.process;
 import java.io.IOException;
 
 /**
- * @deprecated Use {@link JavaProcessBuilder} instead
+ * @deprecated Use {@link InternalJavaProcessBuilder} instead
  */
 @Deprecated
 public final class InternalProcessRunner {
@@ -19,7 +19,7 @@ public final class InternalProcessRunner {
      * @param args  Any arguments to pass to the process
      * @return the Process spawned
      * @throws IOException if there is an error starting the process
-     * @deprecated Use {@link JavaProcessBuilder} instead
+     * @deprecated Use {@link InternalJavaProcessBuilder} instead
      */
     @Deprecated
     public static Process runClass(Class<?> clazz, String... args) throws IOException {
@@ -35,11 +35,11 @@ public final class InternalProcessRunner {
      * @param classPathEntries Classpath for the process, {code null} for default
      * @return the Process spawned
      * @throws IOException if there is an error starting the process
-     * @deprecated Use {@link JavaProcessBuilder} instead
+     * @deprecated Use {@link InternalJavaProcessBuilder} instead
      */
     @Deprecated
     public static Process runClass(Class<?> clazz, String[] jvmArgs, String[] programArgs, String[] classPathEntries) throws IOException {
-        return JavaProcessBuilder.forMainClass(clazz)
+        return new InternalJavaProcessBuilder(clazz)
                 .withJvmArguments(jvmArgs)
                 .withProgramArguments(programArgs)
                 .withProgramArguments(programArgs)
@@ -54,10 +54,10 @@ public final class InternalProcessRunner {
      * <p>
      * https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream
      *
-     * @deprecated Use {@link JavaProcessBuilder#printProcessOutput(String, Process)} instead
+     * @deprecated Use {@link InternalJavaProcessBuilder#printProcessOutput(String, Process)} instead
      */
     @Deprecated
     public static void printProcessOutput(String processName, Process process) {
-        JavaProcessBuilder.printProcessOutput(processName, process);
+        InternalJavaProcessBuilder.printProcessOutput(processName, process);
     }
 }
