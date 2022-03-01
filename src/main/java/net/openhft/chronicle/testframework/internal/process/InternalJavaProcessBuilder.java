@@ -1,5 +1,7 @@
 package net.openhft.chronicle.testframework.internal.process;
 
+import net.openhft.chronicle.testframework.process.JavaProcessBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,37 +18,46 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class InternalProcessRunner {
+public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InternalProcessRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InternalJavaProcessBuilder.class);
 
-    private InternalProcessRunner() {
-        // Suppresses default constructor, ensuring non-instantiability.
+    private final Class<?> mainClass;
+    private String[] jvmArguments;
+    private String[] programArguments;
+    private String[] classpathEntries;
+    private boolean inheritIO = false;
+
+    public InternalJavaProcessBuilder(@NotNull final Class<?> mainClass) {
+        this.mainClass = mainClass;
     }
 
-    /**
-     * Spawn a process running the main method of a specified class
-     *
-     * @param clazz The class to execute
-     * @param args  Any arguments to pass to the process
-     * @return the Process spawned
-     * @throws IOException if there is an error starting the process
-     */
-    public static Process runClass(Class<?> clazz, String... args) throws IOException {
-        return runClass(clazz, new String[]{}, args, null);
+    @Override
+    public InternalJavaProcessBuilder withProgramArguments(String... programArguments) {
+        this.programArguments = programArguments;
+        return this;
     }
 
-    /**
-     * Spawn a process running the main method of a specified class
-     *
-     * @param clazz            The class to execute
-     * @param jvmArgs          Any JVM arguments to pass to the process
-     * @param programArgs      Any arguments to pass to the process
-     * @param classPathEntries Classpath for the process, {code null} for default
-     * @return the Process spawned
-     * @throws IOException if there is an error starting the process
-     */
-    public static Process runClass(Class<?> clazz, String[] jvmArgs, String[] programArgs, String[] classPathEntries) throws IOException {
+    @Override
+    public InternalJavaProcessBuilder withJvmArguments(String... jvmArguments) {
+        this.jvmArguments = jvmArguments;
+        return this;
+    }
+
+    @Override
+    public InternalJavaProcessBuilder withClasspathEntries(String... classpathEntries) {
+        this.classpathEntries = classpathEntries;
+        return this;
+    }
+
+    @Override
+    public InternalJavaProcessBuilder inheritingIO() {
+        this.inheritIO = true;
+        return this;
+    }
+
+    @Override
+    public Process start() {
         // Because Java17 must be run using various module flags, these must be propagated
         // to the child processes
         // https://stackoverflow.com/questions/1490869/how-to-get-vm-arguments-from-inside-of-java-application
@@ -59,25 +70,52 @@ public final class InternalProcessRunner {
                 .collect(Collectors.toList());
 
         String classPath;
-        if (classPathEntries == null || classPathEntries.length == 0) {
+        if (classpathEntries == null || classpathEntries.length == 0) {
             classPath = System.getProperty("java.class.path");
         } else {
-            classPath = String.join(":", classPathEntries);
+            classPath = String.join(System.getProperty("path.separator"), classpathEntries);
         }
 
-        String className = clazz.getName();
+        String className = mainClass.getName();
         String javaBin = findJavaBinPath().toString();
         List<String> allArgs = new ArrayList<>();
         allArgs.add(javaBin);
         allArgs.addAll(jvmArgsWithoutJavaAgents);
-        allArgs.addAll(Arrays.asList(jvmArgs));
+        allArgs.addAll(Arrays.asList(jvmArguments));
         allArgs.add("-cp");
         allArgs.add(classPath);
         allArgs.add(className);
-        allArgs.addAll(Arrays.asList(programArgs));
+        allArgs.addAll(Arrays.asList(programArguments));
         ProcessBuilder processBuilder = new ProcessBuilder(allArgs.toArray(new String[]{}));
-//        processBuilder.inheritIO(); // this doesn't place nice with surefire
-        return processBuilder.start();
+        if (inheritIO) {
+            LOGGER.warn("You've specified to inherit IO when spawning a Java process, this won't play nice with Maven surefire plugin, don't commit this, see https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream");
+            processBuilder.inheritIO();
+        }
+        try {
+            return processBuilder.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Try and work out what the java executable is cross platform
+     *
+     * @return the Path to the java executable
+     * @throws IllegalStateException if the executable couldn't be located
+     */
+    private static Path findJavaBinPath() {
+        final Path javaBinPath = Paths.get(System.getProperty("java.home")).resolve("bin");
+        final Path linuxJavaExecutable = javaBinPath.resolve("java");
+        if (linuxJavaExecutable.toFile().exists()) {
+            return linuxJavaExecutable;
+        } else {
+            Path windowsJavaExecutable = javaBinPath.resolve("java.exe");
+            if (windowsJavaExecutable.toFile().exists()) {
+                return windowsJavaExecutable;
+            }
+        }
+        throw new IllegalStateException("Couldn't locate java executable!");
     }
 
     /**
@@ -115,25 +153,5 @@ public final class InternalProcessRunner {
             // Ignore
         }
         return new String(os.toByteArray(), Charset.defaultCharset());
-    }
-
-    /**
-     * Try and work out what the java executable is cross platform
-     *
-     * @return the Path to the java executable
-     * @throws IllegalStateException if the executable couldn't be located
-     */
-    private static Path findJavaBinPath() {
-        final Path javaBinPath = Paths.get(System.getProperty("java.home")).resolve("bin");
-        final Path linuxJavaExecutable = javaBinPath.resolve("java");
-        if (linuxJavaExecutable.toFile().exists()) {
-            return linuxJavaExecutable;
-        } else {
-            Path windowsJavaExecutable = javaBinPath.resolve("java.exe");
-            if (windowsJavaExecutable.toFile().exists()) {
-                return windowsJavaExecutable;
-            }
-        }
-        throw new IllegalStateException("Couldn't locate java executable!");
     }
 }

@@ -1,11 +1,15 @@
 package net.openhft.chronicle.testframework.process;
 
-import net.openhft.chronicle.testframework.internal.process.InternalProcessRunner;
+import net.openhft.chronicle.testframework.internal.process.InternalJavaProcessBuilder;
 
 import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @deprecated for removal. Use the JavaProcessBuilder instead.
+ */
+@Deprecated
 public final class ProcessRunner {
 
     private ProcessRunner() {
@@ -19,7 +23,9 @@ public final class ProcessRunner {
      * @param args  Any arguments to pass to the process
      * @return the Process spawned
      * @throws IOException if there is an error starting the process
+     * @deprecated for removal. Use {@link JavaProcessBuilder}
      */
+    @Deprecated
     public static Process runClass(Class<?> clazz, String... args) throws IOException {
         requireNonNull(clazz);
         requireNonNull(args);
@@ -39,7 +45,10 @@ public final class ProcessRunner {
         requireNonNull(clazz);
         requireNonNull(jvmArgs);
         requireNonNull(programArgs);
-        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs, null);
+        return new InternalJavaProcessBuilder(clazz)
+                .withJvmArguments(jvmArgs)
+                .withProgramArguments(programArgs)
+                .start();
     }
 
     /**
@@ -57,7 +66,11 @@ public final class ProcessRunner {
         requireNonNull(jvmArgs);
         requireNonNull(programArgs);
         requireNonNull(classPath);
-        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs, classPath);
+        return new InternalJavaProcessBuilder(clazz)
+                .withJvmArguments(jvmArgs)
+                .withProgramArguments(programArgs)
+                .withClasspathEntries(classPath)
+                .start();
     }
 
     /**
@@ -70,7 +83,7 @@ public final class ProcessRunner {
     public static void printProcessOutput(String processName, Process process) {
         requireNonNull(processName);
         requireNonNull(process);
-        InternalProcessRunner.printProcessOutput(processName, process);
+        InternalJavaProcessBuilder.printProcessOutput(processName, process);
     }
 
 }

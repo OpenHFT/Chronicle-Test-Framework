@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("deprecation")
 class ProcessRunnerTest {
     @Test
     void testSuccessful() throws IOException, InterruptedException {
