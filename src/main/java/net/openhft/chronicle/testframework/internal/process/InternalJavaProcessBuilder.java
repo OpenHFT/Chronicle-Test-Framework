@@ -27,6 +27,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
     private String[] programArguments;
     private String[] classpathEntries;
     private boolean inheritIO = false;
+    private boolean built;
 
     public InternalJavaProcessBuilder(@NotNull final Class<?> mainClass) {
         this.mainClass = mainClass;
@@ -58,6 +59,9 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
     @Override
     public Runner build() {
+        if (built)
+            throw new IllegalStateException("This Builder has already been used.");
+        built = true;
         return this::start;
     }
 
