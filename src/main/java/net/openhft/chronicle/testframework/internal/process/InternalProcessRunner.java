@@ -42,7 +42,6 @@ public final class InternalProcessRunner {
         return new InternalJavaProcessBuilder(clazz)
                 .withJvmArguments(jvmArgs)
                 .withProgramArguments(programArgs)
-                .withProgramArguments(programArgs)
                 .withClasspathEntries(classPathEntries)
                 .start();
     }

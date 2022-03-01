@@ -1,8 +1,6 @@
 package net.openhft.chronicle.testframework.process;
 
-import net.openhft.chronicle.testframework.internal.process.InternalProcessRunner;
 import net.openhft.chronicle.testframework.internal.process.InternalJavaProcessBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -47,7 +45,11 @@ public final class ProcessRunner {
         requireNonNull(clazz);
         requireNonNull(jvmArgs);
         requireNonNull(programArgs);
-        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs, null);
+        return new InternalJavaProcessBuilder(clazz)
+                .withJvmArguments(jvmArgs)
+                .withProgramArguments(programArgs)
+                .build()
+                .run();
     }
 
     /**
@@ -65,7 +67,12 @@ public final class ProcessRunner {
         requireNonNull(jvmArgs);
         requireNonNull(programArgs);
         requireNonNull(classPath);
-        return InternalProcessRunner.runClass(clazz, jvmArgs, programArgs, classPath);
+        return new InternalJavaProcessBuilder(clazz)
+                .withJvmArguments(jvmArgs)
+                .withProgramArguments(programArgs)
+                .withClasspathEntries(classPath)
+                .build()
+                .run();
     }
 
     /**
@@ -78,7 +85,7 @@ public final class ProcessRunner {
     public static void printProcessOutput(String processName, Process process) {
         requireNonNull(processName);
         requireNonNull(process);
-        InternalProcessRunner.printProcessOutput(processName, process);
+        InternalJavaProcessBuilder.printProcessOutput(processName, process);
     }
 
 }
