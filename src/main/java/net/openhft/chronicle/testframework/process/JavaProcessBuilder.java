@@ -41,21 +41,11 @@ public interface JavaProcessBuilder {
     JavaProcessBuilder inheritingIO();
 
     /**
-     * Creates and returns a new ProcessRunner
+     * Start a process defined by the current state of the builder
      *
-     * @return a new ProcessRunner
+     * @return the started Process
      */
-    Runner build();
-
-    @FunctionalInterface
-    interface Runner {
-        /**
-         * Creates, starts and returns a new process.
-         *
-         * @return The executing {@link Process}
-         */
-        Process run();
-    }
+    Process start();
 
     /**
      * Creates and returns a new JavaProcessBuilder.

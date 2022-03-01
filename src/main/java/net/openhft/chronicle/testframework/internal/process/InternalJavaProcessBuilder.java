@@ -27,7 +27,6 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
     private String[] programArguments;
     private String[] classpathEntries;
     private boolean inheritIO = false;
-    private boolean built;
 
     public InternalJavaProcessBuilder(@NotNull final Class<?> mainClass) {
         this.mainClass = mainClass;
@@ -58,19 +57,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
     }
 
     @Override
-    public Runner build() {
-        if (built)
-            throw new IllegalStateException("This Builder has already been used.");
-        built = true;
-        return this::start;
-    }
-
-    /**
-     * Start the process
-     *
-     * @return The executing {@link Process}
-     */
-    Process start() {
+    public Process start() {
         // Because Java17 must be run using various module flags, these must be propagated
         // to the child processes
         // https://stackoverflow.com/questions/1490869/how-to-get-vm-arguments-from-inside-of-java-application

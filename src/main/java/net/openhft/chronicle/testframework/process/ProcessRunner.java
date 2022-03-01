@@ -48,8 +48,7 @@ public final class ProcessRunner {
         return new InternalJavaProcessBuilder(clazz)
                 .withJvmArguments(jvmArgs)
                 .withProgramArguments(programArgs)
-                .build()
-                .run();
+                .start();
     }
 
     /**
@@ -71,8 +70,7 @@ public final class ProcessRunner {
                 .withJvmArguments(jvmArgs)
                 .withProgramArguments(programArgs)
                 .withClasspathEntries(classPath)
-                .build()
-                .run();
+                .start();
     }
 
     /**
