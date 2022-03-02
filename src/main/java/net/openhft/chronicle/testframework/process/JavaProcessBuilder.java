@@ -71,4 +71,23 @@ public interface JavaProcessBuilder {
         InternalJavaProcessBuilder.printProcessOutput(processName, process);
     }
 
+    /**
+     * Get process stderr
+     *
+     * @param process The process
+     */
+    static String getProcessStdErr(Process process) {
+        requireNonNull(process);
+        return InternalJavaProcessBuilder.getProcessStdErr(process);
+    }
+
+    /**
+     * Get process stdout
+     *
+     * @param process The process
+     */
+    static String getProcessStdOut(Process process) {
+        requireNonNull(process);
+        return InternalJavaProcessBuilder.getProcessStdOut(process);
+    }
 }
