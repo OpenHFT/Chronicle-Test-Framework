@@ -21,10 +21,11 @@ import java.util.stream.Collectors;
 public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalJavaProcessBuilder.class);
+    private static final String[] NO_ARGUMENTS = {};
 
     private final Class<?> mainClass;
-    private String[] jvmArguments;
-    private String[] programArguments;
+    private String[] jvmArguments = NO_ARGUMENTS;
+    private String[] programArguments = NO_ARGUMENTS;
     private String[] classpathEntries;
     private boolean inheritIO = false;
 
@@ -130,9 +131,27 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
             LOGGER.info(
                     String.format("%n Output for %s%n stdout:%n%s stderr:%n%s",
                             processName,
-                            copyStreamToString(process.getInputStream()),
-                            copyStreamToString(process.getErrorStream()))
+                            getProcessStdOut(process),
+                            getProcessStdErr(process))
             );
+    }
+
+    /**
+     * Get process stderr
+     *
+     * @param process The process
+     */
+    public static String getProcessStdErr(Process process) {
+        return copyStreamToString(process.getErrorStream());
+    }
+
+    /**
+     * Get process stdout
+     *
+     * @param process The process
+     */
+    public static String getProcessStdOut(Process process) {
+        return copyStreamToString(process.getErrorStream());
     }
 
     /**
