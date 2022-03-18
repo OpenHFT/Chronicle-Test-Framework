@@ -23,7 +23,7 @@ final class StandardMetrics {
     static final Metric<MethodInfo> METHOD_PROTECTED = Metric.of(MethodInfo.class, predicateOfMethod(Modifier::isProtected), "Method Protected", 1);
     static final Metric<MethodInfo> METHOD_PUBLIC_AND_OVERRIDABLE = Metric.of(MethodInfo.class, mi -> mi.isPublic() && !mi.isFinal() && !mi.getClassInfo().isFinal(), "Method Public And Overridable", 3);
     static final Metric<MethodInfo> METHOD_PROTECTED_AND_OVERRIDABLE = Metric.of(MethodInfo.class, mi -> !Modifier.isProtected(mi.getModifiers()) && !mi.isFinal() && !mi.getClassInfo().isFinal(), "Method Protected and Overridable", 2);
-    static final Metric<FieldInfo> FIELD_PUBLIC = Metric.of(FieldInfo.class, predicateOfField(Modifier::isPublic), "Field Public", 5);
+    static final Metric<FieldInfo> FIELD_PUBLIC = Metric.of(FieldInfo.class, predicateOfPublicField(), "Field Public", 5);
     static final Metric<FieldInfo> FIELD_PROTECTED = Metric.of(FieldInfo.class, predicateOfField(Modifier::isProtected), "Field Protected", 2);
 
     static Stream<Metric<?>> stream() {
@@ -49,6 +49,15 @@ final class StandardMetrics {
 
     private static Predicate<FieldInfo> predicateOfField(final IntPredicate modifierFilter) {
         return fi -> modifierFilter.test(fi.getModifiers());
+    }
+
+    private static Predicate<FieldInfo> predicateOfPublicField() {
+        return fieldInfo -> {
+            final String typeName = fieldInfo.getTypeSignatureOrTypeDescriptor().toString();
+            final boolean isEnumField = fieldInfo.getClassInfo().isEnum() && typeName.equals(fieldInfo.getClassName()) && fieldInfo.isFinal() && fieldInfo.isStatic();
+            // public static final fields in enum classes that are of the same type as the Enum itself should not count
+            return fieldInfo.isPublic() && !isEnumField;
+        };
     }
 
 }
