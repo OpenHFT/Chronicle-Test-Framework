@@ -24,7 +24,9 @@ final class StandardMetrics {
     static final Metric<MethodInfo> METHOD_PUBLIC_AND_OVERRIDABLE = Metric.of(MethodInfo.class, mi -> mi.isPublic() && !mi.isFinal() && !mi.getClassInfo().isFinal() && !mi.getClassInfo().isEnum(), "Method Public And Overridable", 3);
     static final Metric<MethodInfo> METHOD_PROTECTED_AND_OVERRIDABLE = Metric.of(MethodInfo.class, mi -> !Modifier.isProtected(mi.getModifiers()) && !mi.isFinal() && !mi.getClassInfo().isFinal() && !mi.getClassInfo().isEnum(), "Method Protected and Overridable", 2);
     static final Metric<FieldInfo> FIELD_PUBLIC = Metric.of(FieldInfo.class, predicateOfPublicField(), "Field Public", 5);
+    static final Metric<FieldInfo> FIELD_PUBLIC_STATIC_FINAL = Metric.of(FieldInfo.class, mi -> mi.isPublic() && mi.isStatic() && mi.isFinal(), "Field Public Static Final", 2);
     static final Metric<FieldInfo> FIELD_PROTECTED = Metric.of(FieldInfo.class, predicateOfField(Modifier::isProtected), "Field Protected", 2);
+    static final Metric<FieldInfo> FIELD_PROTECTED_STATIC_FINAL = Metric.of(FieldInfo.class, mi -> Modifier.isProtected(mi.getModifiers()) && mi.isStatic() && mi.isFinal(), "Field Protected Static Final", 1);
 
     static Stream<Metric<?>> stream() {
         return Stream.<Metric<?>>of(
@@ -36,7 +38,9 @@ final class StandardMetrics {
                 METHOD_PUBLIC_AND_OVERRIDABLE,
                 METHOD_PROTECTED_AND_OVERRIDABLE,
                 FIELD_PUBLIC,
-                FIELD_PROTECTED);
+                FIELD_PUBLIC_STATIC_FINAL,
+                FIELD_PROTECTED,
+                FIELD_PROTECTED_STATIC_FINAL);
     }
 
     private static Predicate<ClassInfo> predicateOfClass(final IntPredicate modifierFilter) {
@@ -56,7 +60,7 @@ final class StandardMetrics {
             final String typeName = fieldInfo.getTypeSignatureOrTypeDescriptor().toString();
             final boolean isEnumField = fieldInfo.getClassInfo().isEnum() && typeName.equals(fieldInfo.getClassName()) && fieldInfo.isFinal() && fieldInfo.isStatic();
             // public static final fields in enum classes that are of the same type as the Enum itself should not count
-            return fieldInfo.isPublic() && !isEnumField;
+            return fieldInfo.isPublic() && !fieldInfo.isPublic() && !fieldInfo.isStatic() && !isEnumField;
         };
     }
 
