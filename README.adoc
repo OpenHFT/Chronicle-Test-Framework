@@ -1,4 +1,4 @@
-= Chronicle-Test-Framework
+= Chronicle Test Framework
 
 :css-signature: demo
 :toc: macro
