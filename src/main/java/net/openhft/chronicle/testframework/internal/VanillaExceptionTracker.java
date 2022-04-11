@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
  *
  * @param <T> The class used to represent thrown exceptions
  */
-public final class StandardExceptionTracker<T> implements ExceptionTracker<T> {
+public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StandardExceptionTracker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VanillaExceptionTracker.class);
 
     private final Map<Predicate<T>, String> ignoredExceptions = new LinkedHashMap<>();
     private final Map<Predicate<T>, String> expectedExceptions = new LinkedHashMap<>();
@@ -28,20 +28,20 @@ public final class StandardExceptionTracker<T> implements ExceptionTracker<T> {
     private final Predicate<T> ignorePredicate;
     private final Function<T, String> exceptionRenderer;
 
-    public StandardExceptionTracker(@NotNull final Function<T, String> messageExtractor,
-                                    @NotNull final Function<T, Throwable> throwableExtractor,
-                                    @NotNull final Runnable resetRunnable,
-                                    @NotNull final Map<T, Integer> exceptions,
-                                    @NotNull final Predicate<T> ignorePredicate) {
+    public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
+                                   @NotNull final Function<T, Throwable> throwableExtractor,
+                                   @NotNull final Runnable resetRunnable,
+                                   @NotNull final Map<T, Integer> exceptions,
+                                   @NotNull final Predicate<T> ignorePredicate) {
         this(messageExtractor, throwableExtractor, resetRunnable, exceptions, ignorePredicate, String::valueOf);
     }
 
-    public StandardExceptionTracker(@NotNull final Function<T, String> messageExtractor,
-                                    @NotNull final Function<T, Throwable> throwableExtractor,
-                                    @NotNull final Runnable resetRunnable,
-                                    @NotNull final Map<T, Integer> exceptions,
-                                    @NotNull final Predicate<T> ignorePredicate,
-                                    @NotNull final Function<T, String> exceptionRenderer) {
+    public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
+                                   @NotNull final Function<T, Throwable> throwableExtractor,
+                                   @NotNull final Runnable resetRunnable,
+                                   @NotNull final Map<T, Integer> exceptions,
+                                   @NotNull final Predicate<T> ignorePredicate,
+                                   @NotNull final Function<T, String> exceptionRenderer) {
         this.messageExtractor = messageExtractor;
         this.throwableExtractor = throwableExtractor;
         this.resetRunnable = resetRunnable;
