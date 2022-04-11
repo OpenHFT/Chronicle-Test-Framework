@@ -78,7 +78,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         }
         expectedExceptions.clear();
         for (Map.Entry<Predicate<T>, String> ignoredException : ignoredExceptions.entrySet()) {
-            if (!exceptions.keySet().removeIf(ignoredException.getKey()))
+            if (exceptions.keySet().removeIf(ignoredException.getKey()))
                 LOGGER.debug("Ignored {}", ignoredException.getValue());
         }
         ignoredExceptions.clear();
