@@ -27,6 +27,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     private final Map<T, Integer> exceptions;
     private final Predicate<T> ignorePredicate;
     private final Function<T, String> exceptionRenderer;
+    private boolean finalised = false;
 
     public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
                                    @NotNull final Function<T, Throwable> throwableExtractor,
@@ -57,6 +58,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     @Override
     public void expectException(Predicate<T> predicate, String description) {
+        checkFinalised();
         expectedExceptions.put(predicate, description);
     }
 
@@ -67,11 +69,14 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     @Override
     public void ignoreException(Predicate<T> predicate, String description) {
+        checkFinalised();
         ignoredExceptions.put(predicate, description);
     }
 
     @Override
     public void checkExceptions() {
+        checkFinalised();
+        finalised = true;
         for (Map.Entry<Predicate<T>, String> expectedException : expectedExceptions.entrySet()) {
             if (!exceptions.keySet().removeIf(expectedException.getKey()))
                 throw new AssertionError("No error for " + expectedException.getValue());
@@ -87,9 +92,9 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
             dumpException();
 
             final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
-            resetRunnable.run();
             throw new AssertionError(msg);
         }
+        resetRunnable.run();
     }
 
     private boolean hasExceptions() {
@@ -101,7 +106,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         return false;
     }
 
-    public void dumpException() {
+    private void dumpException() {
         for (@NotNull Map.Entry<T, Integer> entry : exceptions.entrySet()) {
             final T key = entry.getKey();
             LOGGER.warn(exceptionRenderer.apply(key), throwableExtractor.apply(key));
@@ -113,5 +118,11 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     private static boolean contains(String text, String message) {
         return text != null && text.contains(message);
+    }
+
+    private void checkFinalised() {
+        if (finalised) {
+            throw new IllegalStateException("VanillaExceptionTracker is single use, you create it, add expectations/ignores, run tests, call check and then dispose of it.");
+        }
     }
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class VanillaExceptionTrackerTest {
@@ -79,6 +80,30 @@ class VanillaExceptionTrackerTest {
     void exceptionsIgnoredByPredicateWillNotFailCheck() {
         exceptionCounts.put(new ExceptionHolder("test test", new IllegalStateException(), true), 1);
         vet.checkExceptions();
+    }
+
+    @Test
+    void resetRunnableIsCalledInCheck() {
+        vet.checkExceptions();
+        assertEquals(1, resetCounter.get());
+    }
+
+    @Test
+    void cannotIgnoreExceptionsAfterFinalised() {
+        vet.checkExceptions();
+        assertThrows(IllegalStateException.class, () -> vet.ignoreException("test"));
+    }
+
+    @Test
+    void cannotExpectExceptionsAfterFinalised() {
+        vet.checkExceptions();
+        assertThrows(IllegalStateException.class, () -> vet.expectException("test"));
+    }
+
+    @Test
+    void cannotCheckExceptionsAfterFinalised() {
+        vet.checkExceptions();
+        assertThrows(IllegalStateException.class, () -> vet.checkExceptions());
     }
 
     private static class ExceptionHolder {
