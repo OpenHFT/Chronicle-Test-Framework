@@ -1,5 +1,9 @@
 package net.openhft.chronicle.testframework.internal;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -8,6 +12,31 @@ import java.util.function.Predicate;
  * @param <T> The class used to represent thrown exceptions
  */
 public interface ExceptionTracker<T> {
+
+    /**
+     * Create an exception tracker
+     *
+     * @param messageExtractor   The function used to extract the String message or description from T
+     * @param throwableExtractor The function used to extract the Throwable from T
+     * @param resetRunnable      A Runnable that will be called at the end of {@link #checkExceptions()}
+     * @param exceptions         A map that will be populated with T as the key and the count of occurrences of T as a value
+     * @param ignorePredicate    A predicate that will exclude T's from consideration
+     * @param exceptionRenderer  A function to render T as a String (used when dumping exceptions)
+     */
+    static <T> ExceptionTracker<T> create(@NotNull final Function<T, String> messageExtractor,
+                                          @NotNull final Function<T, Throwable> throwableExtractor,
+                                          @NotNull final Runnable resetRunnable,
+                                          @NotNull final Map<T, Integer> exceptions,
+                                          @NotNull final Predicate<T> ignorePredicate,
+                                          @NotNull final Function<T, String> exceptionRenderer) {
+        return new VanillaExceptionTracker<>(
+                messageExtractor,
+                throwableExtractor,
+                resetRunnable,
+                exceptions,
+                ignorePredicate,
+                exceptionRenderer);
+    }
 
     /**
      * Require than an exception containing the specified string is thrown during the test
