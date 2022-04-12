@@ -81,12 +81,10 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
             if (!exceptions.keySet().removeIf(expectedException.getKey()))
                 throw new AssertionError("No error for " + expectedException.getValue());
         }
-        expectedExceptions.clear();
         for (Map.Entry<Predicate<T>, String> ignoredException : ignoredExceptions.entrySet()) {
             if (exceptions.keySet().removeIf(ignoredException.getKey()))
                 LOGGER.debug("Ignored {}", ignoredException.getValue());
         }
-        ignoredExceptions.clear();
 
         if (hasExceptions()) {
             dumpException();
