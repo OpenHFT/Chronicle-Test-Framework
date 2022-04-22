@@ -28,7 +28,7 @@ class VanillaExceptionTrackerTest {
                     exceptionCounts.clear();
                 },
                 exceptionCounts,
-                ExceptionHolder::isIgnore);
+                ExceptionHolder::isFilter);
     }
 
     @Test
@@ -83,6 +83,28 @@ class VanillaExceptionTrackerTest {
     }
 
     @Test
+    void ignoredAndExpectedExceptionsWillPassCheckWhenPresent() {
+        vet.expectException("test test");
+        vet.ignoreException("test test");
+        exceptionCounts.put(new ExceptionHolder("test test", new IllegalStateException(), false), 1);
+        vet.checkExceptions();
+    }
+
+    @Test
+    void ignoredAndExpectedExceptionsWillFailCheckWhenNotPresent() {
+        vet.expectException("test test");
+        vet.ignoreException("test test");
+        assertThrows(AssertionError.class, () -> vet.checkExceptions());
+    }
+
+    @Test
+    void filteredAndExpectedExceptionsWillPassCheckWhenPresent() {
+        vet.expectException("test test");
+        exceptionCounts.put(new ExceptionHolder("test test", new IllegalStateException(), true), 1);
+        vet.checkExceptions();
+    }
+
+    @Test
     void resetRunnableIsCalledInCheck() {
         vet.checkExceptions();
         assertEquals(1, resetCounter.get());
@@ -109,12 +131,12 @@ class VanillaExceptionTrackerTest {
     private static class ExceptionHolder {
         private final String description;
         private final Throwable exception;
-        private final boolean ignore;
+        private final boolean filter;
 
-        private ExceptionHolder(String description, Throwable exception, boolean ignore) {
+        private ExceptionHolder(String description, Throwable exception, boolean filter) {
             this.description = description;
             this.exception = exception;
-            this.ignore = ignore;
+            this.filter = filter;
         }
 
         public String getDescription() {
@@ -125,8 +147,8 @@ class VanillaExceptionTrackerTest {
             return exception;
         }
 
-        public boolean isIgnore() {
-            return ignore;
+        public boolean isFilter() {
+            return filter;
         }
     }
 }
