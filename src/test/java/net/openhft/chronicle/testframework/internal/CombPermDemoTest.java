@@ -13,7 +13,6 @@ class CombPermDemoTest {
         assertEquals(16,
                 Combination.of("A", "B", "C")
                         .flatMap(Permutation::of)
-                        .distinct()
                         .peek(System.out::println)
                         .count());
     }
