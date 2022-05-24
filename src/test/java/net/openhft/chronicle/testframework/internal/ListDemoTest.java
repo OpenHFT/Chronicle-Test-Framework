@@ -46,13 +46,13 @@ public class ListDemoTest {
                         .flatMap(Permutation::of),
                 Object::toString,
                 operations -> {
-                    List<Integer> l0 = new ArrayList<>();
-                    List<Integer> l1 = new LinkedList<>();
+                    List<Integer> first = new ArrayList<>();
+                    List<Integer> second = new LinkedList<>();
                     operations.forEach(op -> {
-                        op.accept(l0);
-                        op.accept(l1);
+                        op.accept(first);
+                        op.accept(second);
                     });
-                    assertEquals(l0, l1);
+                    assertEquals(first, second);
                 });
     }
 
