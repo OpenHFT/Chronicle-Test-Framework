@@ -125,7 +125,6 @@ Combinations and Permutaions can be combined to create powerful exhaustive test 
     void demo() {
         Combination.of("A", "B", "C")
                 .flatMap(Permutation::of)
-                .distinct()
                 .forEach(System.out::println);
     }
 ----
