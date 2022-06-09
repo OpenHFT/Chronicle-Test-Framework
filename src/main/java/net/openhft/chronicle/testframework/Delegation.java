@@ -14,7 +14,7 @@ public final class Delegation {
 
     /**
      * Creates and returns a new builder for a delegator instance of the provided {@code type} that is using the provided
-     * {@code delegate} as a delegator. I.e. methods invoked on the new instance will be delegated to the
+     * {@code delegate} as a delegate. I.e. methods invoked on the new instance will be delegated to the
      * provided delegate. The new instance will default it's {@link Object#toString()} method to the one of the
      * provided delegate.
      *
