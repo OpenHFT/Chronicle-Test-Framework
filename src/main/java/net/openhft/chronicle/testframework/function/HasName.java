@@ -1,5 +1,7 @@
 package net.openhft.chronicle.testframework.function;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface HasName {
 
     /**
@@ -7,6 +9,7 @@ public interface HasName {
      *
      * @return name
      */
+    @NotNull
     String name();
 
 }

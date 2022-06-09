@@ -1,4 +1,4 @@
-package net.openhft.chronicle.testframework.internal;
+package net.openhft.chronicle.testframework.internal.function;
 
 import net.openhft.chronicle.testframework.function.ThrowingConsumer;
 import net.openhft.chronicle.testframework.function.ThrowingConsumerException;

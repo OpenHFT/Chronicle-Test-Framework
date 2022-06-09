@@ -1,6 +1,7 @@
 package net.openhft.chronicle.testframework.internal;
 
 import net.openhft.chronicle.testframework.function.ThrowingConsumerException;
+import net.openhft.chronicle.testframework.internal.function.VanillaThrowingConsumer;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

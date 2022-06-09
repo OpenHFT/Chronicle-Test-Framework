@@ -1,6 +1,7 @@
 package net.openhft.chronicle.testframework.function;
 
-import net.openhft.chronicle.testframework.internal.VanillaThrowingConsumer;
+import net.openhft.chronicle.testframework.internal.function.VanillaThrowingConsumer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -34,7 +35,8 @@ public interface ThrowingConsumer<T, X extends Exception> {
      * @param <T> consumed type
      * @return a wrapped Consumer
      */
-    static <T> Consumer<T> of(final ThrowingConsumer<T, ?> throwingConsumer) {
+    @NotNull
+    static <T> Consumer<T> of(@NotNull final ThrowingConsumer<T, ?> throwingConsumer) {
         requireNonNull(throwingConsumer);
         return new VanillaThrowingConsumer<>(throwingConsumer);
     }
