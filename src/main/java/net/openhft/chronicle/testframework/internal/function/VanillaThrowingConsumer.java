@@ -2,6 +2,7 @@ package net.openhft.chronicle.testframework.internal.function;
 
 import net.openhft.chronicle.testframework.function.ThrowingConsumer;
 import net.openhft.chronicle.testframework.function.ThrowingConsumerException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -11,7 +12,7 @@ public final class VanillaThrowingConsumer<T> implements Consumer<T> {
 
     private final ThrowingConsumer<T, ?> delegate;
 
-    public VanillaThrowingConsumer(final ThrowingConsumer<T, ?> delegate) {
+    public VanillaThrowingConsumer(@NotNull final ThrowingConsumer<T, ?> delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
