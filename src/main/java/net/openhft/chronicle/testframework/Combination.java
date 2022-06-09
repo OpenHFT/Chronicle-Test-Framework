@@ -17,10 +17,14 @@
 package net.openhft.chronicle.testframework;
 
 import net.openhft.chronicle.testframework.internal.CombinationUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * General Combination support. The class eagerly calculates all combinations.
@@ -34,29 +38,51 @@ public final class Combination {
 
     /**
      * Creates and returns all possible combinations of the given elements.
-     *
+     * <p>
      * The order of the combinations in the stream is unspecified.
      *
      * @param <T> element type
      * @param items to combine
      * @return all possible combinations of the given elements
+     * @throws NullPointerException if the provided {@code items} list is {@code null}.
      */
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a Set from an array is safe
-    public static <T> Stream<Set<T>> of(final T... items) {
+    public static <T> Stream<Set<T>> of(@NotNull final T... items) {
+        requireNonNull(items);
         return CombinationUtil.of(items);
     }
 
     /**
      * Creates and returns all possible combinations of the given elements.
-     *
+     * <p>
      * The order of the combinations in the stream is unspecified.
      *
      * @param <T> element type
      * @param items to combine
      * @return all possible combinations of the given elements
+     * @throws NullPointerException if the provided {@code items} list is {@code null}.
      */
-    public static <T> Stream<Set<T>> of(final Collection<T> items) {
+    public static <T> Stream<Set<T>> of(@NotNull final Collection<T> items) {
+        requireNonNull(items);
+        return CombinationUtil.of(items);
+    }
+
+    /**
+     * Creates and returns all possible combinations of the given elements.
+     * <p>
+     * The order of the combinations in the stream is unspecified.
+     * <p>
+     * It is unspecified if the method lazily consume the provided stream before providing
+     * the result or not.
+     *
+     * @param <T> element type
+     * @param items to combine
+     * @return all possible combinations of the given elements
+     * @throws NullPointerException if the provided {@code items} stream is {@code null}.
+     */
+    public static <T> Stream<Set<T>> of(@NotNull final Stream<T> items) {
+        requireNonNull(items);
         return CombinationUtil.of(items);
     }
 

@@ -3,7 +3,9 @@ package net.openhft.chronicle.testframework.internal;
 import net.openhft.chronicle.testframework.Product;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -23,6 +25,17 @@ public final class ProductUtil {
                 .flatMap(t -> us.stream()
                         .map(u -> constructor.apply(t, u)));
     }
+    public static <T, U, R> Stream<R> of(Stream<T> ts,
+                                         Stream<U> us,
+                                         BiFunction<? super T, ? super U, ? extends R> constructor) {
+        requireNonNull(ts);
+        requireNonNull(us);
+        requireNonNull(constructor);
+        final List<U> innerU = us.collect(Collectors.toList());
+        return ts
+                .flatMap(t -> innerU.stream()
+                        .map(u -> constructor.apply(t, u)));
+    }
 
     public static <T, U, V, R> Stream<R> of(Collection<T> ts,
                                             Collection<U> us,
@@ -35,6 +48,22 @@ public final class ProductUtil {
         return ts.stream()
                 .flatMap(t -> us.stream()
                         .flatMap((u -> vs.stream()
+                                .map(v -> constructor.apply(t, u, v)))));
+    }
+
+    public static <T, U, V, R> Stream<R> of(Stream<T> ts,
+                                            Stream<U> us,
+                                            Stream<V> vs,
+                                            Product.TriFunction<? super T, ? super U, ? super V, ? extends R> constructor) {
+        requireNonNull(ts);
+        requireNonNull(us);
+        requireNonNull(vs);
+        requireNonNull(constructor);
+        final List<U> innerU = us.collect(Collectors.toList());
+        final List<V> innerV = vs.collect(Collectors.toList());
+        return ts
+                .flatMap(t -> innerU.stream()
+                        .flatMap((u -> innerV.stream()
                                 .map(v -> constructor.apply(t, u, v)))));
     }
 

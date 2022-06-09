@@ -17,10 +17,13 @@
 package net.openhft.chronicle.testframework;
 
 import net.openhft.chronicle.testframework.internal.PermutationUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * General Permutation support from
@@ -57,7 +60,11 @@ public final class Permutation {
      * @return the given {@code no} (of n!) permutation variant of the
      * given {@code items}
      */
-    public static <T> List<T> permutation(final long no, final List<T> items) {
+    public static <T> List<T> permutation(final long no,
+                                          @NotNull final List<T> items) {
+        if (no < 0)
+            throw new IllegalArgumentException("no is negative: " + no);
+        requireNonNull(items);
         return PermutationUtil.permutation(no, items);
     }
 
@@ -70,11 +77,12 @@ public final class Permutation {
      * @param items to create permutations for
      * @param <T>   type of the elements
      * @return a Stream of all permutations of the provided {@code items} array
-     * @throws NullPointerException is the provided {@code items} array is {@code null}.
+     * @throws NullPointerException if the provided {@code items} array is {@code null}.
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <T> Stream<List<T>> of(final T... items) {
+    public static <T> Stream<List<T>> of(@NotNull final T... items) {
+        requireNonNull(items);
         return PermutationUtil.of(items);
     }
 
@@ -87,9 +95,27 @@ public final class Permutation {
      * @param items to create permutations for
      * @param <T>   type of the elements
      * @return a Stream of all permutations of the provided {@code items} list
-     * @throws NullPointerException is the provided {@code items} list is {@code null}.
+     * @throws NullPointerException if the provided {@code items} list is {@code null}.
      */
-    public static <T> Stream<List<T>> of(final Collection<T> items) {
+    public static <T> Stream<List<T>> of(@NotNull final Collection<T> items) {
+        return PermutationUtil.of(items);
+    }
+
+    /**
+     * Creates and returns a Stream of all permutations of the provided {@code items} list.
+     * <p>
+     * Note that the number of permutations increases very rapidly as the length of
+     * the provided {@code items} list increases.
+     * <p>
+     * It is unspecified if the method lazily consume the provided stream before providing
+     * the result or not.
+     *
+     * @param items to create permutations for
+     * @param <T>   type of the elements
+     * @return a Stream of all permutations of the provided {@code items} list
+     * @throws NullPointerException if the provided {@code items} stream is {@code null}.
+     */
+    public static <T> Stream<List<T>> of(@NotNull final Stream<T> items) {
         return PermutationUtil.of(items);
     }
 
