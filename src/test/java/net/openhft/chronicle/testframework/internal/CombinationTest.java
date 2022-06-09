@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
@@ -106,4 +107,20 @@ final class CombinationTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    void testOfStream() {
+        final List<Set<String>> actual = Combination.of(Stream.of("a", "b"))
+                .collect(toList());
+
+        final List<Set<String>> expected = asList(
+                emptySet(),
+                singleton("a"),
+                singleton("b"),
+                new LinkedHashSet<>(asList("a", "b"))
+        );
+
+        assertEquals(expected, actual);
+    }
+
 }

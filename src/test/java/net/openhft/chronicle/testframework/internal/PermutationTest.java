@@ -109,6 +109,16 @@ final class PermutationTest {
     }
 
     @Test
+    void ofStream() {
+        final List<List<Integer>> expected = expectedFor123();
+        final List<List<Integer>> actual =
+                Permutation.of(Stream.of(1, 2, 3))
+            .collect(toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void ofList() {
         final List<List<Integer>> expected = expectedFor123();
         final List<List<Integer>> actual =

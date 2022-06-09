@@ -34,15 +34,6 @@ public final class CombinationUtil {
 
     private CombinationUtil() {}
 
-    /**
-     * Creates and returns all possible combinations of the given elements.
-     *
-     * The order of the combinations in the stream is unspecified.
-     *
-     * @param <T> element type
-     * @param items to combine
-     * @return all possible combinations of the given elements
-     */
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a List from an array is safe
     public static <T> Stream<Set<T>> of(final T... items) {
@@ -54,17 +45,13 @@ public final class CombinationUtil {
             }).flatMap(identity());
     }
 
-    /**
-     * Creates and returns all possible combinations of the given elements.
-     *
-     * The order of the combinations in the stream is unspecified.
-     *
-     * @param <T> element type
-     * @param items to combine
-     * @return all possible combinations of the given elements
-     */
     @SuppressWarnings("unchecked")
     public static <T> Stream<Set<T>> of(final Collection<T> items) {
+        return of((T[]) items.toArray());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Stream<Set<T>> of(final Stream<T> items) {
         return of((T[]) items.toArray());
     }
 

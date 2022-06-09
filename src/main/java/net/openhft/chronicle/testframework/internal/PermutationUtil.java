@@ -28,6 +28,7 @@ import java.util.stream.Stream;
  */
 public final class PermutationUtil {
 
+    // Suppresses default constructor, ensuring non-instantiability.
     private PermutationUtil() {}
 
     public static long factorial(final int n) {
@@ -61,6 +62,11 @@ public final class PermutationUtil {
     public static <T> Stream<List<T>> of(final Collection<T> items) {
         return LongStream.range(0, factorial(items.size()))
             .mapToObj(no -> permutation(no, items));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Stream<List<T>> of(final Stream<T> items) {
+        return of((T[]) items.toArray());
     }
 
 }

@@ -26,7 +26,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-final class ProductionTest {
+final class ProductTest {
 
     @Test
     void product2() {
@@ -34,6 +34,22 @@ final class ProductionTest {
         final List<Integer> integers = Arrays.asList(1, 2, 3);
         final List<Product.Product2<String, Integer>> actual =
                 Product.of(strings, integers)
+                        .collect(toList());
+
+        final List<Product.Product2<String, Integer>> expected = new ArrayList<>();
+        for (String s : strings) {
+            for (Integer i : integers) {
+                expected.add(new ProductUtil.Product2Impl<>(s, i));
+            }
+        }
+        assertEquals(expected, actual);
+    }
+    @Test
+    void product2Stream() {
+        final List<String> strings = Arrays.asList("A", "B", "C");
+        final List<Integer> integers = Arrays.asList(1, 2, 3);
+        final List<Product.Product2<String, Integer>> actual =
+                Product.of(strings.stream(), integers.stream())
                         .collect(toList());
 
         final List<Product.Product2<String, Integer>> expected = new ArrayList<>();
@@ -65,5 +81,24 @@ final class ProductionTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void product3Stream() {
+        final List<String> strings = Arrays.asList("A", "B", "C");
+        final List<Integer> integers = Arrays.asList(1, 2, 3);
+        final List<Long> longs = Arrays.asList(10L, 20L, 30L);
+        final List<Product.Product3<String, Integer, Long>> actual =
+                Product.of(strings.stream(), integers.stream(), longs.stream())
+                        .collect(toList());
+
+        final List<Product.Product3<String, Integer, Long>> expected = new ArrayList<>();
+        for (String s : strings) {
+            for (Integer i : integers) {
+                for (Long l:longs) {
+                    expected.add(new ProductUtil.Product3Impl<>(s, i, l));
+                }
+            }
+        }
+        assertEquals(expected, actual);
+    }
 
 }
