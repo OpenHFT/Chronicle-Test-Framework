@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework.internal;
 
+import net.openhft.chronicle.testframework.internal.function.VanillaNamedConsumer;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;

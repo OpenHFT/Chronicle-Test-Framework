@@ -97,6 +97,18 @@ public class ListDemoTest {
                 .count());
     }
 
+    @Test
+    void count() {
+
+        long poc6 = Combination.of(1, 2, 3, 4, 5, 6)
+                .flatMap(Permutation::of)
+                .count();
+
+        System.out.println("poc6 = " + poc6);
+        assertEquals(1957, poc6);
+
+    }
+
 
     private static final class Tuple<T> {
         private final T first;
