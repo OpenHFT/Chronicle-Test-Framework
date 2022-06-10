@@ -4,20 +4,28 @@ import net.openhft.chronicle.testframework.Delegation;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Proxy;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
 public final class DelegationBuilder<T, D> implements Delegation.Builder<T, D> {
 
-    private final Class<T> type;
     private final D delegate;
-    private Function<? super D, String> toStringFunction;
+    @SuppressWarnings("unchecked")
+    private Class<T> type = (Class<T>) Object.class;
+    private Function<? super D, String> toStringFunction = Objects::toString;
 
-    public DelegationBuilder(@NotNull final Class<T> type,
-                             @NotNull final D delegate) {
-        this.type = requireNonNull(type);
+    public DelegationBuilder(@NotNull final D delegate) {
         this.delegate = requireNonNull(delegate);
+    }
+
+    @Override
+    public <N extends D> Delegation.Builder<N, D> as(@NotNull final Class<N> type) {
+        requireNonNull(type);
+        @SuppressWarnings("unchecked") final DelegationBuilder<N, D> newTypeBuilder = (DelegationBuilder<N, D>) this;
+        newTypeBuilder.type = type;
+        return newTypeBuilder;
     }
 
     @Override
