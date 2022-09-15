@@ -18,11 +18,11 @@ class WaitersTest {
     @Test
     void willReturnWhenConditionIsMet() {
         AtomicInteger counter = new AtomicInteger(0);
-        Waiters.waitForCondition("Met", () -> counter.incrementAndGet() > 2, 50);
+        Waiters.waitForCondition("Met", () -> counter.incrementAndGet() > 2, 100);
     }
 
     @Test
-    void customMessagegGeneration() {
+    void customMessageGeneration() {
         assertThrows(Waiters.ConditionNotMetException.class,
                 () -> Waiters.builder(() -> "value", value -> false)
                         .messageGenerator(value -> "Wrong value: " + value)
