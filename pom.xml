@@ -270,7 +270,7 @@
         <connection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git</connection>
         <developerConnection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git
         </developerConnection>
-        <tag>master</tag>
+        <tag>release/2.23</tag>
     </scm>
 
 </project>
