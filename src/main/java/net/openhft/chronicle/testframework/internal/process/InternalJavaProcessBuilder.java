@@ -82,6 +82,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         List<String> allArgs = new ArrayList<>();
         allArgs.add(javaBin);
         allArgs.addAll(jvmArgsWithoutJavaAgents);
+        allArgs.add("-Dchronicle.analytics.disable=true");
         allArgs.addAll(Arrays.asList(jvmArguments));
         allArgs.add("-cp");
         allArgs.add(classPath);

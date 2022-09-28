@@ -14,58 +14,6 @@ public final class FlakyTestRunner {
     private FlakyTestRunner() {
     }
 
-    /**
-     * Runs the provided {@code action} trying at most 2 times.
-     *
-     * @param action non-null action to perform
-     * @param <X>    exception type
-     * @throws X if an underlying exception is thrown despite retrying the specified number of times
-     */
-    @Deprecated // for removal in x.22. Use the builder instead
-    public static <X extends Throwable> void run(@NotNull final RunnableThrows<X> action) throws X {
-        builder(action)
-                .build()
-                .run();
-    }
-
-    /**
-     * Runs the provided {@code action} trying at most 2 times if the provided {@code flakyOnTHisArch} is true,
-     * otherwise just runs the provided {@code action} once.
-     *
-     * @param flakyOnThisArch indicating if the provided action is
-     * @param action          non-null action to perform
-     * @param <X>             exception type
-     * @throws X if an underlying exception is thrown despite retrying the specified number of times
-     */
-    @Deprecated // for removal in x.22. Use the builder instead
-    public static <X extends Throwable> void run(final boolean flakyOnThisArch,
-                                                 @NotNull final RunnableThrows<X> action) throws X {
-        builder(action)
-                .withFlakyOnThisArchitecture(flakyOnThisArch)
-                .build()
-                .run();
-    }
-
-    /**
-     * Runs the provided {@code action} trying at most the provided {@code maxIteration} times if the
-     * provided {@code flakyOnTHisArch} is true, otherwise just runs the provided {@code action} once.
-     *
-     * @param flakyOnThisArch indicating if the provided action is
-     * @param action          non-null action to perform
-     * @param <X>             exception type
-     * @throws X if an underlying exception is thrown despite retrying the specified number of times
-     */
-    @Deprecated // for removal in x.22. Use the builder instead
-    public static <X extends Throwable> void run(final boolean flakyOnThisArch,
-                                                 @NotNull final RunnableThrows<X> action,
-                                                 final int maxIterations) throws X {
-        builder(action)
-                .withFlakyOnThisArchitecture(flakyOnThisArch)
-                .withMaxIterations(maxIterations)
-                .build()
-                .run();
-    }
-
     @FunctionalInterface
     public interface RunnableThrows<T extends Throwable> {
 
