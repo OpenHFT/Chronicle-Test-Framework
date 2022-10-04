@@ -69,6 +69,13 @@ public interface ExceptionTracker<T> {
     void ignoreException(Predicate<T> predicate, String description);
 
     /**
+     * Determine if the tracker contains an exception matching the predicate
+     *
+     * @param predicate The predicate to match the exception
+     */
+    boolean hasException(Predicate<T> predicate);
+
+    /**
      * Call this in @After to ensure
      * <ul>
      *     <li>No non-ignored exceptions were thrown</li>

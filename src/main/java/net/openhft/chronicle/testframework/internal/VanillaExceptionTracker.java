@@ -74,6 +74,11 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     }
 
     @Override
+    public boolean hasException(Predicate<T> predicate) {
+        return exceptions.keySet().stream().anyMatch(predicate);
+    }
+
+    @Override
     public void checkExceptions() {
         checkFinalised();
         finalised = true;

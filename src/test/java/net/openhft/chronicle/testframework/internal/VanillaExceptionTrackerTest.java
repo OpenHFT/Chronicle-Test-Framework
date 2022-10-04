@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class VanillaExceptionTrackerTest {
 
@@ -126,6 +125,13 @@ class VanillaExceptionTrackerTest {
     void cannotCheckExceptionsAfterFinalised() {
         vet.checkExceptions();
         assertThrows(IllegalStateException.class, () -> vet.checkExceptions());
+    }
+
+    @Test
+    void testHasException() {
+        exceptionCounts.put(new ExceptionHolder("was present", null, false), 1);
+        assertTrue(vet.hasException(eh -> eh.description.equals("was present")));
+        assertFalse(vet.hasException(eh -> eh.description.equals("not present")));
     }
 
     private static class ExceptionHolder {
