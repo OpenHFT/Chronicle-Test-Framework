@@ -35,7 +35,7 @@ public enum GcControls {
     /**
      * Request a GC
      */
-    static void requestGcCycle() {
+    public static void requestGcCycle() {
         System.gc();
     }
 
@@ -57,7 +57,12 @@ public enum GcControls {
         }
     }
 
-    static long getGcCount() {
+    /**
+     * Get the GC count
+     *
+     * @return The number of GCs of all types that have occurred
+     */
+    public static long getGcCount() {
         return ManagementFactory.getGarbageCollectorMXBeans().stream().
                 reduce(0L,
                         (count, gcBean) -> count + gcBean.getCollectionCount(),
