@@ -130,7 +130,7 @@ public class Waiters {
         }
     }
 
-    static class ConditionNotMetException extends RuntimeException {
+    public static class ConditionNotMetException extends RuntimeException {
         private static final long serialVersionUID = 2827672436814649510L;
         private final Object lastValue;
 
