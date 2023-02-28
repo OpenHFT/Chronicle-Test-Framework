@@ -4,8 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -52,8 +54,8 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     }
 
     @Override
-    public void expectException(String message) {
-        expectException(k -> contains(messageExtractor.apply(k), message) || (throwableExtractor.apply(k) != null && contains(throwableExtractor.apply(k).getMessage(), message)), message);
+    public void expectException(@NotNull String message) {
+        expectException(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)), message);
     }
 
     @Override
@@ -63,8 +65,8 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     }
 
     @Override
-    public void ignoreException(String message) {
-        ignoreException(k -> contains(messageExtractor.apply(k), message) || (throwableExtractor.apply(k) != null && contains(throwableExtractor.apply(k).getMessage(), message)), message);
+    public void ignoreException(@NotNull String message) {
+        ignoreException(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)), message);
     }
 
     @Override
@@ -127,5 +129,26 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         if (finalised) {
             throw new IllegalStateException("VanillaExceptionTracker is single use, you create it, add expectations/ignores, run tests, call check and then dispose of it.");
         }
+    }
+
+    /**
+     * Does this Throwable or any of its causes contain the specified text?
+     *
+     * @param text The substring to search for
+     * @return true if there are any matches for it, false otherwise
+     */
+    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable) {
+        return throwableContainsTextRecursive(text, throwable, new HashSet<>());
+    }
+
+    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable, Set<Integer> seenThrowableIDs) {
+        if (throwable == null || seenThrowableIDs.contains(System.identityHashCode(throwable))) {
+            return false;
+        }
+        if (throwable.getMessage() != null && throwable.getMessage().contains(text)) {
+            return true;
+        }
+        seenThrowableIDs.add(System.identityHashCode(throwable));
+        return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
     }
 }
