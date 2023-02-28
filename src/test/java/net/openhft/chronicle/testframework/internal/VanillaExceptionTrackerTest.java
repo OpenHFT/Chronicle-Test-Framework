@@ -134,6 +134,37 @@ class VanillaExceptionTrackerTest {
         assertFalse(vet.hasException(eh -> eh.description.equals("not present")));
     }
 
+    @Test
+    public void expectationWillMatchWhenMessageIsNestedInThrowableMessageCauses() {
+        ExceptionHolder exceptionKey = new ExceptionHolder("nested with nulls",
+                new RuntimeException("no match",
+                        new RuntimeException(null,
+                                new RuntimeException("this string matches"))), false);
+        exceptionCounts.put(exceptionKey, 1);
+        vet.expectException("matches");
+        vet.checkExceptions();
+    }
+
+    @Test
+    public void checkDoesNotGetLostInCircularReference() {
+        exceptionCounts.put(new ExceptionHolder("self-caused matching", new SelfCausedException("this string matches"), false), 1);
+        vet.expectException("matches");
+        vet.checkExceptions();
+    }
+
+    @SuppressWarnings("serial")
+    private static final class SelfCausedException extends Exception {
+
+        public SelfCausedException(String message) {
+            super(message);
+        }
+
+        @Override
+        public synchronized Throwable getCause() {
+            return this;
+        }
+    }
+
     private static class ExceptionHolder {
         private final String description;
         private final Throwable exception;
