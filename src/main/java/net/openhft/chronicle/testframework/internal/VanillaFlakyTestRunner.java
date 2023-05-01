@@ -5,6 +5,7 @@ import net.openhft.chronicle.testframework.FlakyTestRunner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Objects.requireNonNull;
+import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 
 public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyTestRunner.RunnableThrows<X> {
 
@@ -36,11 +37,7 @@ public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyT
                     if (builder.interIterationGc) {
                         System.gc();
                     }
-                    try {
-                        Thread.sleep(builder.delayMs);
-                    } catch (InterruptedException ignore) {
-                        Thread.currentThread().interrupt();
-                    }
+                    pause(builder.delayMs);
                 }
             }
         } finally {

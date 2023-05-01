@@ -4,6 +4,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static net.openhft.chronicle.testframework.ThreadUtil.pause;
+
 public class Waiters {
 
     private static final int DEFAULT_MAX_WAIT_TIME_MS = 5_000;
@@ -119,14 +121,6 @@ public class Waiters {
         public WaiterBuilder<T> checkIntervalMs(long checkIntervalMs) {
             this.checkIntervalMs = checkIntervalMs;
             return this;
-        }
-
-        private void pause(long timeInMillis) {
-            try {
-                Thread.sleep(timeInMillis);
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            }
         }
     }
 
