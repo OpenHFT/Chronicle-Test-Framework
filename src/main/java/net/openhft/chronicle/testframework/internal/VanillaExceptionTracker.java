@@ -11,13 +11,15 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import net.openhft.chronicle.testframework.ExceptionTracker;
 
 /**
  * A test utility class for recording and executing assertions about the presence (or absence) of exceptions
  *
  * @param <T> The class used to represent thrown exceptions
  */
-public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
+@SuppressWarnings("deprecation")
+public final class VanillaExceptionTracker<T> implements ExceptionTracker<T>, net.openhft.chronicle.testframework.internal.ExceptionTracker<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VanillaExceptionTracker.class);
 
