@@ -9,15 +9,15 @@ import java.util.function.Predicate;
 /**
  * A test utility class for recording and executing assertions about the presence (or absence) of exceptions
  *
- * @deprecated use {@link net.openhft.chronicle.testframework.ExceptionTracker}
+ * @deprecated use {@link net.openhft.chronicle.testframework.exception.ExceptionTracker}
  *
  * @param <T> The class used to represent thrown exceptions
  */
 @Deprecated(/* To be removed in x.25 */)
-public interface ExceptionTracker<T> extends net.openhft.chronicle.testframework.ExceptionTracker<T> {
+public interface ExceptionTracker<T> extends net.openhft.chronicle.testframework.exception.ExceptionTracker<T> {
 
     /**
-     * @deprecated use {@link net.openhft.chronicle.testframework.ExceptionTracker#create(Function, Function, Runnable, Map, Predicate, Function)}
+     * @deprecated use {@link net.openhft.chronicle.testframework.exception.ExceptionTracker#create(Function, Function, Runnable, Map, Predicate, Function)}
      */
     @Deprecated(/* To be removed in x.25 */)
     static <T> ExceptionTracker<T> create(@NotNull final Function<T, String> messageExtractor,
@@ -26,7 +26,7 @@ public interface ExceptionTracker<T> extends net.openhft.chronicle.testframework
                                                                               @NotNull final Map<T, Integer> exceptions,
                                                                               @NotNull final Predicate<T> ignorePredicate,
                                                                               @NotNull final Function<T, String> exceptionRenderer) {
-        return (ExceptionTracker<T>) net.openhft.chronicle.testframework.ExceptionTracker.create(
+        return (ExceptionTracker<T>) net.openhft.chronicle.testframework.exception.ExceptionTracker.create(
                 messageExtractor, throwableExtractor, resetRunnable, exceptions, ignorePredicate, exceptionRenderer);
     }
 }

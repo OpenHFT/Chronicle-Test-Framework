@@ -1,4 +1,4 @@
-package net.openhft.chronicle.testframework;
+package net.openhft.chronicle.testframework.exception;
 
 import net.openhft.chronicle.testframework.internal.VanillaExceptionTracker;
 import org.jetbrains.annotations.NotNull;

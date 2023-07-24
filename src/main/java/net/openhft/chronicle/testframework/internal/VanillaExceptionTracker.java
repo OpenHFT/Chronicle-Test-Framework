@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.openhft.chronicle.testframework.ExceptionTracker;
+import net.openhft.chronicle.testframework.exception.ExceptionTracker;
 
 /**
  * A test utility class for recording and executing assertions about the presence (or absence) of exceptions
