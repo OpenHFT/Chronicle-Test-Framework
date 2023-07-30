@@ -1,4 +1,4 @@
-package net.openhft.chronicle.testframework.apimetrics;
+package net.openhft.chronicle.testframework.internal.apimetrics;
 
 public class Foo {
 
