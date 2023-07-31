@@ -8,6 +8,9 @@ import java.util.function.Consumer;
  * result. This is the three-arity specialization of {@link Consumer}.
  * Unlike most other functional interfaces, {@code TriConsumer} is expected
  * to operate via side-effects.
+ * <p>
+ * This can be used anywhere you need to apply an operation to three input parameters
+ * and don't need to return a result, for example, in handling events with three attributes.
  *
  * <p>This is a <a href="package-summary.html">functional interface</a>
  * whose functional method is {@link #accept(Object, Object, Object)}.
@@ -36,6 +39,10 @@ interface TriConsumer<T, U, V> {
      * operation throws an exception, it is relayed to the caller of the
      * composed operation.  If performing this operation throws an exception,
      * the {@code after} operation will not be performed.
+     *
+     * <p>This can be useful in scenarios where you have several operations that
+     * must be performed on the same set of input parameters, possibly by different parts
+     * of your code.
      *
      * @param after the operation to perform after this operation
      * @return a composed {@code TriConsumer} that performs in sequence this

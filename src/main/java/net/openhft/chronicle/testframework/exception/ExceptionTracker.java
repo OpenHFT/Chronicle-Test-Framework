@@ -8,21 +8,25 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * A test utility class for recording and executing assertions about the presence (or absence) of exceptions
+ * The ExceptionTracker interface provides a set of methods to record, track, and assert exceptions
+ * in a testing context. By defining rules to expect or ignore certain exceptions, it helps in
+ * systematically verifying the correct exception handling behavior of code under test.
  *
  * @param <T> The class used to represent thrown exceptions
  */
 public interface ExceptionTracker<T> {
 
     /**
-     * Create an exception tracker
+     * Factory method to create an instance of the exception tracker. This method encapsulates
+     * the construction of a concrete implementation of the ExceptionTracker interface.
      *
-     * @param messageExtractor   The function used to extract the String message or description from T
-     * @param throwableExtractor The function used to extract the Throwable from T
-     * @param resetRunnable      A Runnable that will be called at the end of {@link #checkExceptions()}
-     * @param exceptions         A map that will be populated with T as the key and the count of occurrences of T as a value
-     * @param ignorePredicate    A predicate that will exclude T's from consideration
-     * @param exceptionRenderer  A function to render T as a String (used when dumping exceptions)
+     * @param messageExtractor   Function to extract the String message or description from T
+     * @param throwableExtractor Function to extract the Throwable from T
+     * @param resetRunnable      Runnable that will be called at the end of {@link #checkExceptions()}
+     * @param exceptions         Map to populate with T as the key and count of occurrences as value
+     * @param ignorePredicate    Predicate to exclude T's from consideration
+     * @param exceptionRenderer  Function to render T as a String (used when dumping exceptions)
+     * @return An instance of ExceptionTracker
      */
     static <T> ExceptionTracker<T> create(@NotNull final Function<T, String> messageExtractor,
                                           @NotNull final Function<T, Throwable> throwableExtractor,
@@ -40,50 +44,54 @@ public interface ExceptionTracker<T> {
     }
 
     /**
-     * Require than an exception containing the specified string is thrown during the test
+     * Specifies that an exception containing the specified string must be thrown during the test.
+     * Failing to do so will cause the test to fail.
      *
      * @param message The string to require
      */
     void expectException(String message);
 
     /**
-     * Require that an exception matching the specified predicate is thrown
+     * Specifies that an exception matching the specified predicate must be thrown.
+     * Failing to match the exception will cause the test to fail.
      *
-     * @param predicate   The predicate used to match exceptions
-     * @param description The description of the exceptions being required
+     * @param predicate   Predicate to match exceptions
+     * @param description Description of the exceptions being required
      */
     void expectException(Predicate<T> predicate, String description);
 
     /**
-     * Ignore exceptions containing the specified string
+     * Ignores exceptions containing the specified string. Matching exceptions will not cause
+     * the test to fail.
      *
      * @param message The string to ignore
      */
     void ignoreException(String message);
 
     /**
-     * Ignore exceptions matching the specified predicate
+     * Ignores exceptions matching the specified predicate. Matching exceptions will not cause
+     * the test to fail.
      *
-     * @param predicate   The predicate to match the exception
-     * @param description The description of the exceptions being ignored
+     * @param predicate   Predicate to match the exception
+     * @param description Description of the exceptions being ignored
      */
     void ignoreException(Predicate<T> predicate, String description);
 
     /**
-     * Determine if the tracker contains an exception matching the predicate
+     * Determines if the tracker contains an exception matching the predicate.
      *
-     * @param predicate The predicate to match the exception
+     * @param predicate Predicate to match the exception
+     * @return true if an exception matching the predicate is found; false otherwise
      */
     boolean hasException(Predicate<T> predicate);
 
     /**
-     * Call this in @After to ensure
+     * Call this method in a teardown (@After) phase of the test to:
      * <ul>
-     *     <li>No non-ignored exceptions were thrown</li>
-     *     <li>There is an exception matching each of the expected predicates</li>
+     *     <li>Verify no non-ignored exceptions were thrown</li>
+     *     <li>Assert there is an exception matching each of the expected predicates</li>
      * </ul>
-     * <p>
-     * Implementations should throw an exception and print a summary of the assertion(s) violated
+     * Implementations should throw an exception and print a summary if the assertion(s) are violated.
      */
     void checkExceptions();
 }
