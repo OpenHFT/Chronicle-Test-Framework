@@ -1,14 +1,22 @@
 package net.openhft.chronicle.testframework;
 
+/**
+ * Utility class for thread-related functionalities.
+ * <p>
+ * This enum class is used as a utility and does not have any instances.
+ */
 public enum ThreadUtil {
     ;
 
     /**
-     * Pause interruptibly
+     * Pauses the current thread's execution for the specified amount of time.
+     * If the thread is interrupted during the sleep, it will catch the
+     * InterruptedException and set the interrupt status of the current thread.
      * <p>
-     * Because we don't depend on chronicle-core, we don't have Jvm.pause(...)
+     * This method is intended to provide similar functionality to Jvm.pause(...)
+     * but does not depend on chronicle-core.
      *
-     * @param timeInMillis The amount of time to pause for in milliseconds
+     * @param timeInMillis The amount of time to pause for in milliseconds.
      */
     public static void pause(long timeInMillis) {
         try {
