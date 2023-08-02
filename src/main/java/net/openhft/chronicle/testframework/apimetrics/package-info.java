@@ -13,7 +13,7 @@
  * assurance.</p>
  *
  * @see net.openhft.chronicle.testframework.apimetrics.ApiMetrics
- * @see net.openhft.chronicle.testframework.apimetrics.ApiMetricsBuilder
  * @see net.openhft.chronicle.testframework.apimetrics.Accumulator
+ * @see net.openhft.chronicle.testframework.apimetrics.Metric
  */
 package net.openhft.chronicle.testframework.apimetrics;

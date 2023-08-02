@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
+
 /**
  * Utility class for working with mapped files, specifically dealing with parsing the "/proc/self/maps" file on Linux systems.
  * This provides information about virtual memory mappings.
@@ -39,7 +40,9 @@ public enum MappedFileUtil {
     private static final int PATH_INDEX = 6;
 
     /**
-     * Gets the distinct files that are currently mapped to the current process.
+     * Get the distinct files that are currently mapped to the current process
+     * <p>
+     * NOTE: this is only likely to work on linux or linux-like environments
      *
      * @return A set of the distinct files listed in /proc/self/maps
      * @throws UnsupportedOperationException if /proc/self/maps does not exist or can't be read

@@ -92,6 +92,7 @@ public final class FlakyTestRunner {
     private static RunnableThrows<RuntimeException> asRunnableThrows(Runnable runnable) {
         return runnable::run;
     }
+
     /**
      * Defines the interface for constructing and configuring a flaky test runner.
      * <p>
@@ -112,7 +113,6 @@ public final class FlakyTestRunner {
      * </pre>
      *
      * @param <X> Type of exception that can be thrown by the runnable object
-     *
      * @see FlakyTestRunner
      * @see FlakyTestRunner.RunnableThrows
      */

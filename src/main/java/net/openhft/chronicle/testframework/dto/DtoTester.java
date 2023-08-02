@@ -73,9 +73,9 @@ public interface DtoTester {
         /**
          * Adds a mutator to the builder for testing.
          *
-         * @param type       The type of the mutator (MANDATORY/OPTIONAL).
+         * @param type        The type of the mutator (MANDATORY/OPTIONAL).
          * @param mutatorName The name of the mutator.
-         * @param mutator    The mutation function.
+         * @param mutator     The mutation function.
          * @return This builder, for chaining.
          */
         @NotNull <R> Builder<T> addMutator(@NotNull MutatorType type,
@@ -113,6 +113,6 @@ public interface DtoTester {
      * Enum for defining mutator types.
      */
     enum MutatorType {
-        MANDATORY, OPTIONAL;
+        MANDATORY, OPTIONAL
     }
 }

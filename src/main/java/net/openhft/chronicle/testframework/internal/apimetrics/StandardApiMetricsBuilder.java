@@ -75,7 +75,7 @@ public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBui
     }
 
     private void computeFor(final Set<Accumulator> accumulators,
-                                     final ClassInfoList.ClassInfoFilter filter) {
+                            final ClassInfoList.ClassInfoFilter filter) {
         try (ScanResult scanResult = new ClassGraph().enableAllInfo().enableAllInfo().scan()) {
             final ClassInfoList exposedClassInfoList = scanResult.getAllClasses()
                     .filter(filter)

@@ -12,10 +12,6 @@ import java.util.stream.Stream;
 
 final class StandardMetrics {
 
-    // Suppresses default constructor, ensuring non-instantiability.
-    private StandardMetrics() {
-    }
-
     static final Metric<ClassInfo> CLASS_PUBLIC = Metric.of(ClassInfo.class, predicateOfClass(Modifier::isPublic), "Class Public", 10);
     static final Metric<ClassInfo> CLASS_PROTECTED = Metric.of(ClassInfo.class, predicateOfClass(Modifier::isProtected), "Class Protected", 5);
     static final Metric<ClassInfo> CLASS_EXTENDABLE_ACROSS_PACKAGE_BOUNDARIES = Metric.of(ClassInfo.class, ci -> (Modifier.isProtected(ci.getModifiers()) || Modifier.isPublic(ci.getModifiers())) && !ci.isFinal() && !ci.isEnum(), "Class Extendable Across Package Boundaries", 20);
@@ -26,9 +22,12 @@ final class StandardMetrics {
     static final Metric<FieldInfo> FIELD_PUBLIC = Metric.of(FieldInfo.class, predicateOfPublicField(false), "Field Public", 5);
     static final Metric<FieldInfo> FIELD_PUBLIC_STATIC_FINAL = Metric.of(FieldInfo.class, predicateOfPublicField(true), "Field Public Static Final", 2);
     static final Metric<FieldInfo> FIELD_PROTECTED = Metric.of(FieldInfo.class, predicateOfField(Modifier::isProtected), "Field Protected", 2);
+    // Suppresses default constructor, ensuring non-instantiability.
+    private StandardMetrics() {
+    }
 
     static Stream<Metric<?>> stream() {
-        return Stream.<Metric<?>>of(
+        return Stream.of(
                 CLASS_PUBLIC,
                 CLASS_PROTECTED,
                 CLASS_EXTENDABLE_ACROSS_PACKAGE_BOUNDARIES,

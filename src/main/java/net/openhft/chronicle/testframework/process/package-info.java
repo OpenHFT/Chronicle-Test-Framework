@@ -10,4 +10,4 @@
  * Usage of classes in this package may be primarily intended for internal use within the framework,
  * rather than direct usage by client code.
  */
-package net.openhft.chronicle.testframework.internal.process;
+package net.openhft.chronicle.testframework.process;

@@ -281,63 +281,80 @@ public final class Product {
     }
 
 
+    /**
+     * An interface representing an object that has a first component.
+     * This can be used to add functionality to objects that are made up of multiple components.
+     *
+     * @param <T> The type of the first component.
+     */
     public interface HasFirst<T> {
+
         /**
-         * Returns the first component.
+         * Returns the first component of the object.
+         * This method should be implemented to return the first component of the multi-component object.
          *
-         * @return the first component
+         * @return The first component of the object.
          */
         T first();
     }
 
     /**
-     * Interface representing an object that has a second component of type {@code U}.
+     * An interface representing an object that has a second component.
+     * This can be used to add functionality to objects that are made up of multiple components.
      *
-     * @param <U> Type of the second component
+     * @param <U> The type of the second component.
      */
     public interface HasSecond<U> {
+
         /**
-         * Returns the second component.
+         * Returns the second component of the object.
+         * This method should be implemented to return the second component of the multi-component object.
          *
-         * @return the second component
+         * @return The second component of the object.
          */
         U second();
     }
-
     /**
      * Interface representing an object that has a third component of type {@code V}.
+     * This can be used to add functionality to objects that are made up of three components.
      *
      * @param <V> Type of the third component
      */
     public interface HasThird<V> {
+
         /**
-         * Returns the third component.
+         * Returns the third component of the object.
+         * This method should be implemented to return the third component of the multi-component object.
          *
-         * @return the third component
+         * @return The third component of the object.
          */
         V third();
     }
 
     /**
      * A Product2 is a composite object comprising two components.
-     * It's a part of a tuple-like structure with two elements.
+     * It's a part of a tuple-like structure with two elements, extending the HasFirst and HasSecond interfaces.
+     * This provides a way to group two related objects together into a single unit.
      *
      * @param <T> Type of the first component
      * @param <U> Type of the second component
      */
     public interface Product2<T, U> extends HasFirst<T>, HasSecond<U> {
 
+        // Interface doesn't have any additional methods or fields, but inherits those from HasFirst and HasSecond.
     }
 
     /**
      * A Product3 is a composite object comprising three components.
-     * It's a part of a tuple-like structure with three elements.
+     * It's a part of a tuple-like structure with three elements, extending the HasFirst, HasSecond, and HasThird interfaces.
+     * This provides a way to group three related objects together into a single unit.
      *
      * @param <T> Type of the first component
      * @param <U> Type of the second component
      * @param <V> Type of the third component
      */
     public interface Product3<T, U, V> extends HasFirst<T>, HasSecond<U>, HasThird<V> {
-    }
 
+        // Interface doesn't have any additional methods or fields, but inherits those from HasFirst, HasSecond, and HasThird.
+    }
 }

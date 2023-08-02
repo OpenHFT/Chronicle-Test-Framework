@@ -36,7 +36,7 @@ public interface ThrowingConsumer<T, X extends Exception> {
      * Consumer is expected, by translating checked exceptions into runtime exceptions.
      *
      * @param throwingConsumer the ThrowingConsumer to wrap, must not be null
-     * @param <T> consumed type
+     * @param <T>              consumed type
      * @return a wrapped Consumer that translates checked exceptions into runtime exceptions
      * @throws NullPointerException if {@code throwingConsumer} is null
      */

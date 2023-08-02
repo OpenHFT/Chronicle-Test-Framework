@@ -40,18 +40,17 @@ public interface Metric<T> {
     /**
      * Factory method to create a new instance of a Metric with the given parameters.
      *
-     * @param <T> The type of element to which this metric can be applied.
+     * @param <T>      The type of element to which this metric can be applied.
      * @param nodeType The class type of the element.
-     * @param filter The predicate to determine if the metric is applicable.
-     * @param name The name of the metric.
-     * @param weight The weight of the metric.
+     * @param filter   The predicate to determine if the metric is applicable.
+     * @param name     The name of the metric.
+     * @param weight   The weight of the metric.
      * @return A new Metric instance.
      */
     static <T> Metric<T> of(final Class<T> nodeType,
                             final Predicate<? super T> filter,
                             final String name,
                             final double weight) {
-        // Creating a StandardMetric instance with provided parameters
         return new StandardMetric<>(nodeType, filter, name, weight);
     }
 }

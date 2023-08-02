@@ -36,14 +36,15 @@ import static java.util.Objects.requireNonNull;
 public final class Combination {
 
     // Suppresses default constructor, ensuring non-instantiability.
-    private Combination() {}
+    private Combination() {
+    }
 
     /**
      * Creates and returns a stream of all possible combinations of the given elements.
      * <p>
      * The order of the combinations in the stream is unspecified.
      *
-     * @param <T> element type
+     * @param <T>   element type
      * @param items the array of items to combine
      * @return a stream of sets containing all possible combinations of the given elements
      * @throws NullPointerException if the provided {@code items} array is {@code null}.
@@ -60,7 +61,7 @@ public final class Combination {
      * <p>
      * The order of the combinations in the stream is unspecified.
      *
-     * @param <T> element type
+     * @param <T>   element type
      * @param items a collection of items to combine
      * @return a stream of sets containing all possible combinations of the given elements
      * @throws NullPointerException if the provided {@code items} collection is {@code null}.
@@ -78,7 +79,7 @@ public final class Combination {
      * It is unspecified if the method lazily consumes the provided stream before providing
      * the result or not.
      *
-     * @param <T> element type
+     * @param <T>   element type
      * @param items a stream of items to combine
      * @return a stream of sets containing all possible combinations of the given elements
      * @throws NullPointerException if the provided {@code items} stream is {@code null}.
@@ -88,4 +89,3 @@ public final class Combination {
         return CombinationUtil.of(items);
     }
 }
-

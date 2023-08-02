@@ -39,7 +39,12 @@ public interface ApiMetrics {
         return new StandardApiMetricsBuilder();
     }
 
-
+    /**
+     * Interface for a builder that allows constructing an ApiMetrics object.
+     * This builder allows the specification of packages to analyze, packages to exclude from analysis,
+     * metrics to apply, and accumulators for aggregating metrics.
+     * The build method applies all the specifications and returns the final ApiMetrics object.
+     */
     interface ApiMetricsBuilder {
 
         /**

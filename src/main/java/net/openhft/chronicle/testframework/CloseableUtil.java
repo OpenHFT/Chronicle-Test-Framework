@@ -23,7 +23,7 @@ public enum CloseableUtil {
     public static void closeQuietly(AutoCloseable closeable) {
         try {
             if (closeable != null) { // Ensuring the closeable is not null to avoid NullPointerException
-            closeable.close();
+                closeable.close();
             }
         } catch (Exception e) {
             LOGGER.warn("Error closing", e); // Logging any exceptions that occur during closing
