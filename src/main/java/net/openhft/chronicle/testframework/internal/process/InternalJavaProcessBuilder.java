@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.charset.Charset;
@@ -105,7 +106,11 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         } catch (IOException e) {
             // Ignore
         }
-        return os.toString(Charset.defaultCharset());
+        try {
+            return os.toString(Charset.defaultCharset().name());
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Override
