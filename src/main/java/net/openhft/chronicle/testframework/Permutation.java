@@ -48,23 +48,24 @@ public final class Permutation {
     }
 
     /**
-     * Returns the given {@code no} (of n!) permutation variant of the
-     * given {@code items}.
+     * Generates a stream of all possible permutations for the given {@code items}.
      * <p>
-     * Note that the number of permutations increases very rapidly as the length of
-     * the provided {@code items} array increases.
+     * This method is an overload of {@link #of(Collection)} that accepts an array instead of
+     * a collection.
      *
-     * @param no    index to get permutations for
-     * @param items to create permutations for
-     * @param <T>   type of the elements
-     * @return the given {@code no} (of n!) permutation variant of the
-     * given {@code items}
+     * @param items Array of items to create permutations for
+     * @param <T>   Type of the elements
+     * @return Stream containing all permutations of the given {@code items}
+     * @throws NullPointerException if {@code items} is null
      */
-    public static <T> List<T> permutation(final long no,
-                                          @NotNull final List<T> items) {
-        if (no < 0)
+    public static <T> List<T> permutation(final long no, @NotNull final List<T> items) {
+        // Check if the permutation number is negative and throw an exception if it is
+        if (no < 0) {
             throw new IllegalArgumentException("no is negative: " + no);
-        requireNonNull(items);
+        }
+        // Check if the provided items list is null
+        requireNonNull(items, "items must not be null");
+        // Utilize PermutationUtil to compute the permutation and return the result
         return PermutationUtil.permutation(no, items);
     }
 
@@ -89,31 +90,39 @@ public final class Permutation {
     /**
      * Creates and returns a Stream of all permutations of the provided {@code items} list.
      * <p>
+     * This method generates a stream that contains all possible arrangements of the elements
+     * within the provided {@code items} list.
+     * <p>
      * Note that the number of permutations increases very rapidly as the length of
-     * the provided {@code items} list increases.
+     * the provided {@code items} list increases, so use with caution with large lists.
      *
-     * @param items to create permutations for
-     * @param <T>   type of the elements
-     * @return a Stream of all permutations of the provided {@code items} list
-     * @throws NullPointerException if the provided {@code items} list is {@code null}.
+     * @param items List of items to create permutations for
+     * @param <T>   Type of the elements
+     * @return a Stream containing all permutations of the provided {@code items} list
+     * @throws NullPointerException     if the provided {@code items} list is {@code null}
+     * @throws IllegalArgumentException if the provided permutation number is negative
      */
     public static <T> Stream<List<T>> of(@NotNull final Collection<T> items) {
+        requireNonNull(items, "items must not be null");
         return PermutationUtil.of(items);
     }
 
     /**
-     * Creates and returns a Stream of all permutations of the provided {@code items} list.
+     * Creates and returns a Stream of all permutations of the provided {@code items} stream.
+     * <p>
+     * This method generates a stream that contains all possible arrangements of the elements
+     * within the provided {@code items} stream.
      * <p>
      * Note that the number of permutations increases very rapidly as the length of
-     * the provided {@code items} list increases.
+     * the provided {@code items} stream increases, so use with caution with large streams.
      * <p>
-     * It is unspecified if the method lazily consume the provided stream before providing
+     * It is unspecified if the method lazily consumes the provided stream before providing
      * the result or not.
      *
-     * @param items to create permutations for
-     * @param <T>   type of the elements
-     * @return a Stream of all permutations of the provided {@code items} list
-     * @throws NullPointerException if the provided {@code items} stream is {@code null}.
+     * @param items Stream of items to create permutations for; must not be {@code null}
+     * @param <T>   Type of the elements
+     * @return a Stream containing all permutations of the provided {@code items} stream
+     * @throws NullPointerException if the provided {@code items} stream is {@code null}
      */
     public static <T> Stream<List<T>> of(@NotNull final Stream<T> items) {
         return PermutationUtil.of(items);

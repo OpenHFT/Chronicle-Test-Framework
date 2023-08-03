@@ -21,30 +21,33 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * General Combination support. The class eagerly calculates all combinations.
+ * Utility class that provides functionality to generate all possible combinations
+ * of a given set of elements. The class eagerly calculates the combinations.
+ * <p>
+ * This class cannot be instantiated.
  *
  * @author Per Minborg
  */
 public final class Combination {
 
     // Suppresses default constructor, ensuring non-instantiability.
-    private Combination() {}
+    private Combination() {
+    }
 
     /**
-     * Creates and returns all possible combinations of the given elements.
+     * Creates and returns a stream of all possible combinations of the given elements.
      * <p>
      * The order of the combinations in the stream is unspecified.
      *
-     * @param <T> element type
-     * @param items to combine
-     * @return all possible combinations of the given elements
-     * @throws NullPointerException if the provided {@code items} list is {@code null}.
+     * @param <T>   element type
+     * @param items the array of items to combine
+     * @return a stream of sets containing all possible combinations of the given elements
+     * @throws NullPointerException if the provided {@code items} array is {@code null}.
      */
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a Set from an array is safe
@@ -54,14 +57,14 @@ public final class Combination {
     }
 
     /**
-     * Creates and returns all possible combinations of the given elements.
+     * Creates and returns a stream of all possible combinations of the given elements.
      * <p>
      * The order of the combinations in the stream is unspecified.
      *
-     * @param <T> element type
-     * @param items to combine
-     * @return all possible combinations of the given elements
-     * @throws NullPointerException if the provided {@code items} list is {@code null}.
+     * @param <T>   element type
+     * @param items a collection of items to combine
+     * @return a stream of sets containing all possible combinations of the given elements
+     * @throws NullPointerException if the provided {@code items} collection is {@code null}.
      */
     public static <T> Stream<Set<T>> of(@NotNull final Collection<T> items) {
         requireNonNull(items);
@@ -69,21 +72,20 @@ public final class Combination {
     }
 
     /**
-     * Creates and returns all possible combinations of the given elements.
+     * Creates and returns a stream of all possible combinations of the given elements.
      * <p>
      * The order of the combinations in the stream is unspecified.
      * <p>
-     * It is unspecified if the method lazily consume the provided stream before providing
+     * It is unspecified if the method lazily consumes the provided stream before providing
      * the result or not.
      *
-     * @param <T> element type
-     * @param items to combine
-     * @return all possible combinations of the given elements
+     * @param <T>   element type
+     * @param items a stream of items to combine
+     * @return a stream of sets containing all possible combinations of the given elements
      * @throws NullPointerException if the provided {@code items} stream is {@code null}.
      */
     public static <T> Stream<Set<T>> of(@NotNull final Stream<T> items) {
         requireNonNull(items);
         return CombinationUtil.of(items);
     }
-
 }

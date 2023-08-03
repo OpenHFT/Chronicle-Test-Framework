@@ -17,13 +17,21 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
+/**
+ * Utility class for working with mapped files, specifically dealing with parsing the "/proc/self/maps" file on Linux systems.
+ * This provides information about virtual memory mappings.
+ * <p>
+ * NOTE: This utility is designed to work on Linux or Linux-like environments.
+ */
 public enum MappedFileUtil {
     ;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MappedFileUtil.class);
     private static final Path PROC_SELF_MAPS = Paths.get("/proc/self/maps");
 
-    // See https://man7.org/linux/man-pages/man5/proc.5.html
+    // Regular expression pattern to parse lines from /proc/self/maps.
     private static final Pattern LINE_PATTERN = Pattern.compile("([\\p{XDigit}\\-]+)\\s+([rwxsp\\-]+)\\s+(\\p{XDigit}+)\\s+(\\p{XDigit}+:\\p{XDigit}+)\\s+(\\d+)(?:\\s+(.*))?");
+    // Index constants for the parsed groups.
     private static final int ADDRESS_INDEX = 1;
     private static final int PERMS_INDEX = 2;
     private static final int OFFSET_INDEX = 3;
@@ -56,6 +64,7 @@ public enum MappedFileUtil {
         }
     }
 
+    // Internal method to process each line from /proc/self/maps
     private static void processProcSelfMaps(Set<String> fileList, BufferedReader reader) throws IOException {
         String line;
         while ((line = reader.readLine()) != null) {
@@ -68,6 +77,7 @@ public enum MappedFileUtil {
         }
     }
 
+    // Processes a single line and adds the file to the list if applicable
     private static void processOneLine(Set<String> fileList, Matcher matcher) {
         String filename = getPath(matcher);
         if (filename == null) {
@@ -80,15 +90,33 @@ public enum MappedFileUtil {
         }
     }
 
+    /**
+     * Parses the provided line using the pattern defined for parsing lines from "/proc/self/maps".
+     *
+     * @param line The line to be parsed
+     * @return A Matcher object after matching the pattern
+     */
     public static Matcher parseMapsLine(String line) {
         return LINE_PATTERN.matcher(line);
     }
 
+    /**
+     * Gets the path (if any) from the provided Matcher object.
+     *
+     * @param matcher Matcher object containing the parsed line
+     * @return The path if available, null otherwise
+     */
     @Nullable
     public static String getPath(Matcher matcher) {
         return matcher.group(PATH_INDEX);
     }
 
+    /**
+     * Gets the memory address range from the provided Matcher object.
+     *
+     * @param matcher Matcher object containing the parsed line
+     * @return The address range as a string
+     */
     public static String getAddress(Matcher matcher) {
         return matcher.group(ADDRESS_INDEX);
     }

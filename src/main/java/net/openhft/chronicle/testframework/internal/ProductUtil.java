@@ -4,6 +4,7 @@ import net.openhft.chronicle.testframework.Product;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,6 +26,7 @@ public final class ProductUtil {
                 .flatMap(t -> us.stream()
                         .map(u -> constructor.apply(t, u)));
     }
+
     public static <T, U, R> Stream<R> of(Stream<T> ts,
                                          Stream<U> us,
                                          BiFunction<? super T, ? super U, ? extends R> constructor) {
@@ -95,8 +97,8 @@ public final class ProductUtil {
 
             Product2Impl<?, ?> product2 = (Product2Impl<?, ?>) o;
 
-            if (first != null ? !first.equals(product2.first) : product2.first != null) return false;
-            return second != null ? second.equals(product2.second) : product2.second == null;
+            if (!Objects.equals(first, product2.first)) return false;
+            return Objects.equals(second, product2.second);
         }
 
         @Override
@@ -151,9 +153,9 @@ public final class ProductUtil {
 
             Product3Impl<?, ?, ?> product3 = (Product3Impl<?, ?, ?>) o;
 
-            if (first != null ? !first.equals(product3.first) : product3.first != null) return false;
-            if (second != null ? !second.equals(product3.second) : product3.second != null) return false;
-            return third != null ? third.equals(product3.third) : product3.third == null;
+            if (!Objects.equals(first, product3.first)) return false;
+            if (!Objects.equals(second, product3.second)) return false;
+            return Objects.equals(third, product3.third);
         }
 
         @Override

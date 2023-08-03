@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.charset.Charset;
@@ -31,73 +32,6 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
     public InternalJavaProcessBuilder(@NotNull final Class<?> mainClass) {
         this.mainClass = mainClass;
-    }
-
-    @Override
-    public InternalJavaProcessBuilder withProgramArguments(String... programArguments) {
-        this.programArguments = programArguments;
-        return this;
-    }
-
-    @Override
-    public InternalJavaProcessBuilder withJvmArguments(String... jvmArguments) {
-        this.jvmArguments = jvmArguments;
-        return this;
-    }
-
-    @Override
-    public InternalJavaProcessBuilder withClasspathEntries(String... classpathEntries) {
-        this.classpathEntries = classpathEntries;
-        return this;
-    }
-
-    @Override
-    public InternalJavaProcessBuilder inheritingIO() {
-        this.inheritIO = true;
-        return this;
-    }
-
-    @Override
-    public Process start() {
-        // Because Java17 must be run using various module flags, these must be propagated
-        // to the child processes
-        // https://stackoverflow.com/questions/1490869/how-to-get-vm-arguments-from-inside-of-java-application
-        final RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-
-        // filter out javaagent params, or this confuses the IntelliJ debugger
-        final List<String> jvmArgsWithoutJavaAgents = runtimeMxBean.getInputArguments().stream()
-                .filter(arg -> !arg.startsWith("-javaagent:"))
-                .filter(arg -> !arg.startsWith("-agentlib:"))
-                .collect(Collectors.toList());
-
-        String classPath;
-        if (classpathEntries == null || classpathEntries.length == 0) {
-            classPath = System.getProperty("java.class.path");
-        } else {
-            classPath = String.join(System.getProperty("path.separator"), classpathEntries);
-        }
-
-        String className = mainClass.getName();
-        String javaBin = findJavaBinPath().toString();
-        List<String> allArgs = new ArrayList<>();
-        allArgs.add(javaBin);
-        allArgs.addAll(jvmArgsWithoutJavaAgents);
-        allArgs.add("-Dchronicle.analytics.disable=true");
-        allArgs.addAll(Arrays.asList(jvmArguments));
-        allArgs.add("-cp");
-        allArgs.add(classPath);
-        allArgs.add(className);
-        allArgs.addAll(Arrays.asList(programArguments));
-        ProcessBuilder processBuilder = new ProcessBuilder(allArgs.toArray(new String[]{}));
-        if (inheritIO) {
-            LOGGER.warn("You've specified to inherit IO when spawning a Java process, this won't play nice with Maven surefire plugin, don't commit this, see https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream");
-            processBuilder.inheritIO();
-        }
-        try {
-            return processBuilder.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -172,6 +106,77 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         } catch (IOException e) {
             // Ignore
         }
-        return new String(os.toByteArray(), Charset.defaultCharset());
+        try {
+            return os.toString(Charset.defaultCharset().name());
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    @Override
+    public InternalJavaProcessBuilder withProgramArguments(String... programArguments) {
+        this.programArguments = programArguments;
+        return this;
+    }
+
+    @Override
+    public InternalJavaProcessBuilder withJvmArguments(String... jvmArguments) {
+        this.jvmArguments = jvmArguments;
+        return this;
+    }
+
+    @Override
+    public InternalJavaProcessBuilder withClasspathEntries(String... classpathEntries) {
+        this.classpathEntries = classpathEntries;
+        return this;
+    }
+
+    @Override
+    public InternalJavaProcessBuilder inheritingIO() {
+        this.inheritIO = true;
+        return this;
+    }
+
+    @Override
+    public Process start() {
+        // Because Java17 must be run using various module flags, these must be propagated
+        // to the child processes
+        // https://stackoverflow.com/questions/1490869/how-to-get-vm-arguments-from-inside-of-java-application
+        final RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+
+        // filter out javaagent params, or this confuses the IntelliJ debugger
+        final List<String> jvmArgsWithoutJavaAgents = runtimeMxBean.getInputArguments().stream()
+                .filter(arg -> !arg.startsWith("-javaagent:"))
+                .filter(arg -> !arg.startsWith("-agentlib:"))
+                .collect(Collectors.toList());
+
+        String classPath;
+        if (classpathEntries == null || classpathEntries.length == 0) {
+            classPath = System.getProperty("java.class.path");
+        } else {
+            classPath = String.join(System.getProperty("path.separator"), classpathEntries);
+        }
+
+        String className = mainClass.getName();
+        String javaBin = findJavaBinPath().toString();
+        List<String> allArgs = new ArrayList<>();
+        allArgs.add(javaBin);
+        allArgs.addAll(jvmArgsWithoutJavaAgents);
+        allArgs.add("-Dchronicle.analytics.disable=true");
+        allArgs.addAll(Arrays.asList(jvmArguments));
+        allArgs.add("-cp");
+        allArgs.add(classPath);
+        allArgs.add(className);
+        allArgs.addAll(Arrays.asList(programArguments));
+        ProcessBuilder processBuilder = new ProcessBuilder(allArgs.toArray(new String[]{}));
+        if (inheritIO) {
+            LOGGER.warn("You've specified to inherit IO when spawning a Java process, this won't play nice with Maven surefire plugin, don't commit this, see https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream");
+            processBuilder.inheritIO();
+        }
+        try {
+            return processBuilder.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

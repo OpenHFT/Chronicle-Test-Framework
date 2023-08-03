@@ -6,7 +6,10 @@ import net.openhft.chronicle.testframework.Product;
 import net.openhft.chronicle.testframework.apimetrics.Accumulator;
 import net.openhft.chronicle.testframework.apimetrics.Metric;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -67,10 +70,10 @@ public final class StandardAccumulator1 implements Accumulator {
 
         return String.format("*Accumulation per %s*%n", columnName) +
                 map.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(e -> String.format(formatting, e.getKey(), e.getValue()))
-                .collect(Collectors.joining())
-                +String.format(formatting, "_Total_", result());
+                        .sorted(Map.Entry.comparingByKey())
+                        .map(e -> String.format(formatting, e.getKey(), e.getValue()))
+                        .collect(Collectors.joining())
+                + String.format(formatting, "_Total_", result());
 
     }
 }

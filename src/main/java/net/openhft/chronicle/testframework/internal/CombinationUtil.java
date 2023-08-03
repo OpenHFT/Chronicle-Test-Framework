@@ -32,17 +32,17 @@ import static java.util.function.Function.identity;
  */
 public final class CombinationUtil {
 
-    private CombinationUtil() {}
+    private CombinationUtil() {
+    }
 
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a List from an array is safe
     public static <T> Stream<Set<T>> of(final T... items) {
         return IntStream.rangeClosed(0, items.length)
-            .mapToObj(r -> {
-                @SuppressWarnings("unchecked")
-                final T[] data = (T[]) new Object[r];
-                return combinationHelper(items, data, 0, items.length - 1, 0, r);
-            }).flatMap(identity());
+                .mapToObj(r -> {
+                    @SuppressWarnings("unchecked") final T[] data = (T[]) new Object[r];
+                    return combinationHelper(items, data, 0, items.length - 1, 0, r);
+                }).flatMap(identity());
     }
 
     @SuppressWarnings("unchecked")
@@ -70,17 +70,17 @@ public final class CombinationUtil {
         // at index will make a combination with remaining elements
         // at remaining positions
         return IntStream.rangeClosed(start, end)
-            .filter(i -> end - i + 1 >= r - index)
-            .mapToObj(i -> {
-                data[index] = arr[i];
-                return combinationHelper(arr, data, i + 1, end, index + 1, r);
-            }).flatMap(identity());
+                .filter(i -> end - i + 1 >= r - index)
+                .mapToObj(i -> {
+                    data[index] = arr[i];
+                    return combinationHelper(arr, data, i + 1, end, index + 1, r);
+                }).flatMap(identity());
     }
 
     private static <T> Set<T> asSet(T[] array, int newSize) {
         return Stream.of(array)
-            .limit(newSize)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+                .limit(newSize)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

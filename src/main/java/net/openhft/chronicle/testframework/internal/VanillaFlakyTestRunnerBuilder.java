@@ -10,14 +10,13 @@ import static java.util.Objects.requireNonNull;
 public final class VanillaFlakyTestRunnerBuilder<X extends Throwable> implements FlakyTestRunner.Builder<X> {
 
     final FlakyTestRunner.RunnableThrows<X> action;
-    private boolean built = false;
-
     boolean flakyOnThisArchitecture = true;
     int maxIterations = 1;
     long delayMs = 500;
     boolean interIterationGc = true;
     Consumer<? super String> infoLogger = System.out::println;
     Consumer<? super String> errorLogger = System.err::println;
+    private boolean built = false;
 
     public VanillaFlakyTestRunnerBuilder(@NotNull final FlakyTestRunner.RunnableThrows<X> action) {
         this.action = requireNonNull(action);

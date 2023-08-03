@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework.internal;
 
+import net.openhft.chronicle.testframework.exception.ExceptionTracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.openhft.chronicle.testframework.exception.ExceptionTracker;
 
 /**
  * A test utility class for recording and executing assertions about the presence (or absence) of exceptions
@@ -53,6 +53,31 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T>, ne
         this.exceptions = exceptions;
         this.ignorePredicate = ignorePredicate;
         this.exceptionRenderer = exceptionRenderer;
+    }
+
+    private static boolean contains(String text, String message) {
+        return text != null && text.contains(message);
+    }
+
+    /**
+     * Does this Throwable or any of its causes contain the specified text?
+     *
+     * @param text The substring to search for
+     * @return true if there are any matches for it, false otherwise
+     */
+    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable) {
+        return throwableContainsTextRecursive(text, throwable, new HashSet<>());
+    }
+
+    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable, Set<Integer> seenThrowableIDs) {
+        if (throwable == null || seenThrowableIDs.contains(System.identityHashCode(throwable))) {
+            return false;
+        }
+        if (throwable.getMessage() != null && throwable.getMessage().contains(text)) {
+            return true;
+        }
+        seenThrowableIDs.add(System.identityHashCode(throwable));
+        return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
     }
 
     @Override
@@ -123,34 +148,9 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T>, ne
         }
     }
 
-    private static boolean contains(String text, String message) {
-        return text != null && text.contains(message);
-    }
-
     private void checkFinalised() {
         if (finalised) {
             throw new IllegalStateException("VanillaExceptionTracker is single use, you create it, add expectations/ignores, run tests, call check and then dispose of it.");
         }
-    }
-
-    /**
-     * Does this Throwable or any of its causes contain the specified text?
-     *
-     * @param text The substring to search for
-     * @return true if there are any matches for it, false otherwise
-     */
-    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable) {
-        return throwableContainsTextRecursive(text, throwable, new HashSet<>());
-    }
-
-    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable, Set<Integer> seenThrowableIDs) {
-        if (throwable == null || seenThrowableIDs.contains(System.identityHashCode(throwable))) {
-            return false;
-        }
-        if (throwable.getMessage() != null && throwable.getMessage().contains(text)) {
-            return true;
-        }
-        seenThrowableIDs.add(System.identityHashCode(throwable));
-        return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
     }
 }
