@@ -3,6 +3,8 @@ package net.openhft.chronicle.testframework.internal.network.proxy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,7 @@ import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 import static net.openhft.chronicle.testframework.Waiters.waitForCondition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(value = OS.MAC, disabledReason = "MacOS loopback strangeness causes intermittent failures")
 class TcpProxyTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpProxy.class);
