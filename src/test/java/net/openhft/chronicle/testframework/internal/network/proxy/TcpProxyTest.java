@@ -118,7 +118,7 @@ class TcpProxyTest {
 
     private void startServerAndProxyAnd(ServerAndProxyBody serverAndProxyConsumer) throws IOException {
         try (final ServerSocketChannel serverSocket = ServerSocketChannel.open().bind(new InetSocketAddress(0));
-             final TcpProxy tcpProxy = new TcpProxy(getAvailablePort(), (InetSocketAddress) serverSocket.socket().getLocalSocketAddress(), executorService)) {
+             final TcpProxy tcpProxy = new TcpProxy(0, (InetSocketAddress) serverSocket.socket().getLocalSocketAddress(), executorService)) {
             LOGGER.info("Server listening on " + serverSocket.socket().getLocalSocketAddress());
             executorService.submit(tcpProxy);
             waitForCondition("TCP proxy didn't open", tcpProxy::isOpen, TIMEOUT_MS);
