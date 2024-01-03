@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework.mappedfiles;
 
+import net.openhft.chronicle.testframework.Waiters;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -47,7 +48,16 @@ class MappedFileUtilTest {
         final Path mappedFileUtilTest = Files.createTempFile("MappedFileUtilTest", "");
         try (FileChannel channel = FileChannel.open(mappedFileUtilTest, StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.CREATE)) {
             final MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, 100);
-            assertTrue(MappedFileUtil.getAllMappedFiles().contains(mappedFileUtilTest.toAbsolutePath().toString()));
+            // Note: it could take some (small) time for /proc/self/maps to update and this test used to fail sometimes because of this.
+            // Ensure the test waits if necessary to reduce flakiness
+            Waiters.waitForCondition("Timed out waiting for /proc/self/maps to update", () -> contains(mappedFileUtilTest), 10_000);
+            assertTrue(contains(mappedFileUtilTest));
+        } finally {
+            assertTrue(mappedFileUtilTest.toFile().delete());
         }
+    }
+
+    private static boolean contains(Path mappedFileUtilTest) {
+        return MappedFileUtil.getAllMappedFiles().contains(mappedFileUtilTest.toAbsolutePath().toString());
     }
 }
