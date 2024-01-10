@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @param <T> The class used to represent thrown exceptions
  */
 @SuppressWarnings("deprecation")
-public final class VanillaExceptionTracker<T> implements ExceptionTracker<T>, net.openhft.chronicle.testframework.internal.ExceptionTracker<T> {
+public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VanillaExceptionTracker.class);
 

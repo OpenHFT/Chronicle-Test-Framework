@@ -1,7 +1,6 @@
 package net.openhft.chronicle.testframework.internal.function;
 
 import net.openhft.chronicle.testframework.function.NamedConsumer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -12,8 +11,8 @@ public final class VanillaNamedConsumer<T> implements NamedConsumer<T> {
     private final Consumer<T> consumer;
     private final String name;
 
-    public VanillaNamedConsumer(@NotNull final Consumer<T> consumer,
-                                @NotNull final String name) {
+    public VanillaNamedConsumer(final Consumer<T> consumer,
+                                final String name) {
         this.consumer = requireNonNull(consumer);
         this.name = requireNonNull(name);
     }
@@ -24,7 +23,7 @@ public final class VanillaNamedConsumer<T> implements NamedConsumer<T> {
     }
 
     @Override
-    public @NotNull String name() {
+    public String name() {
         return name;
     }
 
