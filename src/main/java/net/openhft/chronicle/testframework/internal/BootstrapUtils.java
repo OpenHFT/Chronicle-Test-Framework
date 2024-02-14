@@ -79,7 +79,7 @@ public class BootstrapUtils {
 
         candidatesNames.removeAll(getExcluded());
         if (!candidatesNames.isEmpty()) {
-            System.out.printf("\nPOTENTIAL BOOTSTRAP ISSUES FOUND (%s):\n{%s}", candidatesNames.size(),
+            System.out.printf("\nPOTENTIAL BOOTSTRAP ISSUES FOUND (%s):\n%s", candidatesNames.size(),
                             String.join("\n", candidatesNames));
         }
         return candidatesNames;
