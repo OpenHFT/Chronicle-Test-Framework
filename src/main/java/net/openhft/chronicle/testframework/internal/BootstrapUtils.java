@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("serial")
 public class BootstrapUtils {
 
     private static final String CHRONICLE_ENTERPRISE = "software.chronicle";
