@@ -2,27 +2,28 @@ package net.openhft.chronicle.testframework.internal;
 
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaCodeUnitAccess;
 import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+
 @SuppressWarnings("serial")
 public class BootstrapUtils {
 
     private static final String CHRONICLE_ENTERPRISE = "software.chronicle";
     private static final String CHRONICLE_CORE = "net.openhft.chronicle.core";
-    private static final Set<String> PROTECTED_PACKAGES = new HashSet<String>() {{
-        add(".internal.");
-        add(".impl.");
-    }};
+    private static final Set<String> PROTECTED_PACKAGES = new HashSet<>(asList(
+            ".internal.", ".impl."
+    ));
 
     private final Set<String> excluded;
 
@@ -41,7 +42,7 @@ public class BootstrapUtils {
         return excluded;
     } 
 
-    public static void main(String... args) throws IOException {
+    public static void main(String... args) {
         new BootstrapUtils().scanClasses();
     }
 
@@ -89,8 +90,8 @@ public class BootstrapUtils {
     private static Set<JavaClass> allReferrers(JavaClass cls, Set<JavaClass> visited) {
         if (visited.contains(cls))
             return visited;
-        Set<JavaClass> referrers = cls.getDirectDependenciesToSelf().stream()
-                .map(Dependency::getOriginClass)
+        Set<JavaClass> referrers = cls.getCodeUnitCallsToSelf().stream()
+                .map(JavaCodeUnitAccess::getOriginOwner)
                 .filter(c -> !c.equals(cls))
                 .filter(BootstrapUtils::notProtected)
                 .collect(Collectors.toSet());
@@ -105,8 +106,8 @@ public class BootstrapUtils {
         return PROTECTED_PACKAGES.stream().anyMatch(p -> cls.getName().contains(p));
     }
 
-    private static boolean notProtected(JavaClass c) {
-        return PROTECTED_PACKAGES.stream().noneMatch(p -> c.getName().contains(p));
+    private static boolean notProtected(JavaClass cls) {
+        return PROTECTED_PACKAGES.stream().noneMatch(p -> cls.getName().contains(p));
     }
 
 }
