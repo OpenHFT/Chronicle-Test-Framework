@@ -68,11 +68,8 @@ public class BootstrapUtils {
 
         Set<JavaClass> visited = new HashSet<>();
         Set<JavaClass> candidates = protectedClasses.stream()
-                .flatMap(cls -> allReferrers(cls, visited).stream())
+                .flatMap(cls -> allReferrers(cls, coreNames, visited).stream())
                 .filter(BootstrapUtils::notProtected)
-                .filter(cls -> cls.getDirectDependenciesFromSelf().stream()
-                        .map(Dependency::getTargetClass)
-                        .noneMatch(c -> coreNames.contains(c.getName())))
                 .collect(Collectors.toSet());
         Set<String> candidatesNames = candidates.stream()
                 .map(JavaClass::getName)
@@ -81,23 +78,26 @@ public class BootstrapUtils {
         candidatesNames.removeAll(getExcluded());
         if (!candidatesNames.isEmpty()) {
             System.out.printf("\nPOTENTIAL BOOTSTRAP ISSUES FOUND (%s):\n%s", candidatesNames.size(),
-                            String.join("\n", candidatesNames));
+                    String.join("\n", candidatesNames));
         }
         return candidatesNames;
     }
 
     @NotNull
-    private static Set<JavaClass> allReferrers(JavaClass cls, Set<JavaClass> visited) {
+    private static Set<JavaClass> allReferrers(JavaClass cls, Set<String> coreNames, Set<JavaClass> visited) {
         if (visited.contains(cls))
             return visited;
         Set<JavaClass> referrers = cls.getCodeUnitCallsToSelf().stream()
                 .map(JavaCodeUnitAccess::getOriginOwner)
                 .filter(c -> !c.equals(cls))
                 .filter(BootstrapUtils::notProtected)
+                .filter(c -> c.getDirectDependenciesFromSelf().stream()
+                        .map(Dependency::getTargetClass)
+                        .noneMatch(cl -> coreNames.contains(cl.getName())))
                 .collect(Collectors.toSet());
         visited.add(cls);
         for (JavaClass c : referrers) {
-            visited.addAll(allReferrers(c, visited));
+            visited.addAll(allReferrers(c, coreNames, visited));
         }
         return visited;
     }
