@@ -1,9 +1,6 @@
 package net.openhft.chronicle.testframework.internal;
 
-import com.tngtech.archunit.core.domain.Dependency;
-import com.tngtech.archunit.core.domain.JavaClass;
-import com.tngtech.archunit.core.domain.JavaCodeUnitAccess;
-import com.tngtech.archunit.core.domain.JavaModifier;
+import com.tngtech.archunit.core.domain.*;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +9,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -26,13 +25,21 @@ public class BootstrapUtils {
     ));
 
     private final Set<String> excluded;
+    private final Function<ClassFileImporter, JavaClasses> classesSupplier;
 
     public BootstrapUtils() {
         this.excluded = Collections.emptySet();
+        classesSupplier = cfi -> cfi.importPackages(CHRONICLE_ENTERPRISE, CHRONICLE_CORE);
     }
 
     public BootstrapUtils(Set<String> excluded) {
         this.excluded = excluded;
+        classesSupplier = cfi -> cfi.importPackages(CHRONICLE_ENTERPRISE, CHRONICLE_CORE);
+    }
+
+    public BootstrapUtils(Function<ClassFileImporter, JavaClasses> classesSupplier, Set<String> excluded) {
+        this.excluded = excluded;
+        this.classesSupplier = classesSupplier;
     }
 
     /**
@@ -40,17 +47,20 @@ public class BootstrapUtils {
      */
     protected Set<String> getExcluded() {
         return excluded;
-    } 
+    }
 
-    public static void main(String... args) {
-        new BootstrapUtils().scanClasses();
+    public static void main(String... args) throws Exception {
+        try (JarFile jar = new JarFile("")) {
+            new BootstrapUtils(cfi -> cfi.importJar(jar), Collections.emptySet())
+                    .scanClasses();
+        }
     }
 
     public Set<String> scanClasses() {
-        Set<JavaClass> allClasses = new ClassFileImporter()
-                .withImportOption(new ImportOption.DoNotIncludeTests())
-                .importPackages(CHRONICLE_ENTERPRISE, CHRONICLE_CORE)
-                .stream().filter(cls -> cls.getModifiers().contains(JavaModifier.PUBLIC))
+        Set<JavaClass> allClasses = classesSupplier.apply(new ClassFileImporter()
+                        .withImportOption(new ImportOption.DoNotIncludeTests()))
+                .stream()
+                .filter(cls -> cls.getModifiers().contains(JavaModifier.PUBLIC))
                 .collect(Collectors.toSet());
 
         Set<JavaClass> coreClasses = allClasses.stream()
