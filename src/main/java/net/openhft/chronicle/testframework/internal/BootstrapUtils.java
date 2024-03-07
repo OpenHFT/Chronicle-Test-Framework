@@ -4,6 +4,8 @@ import com.tngtech.archunit.core.domain.*;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,6 +15,7 @@ import java.util.function.Function;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 @SuppressWarnings("serial")
@@ -23,6 +26,7 @@ public class BootstrapUtils {
     private static final Set<String> PROTECTED_PACKAGES = new HashSet<>(asList(
             ".internal.", ".impl."
     ));
+    private final static Logger logger = LoggerFactory.getLogger(BootstrapUtils.class);
 
     private final Set<String> excluded;
     private final Function<ClassFileImporter, JavaClasses> classesSupplier;
@@ -87,8 +91,8 @@ public class BootstrapUtils {
 
         candidatesNames.removeAll(getExcluded());
         if (!candidatesNames.isEmpty()) {
-            System.out.printf("\nPOTENTIAL BOOTSTRAP ISSUES FOUND (%s):\n%s", candidatesNames.size(),
-                    String.join("\n", candidatesNames));
+            logger.error(format("\nPOTENTIAL BOOTSTRAP ISSUES FOUND (%s):\n%s\n", candidatesNames.size(),
+                    String.join("\n", candidatesNames)));
         }
         return candidatesNames;
     }
