@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  *
  * @param <T> The class used to represent thrown exceptions
  */
-@SuppressWarnings("deprecation")
 public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VanillaExceptionTracker.class);
@@ -55,6 +54,71 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         this.exceptionRenderer = exceptionRenderer;
     }
 
+    @Override
+    public void expectException(@NotNull String message) {
+        expectException(k -> containsString(k, message), message);
+    }
+
+    @Override
+    public void expectException(Predicate<T> predicate, String description) {
+        checkFinalised();
+        expectedExceptions.put(predicate, description);
+    }
+
+    @Override
+    public void ignoreException(@NotNull String message) {
+        ignoreException(k -> containsString(k, message), message);
+    }
+
+    @Override
+    public void ignoreException(Predicate<T> predicate, String description) {
+        checkFinalised();
+        ignoredExceptions.put(predicate, description);
+    }
+
+    @Override
+    public boolean hasException(Predicate<T> predicate) {
+        return exceptions.keySet().stream().anyMatch(predicate);
+    }
+
+    @Override
+    public boolean hasException(String message) {
+        return exceptions.keySet().stream().anyMatch(k -> containsString(k, message));
+    }
+
+    @Override
+    public void checkExceptions() {
+        checkFinalised();
+        finalised = true;
+        for (Map.Entry<Predicate<T>, String> expectedException : expectedExceptions.entrySet()) {
+            if (!exceptions.keySet().removeIf(expectedException.getKey()))
+                throw new AssertionError("No error for " + expectedException.getValue());
+        }
+        for (Map.Entry<Predicate<T>, String> ignoredException : ignoredExceptions.entrySet()) {
+            if (exceptions.keySet().removeIf(ignoredException.getKey()))
+                LOGGER.debug("Ignored {}", ignoredException.getValue());
+        }
+
+        if (hasExceptions()) {
+            dumpException();
+
+            final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
+            throw new AssertionError(msg);
+        }
+        resetRunnable.run();
+    }
+
+    /**
+     * Does the exception key match the string
+     *
+     * @param k       The exception key
+     * @param message The string
+     * @return true if the string appears in the message or in that or any of the Throwables in its stack trace
+     */
+    private boolean containsString(T k, String message) {
+        return contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k));
+    }
+
     private static boolean contains(String text, String message) {
         return text != null && text.contains(message);
     }
@@ -78,55 +142,6 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         }
         seenThrowableIDs.add(System.identityHashCode(throwable));
         return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
-    }
-
-    @Override
-    public void expectException(@NotNull String message) {
-        expectException(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)), message);
-    }
-
-    @Override
-    public void expectException(Predicate<T> predicate, String description) {
-        checkFinalised();
-        expectedExceptions.put(predicate, description);
-    }
-
-    @Override
-    public void ignoreException(@NotNull String message) {
-        ignoreException(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)), message);
-    }
-
-    @Override
-    public void ignoreException(Predicate<T> predicate, String description) {
-        checkFinalised();
-        ignoredExceptions.put(predicate, description);
-    }
-
-    @Override
-    public boolean hasException(Predicate<T> predicate) {
-        return exceptions.keySet().stream().anyMatch(predicate);
-    }
-
-    @Override
-    public void checkExceptions() {
-        checkFinalised();
-        finalised = true;
-        for (Map.Entry<Predicate<T>, String> expectedException : expectedExceptions.entrySet()) {
-            if (!exceptions.keySet().removeIf(expectedException.getKey()))
-                throw new AssertionError("No error for " + expectedException.getValue());
-        }
-        for (Map.Entry<Predicate<T>, String> ignoredException : ignoredExceptions.entrySet()) {
-            if (exceptions.keySet().removeIf(ignoredException.getKey()))
-                LOGGER.debug("Ignored {}", ignoredException.getValue());
-        }
-
-        if (hasExceptions()) {
-            dumpException();
-
-            final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
-            throw new AssertionError(msg);
-        }
-        resetRunnable.run();
     }
 
     private boolean hasExceptions() {

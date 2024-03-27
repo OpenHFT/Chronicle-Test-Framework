@@ -86,6 +86,14 @@ public interface ExceptionTracker<T> {
     boolean hasException(Predicate<T> predicate);
 
     /**
+     * Determines if the tracker contains an exception matching the predicate.
+     *
+     * @param message The exception message
+     * @return true if an exception with the specified message is found; false otherwise
+     */
+    boolean hasException(String message);
+
+    /**
      * Call this method in a teardown (@After) phase of the test to:
      * <ul>
      *     <li>Verify no non-ignored exceptions were thrown</li>
