@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  *
  * @param <T> The class used to represent thrown exceptions
  */
-@SuppressWarnings("deprecation")
 public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VanillaExceptionTracker.class);
@@ -55,34 +54,9 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         this.exceptionRenderer = exceptionRenderer;
     }
 
-    private static boolean contains(String text, String message) {
-        return text != null && text.contains(message);
-    }
-
-    /**
-     * Does this Throwable or any of its causes contain the specified text?
-     *
-     * @param text The substring to search for
-     * @return true if there are any matches for it, false otherwise
-     */
-    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable) {
-        return throwableContainsTextRecursive(text, throwable, new HashSet<>());
-    }
-
-    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable, Set<Integer> seenThrowableIDs) {
-        if (throwable == null || seenThrowableIDs.contains(System.identityHashCode(throwable))) {
-            return false;
-        }
-        if (throwable.getMessage() != null && throwable.getMessage().contains(text)) {
-            return true;
-        }
-        seenThrowableIDs.add(System.identityHashCode(throwable));
-        return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
-    }
-
     @Override
     public void expectException(@NotNull String message) {
-        expectException(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)), message);
+        expectException(k -> containsString(k, message), message);
     }
 
     @Override
@@ -93,7 +67,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     @Override
     public void ignoreException(@NotNull String message) {
-        ignoreException(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)), message);
+        ignoreException(k -> containsString(k, message), message);
     }
 
     @Override
@@ -132,6 +106,42 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
             throw new AssertionError(msg);
         }
         resetRunnable.run();
+    }
+
+    /**
+     * Does the exception key match the string
+     *
+     * @param k       The exception key
+     * @param message The string
+     * @return true if the string appears in the message or in that or any of the Throwables in its stack trace
+     */
+    private boolean containsString(T k, String message) {
+        return contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k));
+    }
+
+    private static boolean contains(String text, String message) {
+        return text != null && text.contains(message);
+    }
+
+    /**
+     * Does this Throwable or any of its causes contain the specified text?
+     *
+     * @param text The substring to search for
+     * @return true if there are any matches for it, false otherwise
+     */
+    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable) {
+        return throwableContainsTextRecursive(text, throwable, new HashSet<>());
+    }
+
+    private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable, Set<Integer> seenThrowableIDs) {
+        if (throwable == null || seenThrowableIDs.contains(System.identityHashCode(throwable))) {
+            return false;
+        }
+        if (throwable.getMessage() != null && throwable.getMessage().contains(text)) {
+            return true;
+        }
+        seenThrowableIDs.add(System.identityHashCode(throwable));
+        return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
     }
 
     private boolean hasExceptions() {

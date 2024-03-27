@@ -128,10 +128,19 @@ class VanillaExceptionTrackerTest {
     }
 
     @Test
-    void testHasException() {
+    void testHasExceptionByPredicate() {
         exceptionCounts.put(new ExceptionHolder("was present", null, false), 1);
         assertTrue(vet.hasException(eh -> eh.description.equals("was present")));
         assertFalse(vet.hasException(eh -> eh.description.equals("not present")));
+    }
+
+    @Test
+    void testHasExceptionByMessage() {
+        exceptionCounts.put(new ExceptionHolder("was present", new RuntimeException("Even nested", new Exception("Even deeply nested")), false), 1);
+        assertTrue(vet.hasException("was present"));
+        assertTrue(vet.hasException("Even nested"));
+        assertTrue(vet.hasException("Even deeply nested"));
+        assertFalse(vet.hasException("not present"));
     }
 
     @Test
