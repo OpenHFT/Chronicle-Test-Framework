@@ -85,6 +85,8 @@ public interface ExceptionTracker<T> {
      */
     boolean hasException(Predicate<T> predicate);
 
+    boolean hasException(String message);
+
     /**
      * Call this method in a teardown (@After) phase of the test to:
      * <ul>

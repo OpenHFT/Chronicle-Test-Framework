@@ -108,6 +108,11 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     }
 
     @Override
+    public boolean hasException(String message) {
+        return exceptions.keySet().stream().anyMatch(k -> contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k)));
+    }
+
+    @Override
     public void checkExceptions() {
         checkFinalised();
         finalised = true;
