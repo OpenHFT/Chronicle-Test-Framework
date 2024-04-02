@@ -80,11 +80,16 @@ public class BootstrapUtils {
                 .map(JavaClass::getName)
                 .collect(Collectors.toSet());
 
-        Set<JavaClass> visited = new HashSet<>();
-        Set<JavaClass> candidates = protectedClasses.stream()
-                .flatMap(cls -> allReferrers(cls, coreNames, visited).stream())
+        Set<JavaClass> children = protectedClasses.stream()
+                .flatMap(cls -> cls.getAllSubclasses().stream())
                 .filter(BootstrapUtils::notProtected)
                 .collect(Collectors.toSet());
+
+        Set<JavaClass> candidates = protectedClasses.stream()
+                .flatMap(cls -> allReferrers(cls, coreNames, children).stream())
+                .filter(BootstrapUtils::notProtected)
+                .collect(Collectors.toSet());
+
         Set<String> candidatesNames = candidates.stream()
                 .map(JavaClass::getName)
                 .collect(Collectors.toCollection(TreeSet::new));
