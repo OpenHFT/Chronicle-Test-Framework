@@ -267,7 +267,7 @@
         <connection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git</connection>
         <developerConnection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git
         </developerConnection>
-        <tag>master</tag>
+        <tag>chronicle-test-framework-2.25ea12</tag>
     </scm>
 
 </project>
