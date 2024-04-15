@@ -95,35 +95,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <!-- we want to fail if we depend on any deprecated methods -->
-                    <failOnWarning>true</failOnWarning>
-                    <showWarnings>true</showWarnings>
-                </configuration>
-                <!-- build a multi-release jar -->
-                <executions>
-                    <execution>
-                        <id>java8</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>java11</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <compileSourceRoots>${project.basedir}/src/main/java11</compileSourceRoots>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF/versions/11</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
