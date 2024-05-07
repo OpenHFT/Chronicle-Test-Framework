@@ -82,5 +82,4 @@ public final class CombinationUtil {
                 .limit(newSize)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
 }

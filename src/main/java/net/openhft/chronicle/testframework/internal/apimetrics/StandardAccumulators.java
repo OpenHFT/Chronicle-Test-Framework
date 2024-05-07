@@ -26,5 +26,4 @@ public final class StandardAccumulators {
     static Stream<Supplier<Accumulator>> stream() {
         return Stream.of(PER_METRIC, PER_PACKAGE, PER_CLASS, PER_METHOD_REFERENCE);
     }
-
 }

@@ -44,7 +44,6 @@ public final class Series {
         return SeriesUtil.fibonacci(); // Delegating to internal utility
     }
 
-
     /**
      * Creates and returns a new LongStream of all the prime numbers: 2, 3, 5, 7, ...
      *

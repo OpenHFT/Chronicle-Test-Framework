@@ -70,7 +70,6 @@ final class CombinationDemoTest {
         boolean isValid() {
             return true;
         }
-
     }
 
 }

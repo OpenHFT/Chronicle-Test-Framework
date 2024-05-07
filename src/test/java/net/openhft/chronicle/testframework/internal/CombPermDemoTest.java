@@ -16,5 +16,4 @@ class CombPermDemoTest {
                         .peek(System.out::println)
                         .count());
     }
-
 }

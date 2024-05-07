@@ -115,7 +115,6 @@ class TcpProxyTest {
         return new String(recvBuf.array(), recvBuf.position(), recvBuf.remaining());
     }
 
-
     private void startServerAndProxyAnd(ServerAndProxyBody serverAndProxyConsumer) throws IOException {
         try (final ServerSocketChannel serverSocket = ServerSocketChannel.open().bind(new InetSocketAddress(0));
              final TcpProxy tcpProxy = new TcpProxy(0, (InetSocketAddress) serverSocket.socket().getLocalSocketAddress(), executorService)) {

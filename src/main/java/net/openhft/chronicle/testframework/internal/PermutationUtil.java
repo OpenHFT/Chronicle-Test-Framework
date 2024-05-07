@@ -69,5 +69,4 @@ public final class PermutationUtil {
     public static <T> Stream<List<T>> of(final Stream<T> items) {
         return of((T[]) items.toArray());
     }
-
 }

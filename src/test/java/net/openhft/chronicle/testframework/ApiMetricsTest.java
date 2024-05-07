@@ -27,7 +27,5 @@ class ApiMetricsTest {
         apiMetrics.internalAccumulators()
                 .forEach(System.out::println);
 
-
     }
-
 }

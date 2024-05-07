@@ -119,13 +119,11 @@ final class StandardDtoTester<T> implements DtoTester {
             throw new AssertionError("Validation did not pass despite having applied " + applied + " -> " + t, e);
         }
 
-
         for (NamedMutator<T> namedMutator : builder.optionalMutators()) {
             namedMutator.mutator().accept(t);
             // We shall also pass validation using any and all optional mutators
             builder.validator().accept(t);
         }
-
     }
 
     private void assertOptionalsDoesNotPass(@NotNull final Set<NamedMutator<T>> set) {
@@ -143,8 +141,6 @@ final class StandardDtoTester<T> implements DtoTester {
                 // Happy path
             }
         }
-
-
     }
 
     private Collection<String> check(final Consumer<? super T> postMutatorAction,

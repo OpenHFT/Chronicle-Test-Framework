@@ -124,5 +124,4 @@ class DtoTesterDemoTest {
     interface Validatable {
         void validate();
     }
-
 }

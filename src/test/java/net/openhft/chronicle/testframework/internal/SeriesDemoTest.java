@@ -31,5 +31,4 @@ class SeriesDemoTest {
     private static void print(Supplier<LongStream> supplier) {
         System.out.println(Arrays.toString(supplier.get().toArray()));
     }
-
 }

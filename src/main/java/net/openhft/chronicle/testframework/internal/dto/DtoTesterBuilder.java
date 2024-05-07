@@ -95,7 +95,6 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         return new StandardDtoTester<>(this);
     }
 
-
     Class<T> type() {
         return type;
     }
@@ -153,11 +152,9 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
             super(name, predicate);
         }
 
-
         Predicate<? super T> predicate() {
             return holder();
         }
-
     }
 
     abstract static class AbstractNamedHolderRecord<H> {
@@ -188,6 +185,4 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
                     '}';
         }
     }
-
-
 }

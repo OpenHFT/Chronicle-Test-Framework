@@ -69,7 +69,6 @@ public final class ProductUtil {
                                 .map(v -> constructor.apply(t, u, v)))));
     }
 
-
     public static final class Product2Impl<T, U> implements Product.Product2<T, U> {
 
         private final T first;
@@ -117,13 +116,11 @@ public final class ProductUtil {
         }
     }
 
-
     public static final class Product3Impl<T, U, V> implements Product.Product3<T, U, V> {
 
         private final T first;
         private final U second;
         private final V third;
-
 
         public Product3Impl(T first, U second, V third) {
             this.first = first;
@@ -166,7 +163,6 @@ public final class ProductUtil {
             return result;
         }
 
-
         @Override
         public String toString() {
             return "Product3Impl{" +
@@ -176,6 +172,4 @@ public final class ProductUtil {
                     '}';
         }
     }
-
-
 }

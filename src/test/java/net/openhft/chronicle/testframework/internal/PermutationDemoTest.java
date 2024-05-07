@@ -58,7 +58,6 @@ final class PermutationDemoTest {
                 });
     }
 
-
     static final class MyBean {
 
         int a;
