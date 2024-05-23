@@ -85,8 +85,6 @@ public interface ExceptionTracker<T> {
      */
     boolean hasException(Predicate<T> predicate);
 
-    boolean hasException(String message);
-
     /**
      * Determines if the tracker contains an exception matching the predicate.
      *
