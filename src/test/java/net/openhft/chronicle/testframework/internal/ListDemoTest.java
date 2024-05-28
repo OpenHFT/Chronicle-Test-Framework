@@ -39,7 +39,6 @@ public class ListDemoTest {
                     Stack::new,
                     Vector::new);
 
-
     @TestFactory
     Stream<DynamicTest> validate() {
         return DynamicTest.stream(Combination.of(OPERATIONS)
@@ -108,7 +107,6 @@ public class ListDemoTest {
         assertEquals(1957, poc6);
 
     }
-
 
     private static final class Tuple<T> {
         private final T first;

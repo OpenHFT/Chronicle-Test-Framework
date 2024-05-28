@@ -38,7 +38,6 @@ class SeriesTest {
         test(expected, Series::primes);
     }
 
-
     private static void test(final long[] expected,
                              final Supplier<LongStream> supplier) {
         final long[] actual = supplier.get()

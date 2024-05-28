@@ -123,5 +123,4 @@ public class BootstrapUtils {
     private static boolean notProtected(JavaClass cls) {
         return PROTECTED_PACKAGES.stream().noneMatch(p -> cls.getName().contains(p));
     }
-
 }

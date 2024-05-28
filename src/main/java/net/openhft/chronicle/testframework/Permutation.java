@@ -127,5 +127,4 @@ public final class Permutation {
     public static <T> Stream<List<T>> of(@NotNull final Stream<T> items) {
         return PermutationUtil.of(items);
     }
-
 }

@@ -27,7 +27,6 @@ public final class SeriesUtil {
         );
     }
 
-
     public static LongStream primes() {
         return LongStream.iterate(2, i -> i + 1)
                 .filter(SeriesUtil::isPrime);

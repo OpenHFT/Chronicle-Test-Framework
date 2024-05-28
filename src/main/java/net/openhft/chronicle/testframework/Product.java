@@ -255,7 +255,6 @@ public final class Product {
         return ProductUtil.of(ts, us, vs, constructor);
     }
 
-
     /**
      * Function interface representing a function that accepts three arguments and produces a result.
      *
@@ -279,7 +278,6 @@ public final class Product {
          */
         R apply(T t, U u, V v);
     }
-
 
     /**
      * An interface representing an object that has a first component.

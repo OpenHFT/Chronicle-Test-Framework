@@ -6,11 +6,11 @@
  *
  * <p>This package enables users to create customized metrics or utilize standard
  * metrics, aggregate the results through accumulators, and build and execute
- * analysis through the ApiMetricsBuilder.</p>
+ * analysis through the ApiMetricsBuilder.
  *
  * <p>Example usage might include analyzing code for compliance with specific
  * coding standards, detecting patterns, or generating reports for code quality
- * assurance.</p>
+ * assurance.
  *
  * @see net.openhft.chronicle.testframework.apimetrics.ApiMetrics
  * @see net.openhft.chronicle.testframework.apimetrics.Accumulator

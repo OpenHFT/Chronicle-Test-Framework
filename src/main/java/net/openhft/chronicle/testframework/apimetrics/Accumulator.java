@@ -37,7 +37,6 @@ public interface Accumulator {
 
     Map<String, Map<String, Double>> result2();
 
-
     static Accumulator of(String columnName,
                           Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor) {
         requireNonNull(columnName);
@@ -85,5 +84,4 @@ public interface Accumulator {
     static Supplier<Accumulator> perClassAndMetric() {
         return StandardAccumulators.PER_CLASS_AND_METRIC;
     }
-
 }

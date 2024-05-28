@@ -45,5 +45,4 @@ public interface ThrowingConsumer<T, X extends Exception> {
         requireNonNull(throwingConsumer);
         return new VanillaThrowingConsumer<>(throwingConsumer);
     }
-
 }

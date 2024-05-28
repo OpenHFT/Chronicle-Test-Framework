@@ -167,6 +167,7 @@ public class Waiters {
      */
     public static class ConditionNotMetException extends RuntimeException {
         private static final long serialVersionUID = 2827672436814649510L;
+        @SuppressWarnings("serial")
         private final Object lastValue;
 
         /**

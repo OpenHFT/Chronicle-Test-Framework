@@ -122,5 +122,4 @@ final class CombinationTest {
 
         assertEquals(expected, actual);
     }
-
 }
