@@ -3,8 +3,6 @@ package net.openhft.chronicle.testframework.internal.network.proxy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +14,10 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static net.openhft.chronicle.testframework.ExecutorServiceUtil.shutdownAndWaitForTermination;
-import static net.openhft.chronicle.testframework.NetworkUtil.getAvailablePort;
 import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 import static net.openhft.chronicle.testframework.Waiters.waitForCondition;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledOnOs(value = OS.MAC, disabledReason = "MacOS loopback strangeness causes intermittent failures")
 class TcpProxyTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpProxy.class);
@@ -37,7 +32,7 @@ class TcpProxyTest {
 
     @AfterEach
     void tearDown() {
-        shutdownAndWaitForTermination(executorService);
+        executorService.shutdownNow();
     }
 
     @Test
@@ -118,6 +113,7 @@ class TcpProxyTest {
     private void startServerAndProxyAnd(ServerAndProxyBody serverAndProxyConsumer) throws IOException {
         try (final ServerSocketChannel serverSocket = ServerSocketChannel.open().bind(new InetSocketAddress(0));
              final TcpProxy tcpProxy = new TcpProxy(0, (InetSocketAddress) serverSocket.socket().getLocalSocketAddress(), executorService)) {
+            tcpProxy.stopForwardingTrafficAndPauseNewConnections();
             LOGGER.info("Server listening on " + serverSocket.socket().getLocalSocketAddress());
             executorService.submit(tcpProxy);
             waitForCondition("TCP proxy didn't open", tcpProxy::isOpen, TIMEOUT_MS);
@@ -131,6 +127,7 @@ class TcpProxyTest {
             waitForCondition("TCP proxy didn't open", tcpProxy::isOpen, TIMEOUT_MS);
             clientSocket.configureBlocking(false);
             final InetSocketAddress remote = tcpProxy.socketAddress();
+            tcpProxy.acceptNewConnections();
             LOGGER.info("Client connecting to " + remote);
             clientSocket.connect(new InetSocketAddress("localhost", remote.getPort()));
             long endTime = System.currentTimeMillis() + TIMEOUT_MS;
