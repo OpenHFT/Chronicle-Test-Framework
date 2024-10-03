@@ -7,6 +7,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("deprecation")
 class BootstrapUtilsTest {
     @Test
     void testPotentialBootstrapIssues() {

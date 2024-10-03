@@ -3,6 +3,7 @@ package net.openhft.chronicle.testframework.internal;
 import com.tngtech.archunit.core.domain.*;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import net.openhft.chronicle.testframework.internal.codestructure.CodeStructureVerifier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,10 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
+/**
+ * @deprecated To be replaced by {@link CodeStructureVerifier}.
+ */
+@Deprecated(/* to be removed in x.28 and replaced with BootstrapTestRunner */)
 @SuppressWarnings("serial")
 public class BootstrapUtils {
 
