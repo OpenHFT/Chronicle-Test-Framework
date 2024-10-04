@@ -145,13 +145,6 @@ public class CodeStructureVerifier {
         }
 
         /**
-         * Set up default imports to scan that will cover most use cases and be used in most tests.
-         */
-        public Builder defaultImports() {
-            throw new UnsupportedOperationException("Not yet implemented");
-        }
-
-        /**
          * Install default set of project wide rules.
          */
         private void installDefaultRules() {
@@ -175,7 +168,6 @@ public class CodeStructureVerifier {
         private void skipClasses() {
             importOptions.add(location -> {
                 String className = parseClassName(location.asURI());
-
                 return !classesToExclude.contains(className);
             });
         }

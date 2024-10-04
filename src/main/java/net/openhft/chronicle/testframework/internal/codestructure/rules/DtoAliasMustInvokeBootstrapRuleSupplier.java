@@ -64,11 +64,11 @@ public class DtoAliasMustInvokeBootstrapRuleSupplier implements Supplier<ArchRul
         private static long getMethodInvocationsFromCodeUnits(List<JavaCodeUnit> codeUnits, String methodTarget) {
             long totalCount = 0;
             for (JavaCodeUnit staticBlock : codeUnits) {
-                long coreBootstrapCallCount = staticBlock.getMethodCallsFromSelf().stream().filter(javaMethodCall -> {
+                long callCount = staticBlock.getMethodCallsFromSelf().stream().filter(javaMethodCall -> {
                     AccessTarget.MethodCallTarget target = javaMethodCall.getTarget();
                     return target.getFullName().equals(methodTarget);
                 }).count();
-                totalCount += coreBootstrapCallCount;
+                totalCount += callCount;
             }
             return totalCount;
         }
