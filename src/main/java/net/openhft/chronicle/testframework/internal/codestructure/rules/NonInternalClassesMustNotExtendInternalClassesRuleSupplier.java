@@ -17,17 +17,22 @@ public class NonInternalClassesMustNotExtendInternalClassesRuleSupplier implemen
 
     @Override
     public ArchRule get() {
-        return classes().that().resideOutsideOfPackage("..internal..").should(new ArchCondition<JavaClass>("not extend internal classes") {
-            @Override
-            public void check(JavaClass javaClass, ConditionEvents events) {
-                if (javaClass.getSuperclass().isPresent()) {
-                    String fullName = javaClass.getSuperclass().get().getName();
-                    boolean packageIsInternal = fullName.matches(RuleUtil.INTERNAL_PACKAGE_REGEX);
-                    events.add(new SimpleConditionEvent(javaClass, !packageIsInternal,
-                            String.format("The non-internal class %s extends internal class %s", javaClass.getName(), fullName)));
-                }
-            }
-        }).allowEmptyShould(true);
+        return classes()
+                .that()
+                .resideOutsideOfPackage("..internal..")
+                .and()
+                .resideOutsideOfPackage("..impl..")
+                .should(new ArchCondition<JavaClass>("not extend internal classes") {
+                    @Override
+                    public void check(JavaClass javaClass, ConditionEvents events) {
+                        if (javaClass.getSuperclass().isPresent()) {
+                            String fullName = javaClass.getSuperclass().get().getName();
+                            boolean packageIsInternal = fullName.matches(RuleUtil.INTERNAL_PACKAGE_REGEX);
+                            events.add(new SimpleConditionEvent(javaClass, !packageIsInternal,
+                                    String.format("The non-internal class %s extends internal class %s", javaClass.getName(), fullName)));
+                        }
+                    }
+                }).allowEmptyShould(true);
     }
 
 }
