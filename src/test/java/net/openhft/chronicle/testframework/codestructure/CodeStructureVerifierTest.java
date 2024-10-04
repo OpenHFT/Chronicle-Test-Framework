@@ -1,6 +1,7 @@
 package net.openhft.chronicle.testframework.codestructure;
 
 import net.openhft.chronicle.testframework.internal.codestructure.CodeStructureVerifier;
+import net.openhft.chronicle.testframework.internal.codestructure.rules.DtoAliasMustInvokeBootstrapRuleSupplier;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +9,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CodeStructureVerifierTest {
 
-    @Test
-    public void builderWithImproperArgumentsShouldFail() {
-        assertThrows(IllegalArgumentException.class, () -> CodeStructureVerifier.builder().build().verify(), "Cannot build test runner with no packages");
+    @Nested
+    class BuilderTests {
+
+        @Test
+        public void builderWithImproperArgumentsShouldFail() {
+            assertThrows(IllegalArgumentException.class, () -> CodeStructureVerifier.builder().build().verify(), "Cannot build test runner with no packages");
+        }
+
+        @Test
+        void explicitlySkippingRuleShouldRemoveItFromTheRuleSet() {
+            CodeStructureVerifier.builder()
+                    .importClass(net.openhft.chronicle.testframework.codestructure.broken.DtoAlias.class) // This would break if the rule wasn't skipped
+                    .skipRule(new DtoAliasMustInvokeBootstrapRuleSupplier().get()) // Skip this rule
+                    .build()
+                    .verify();
+        }
+
     }
 
     @Nested
@@ -45,6 +60,26 @@ class CodeStructureVerifierTest {
         @Test
         void shouldBeAbleToDelegateToInternalClass() {
             CodeStructureVerifier.builder().importClass(DelegatesToInternal.class).build().verify();
+        }
+
+    }
+
+    @Nested
+    class DtoAliasMustInvokeBootstrapRuleTests {
+
+        @Test
+        void compliantDtoAlias() {
+            CodeStructureVerifier.builder().importClass(net.openhft.chronicle.testframework.codestructure.DtoAlias.class).build().verify();
+        }
+
+        @Test
+        void nonCompliantDtoAlias() {
+            assertThrows(
+                    AssertionError.class,
+                    () -> CodeStructureVerifier.builder().importClass(net.openhft.chronicle.testframework.codestructure.broken.DtoAlias.class).build().verify(),
+                    "The class net.openhft.chronicle.testframework.codestructure.broken.DtoAlias does not contain one call to net.openhft.chronicle.core.Bootstrap.bootstrap()\n" +
+                            "The class net.openhft.chronicle.testframework.codestructure.broken.DtoAlias does not contain one call to net.openhft.chronicle.testframework.codestructure.broken.Bootstrap.bootstrap()"
+            );
         }
 
     }

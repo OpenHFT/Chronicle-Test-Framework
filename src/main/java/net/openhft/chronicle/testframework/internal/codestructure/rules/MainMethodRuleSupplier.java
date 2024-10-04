@@ -1,4 +1,4 @@
-package net.openhft.chronicle.testframework.internal.codestructure;
+package net.openhft.chronicle.testframework.internal.codestructure.rules;
 
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.*;

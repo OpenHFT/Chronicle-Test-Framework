@@ -1,4 +1,4 @@
-package net.openhft.chronicle.testframework.internal.codestructure;
+package net.openhft.chronicle.testframework.internal.codestructure.rules;
 
 /**
  * Utility class for sharing rule logic.

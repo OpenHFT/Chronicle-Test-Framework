@@ -4,6 +4,9 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.CompositeArchRule;
+import net.openhft.chronicle.testframework.internal.codestructure.rules.DtoAliasMustInvokeBootstrapRuleSupplier;
+import net.openhft.chronicle.testframework.internal.codestructure.rules.MainMethodRuleSupplier;
+import net.openhft.chronicle.testframework.internal.codestructure.rules.NonInternalClassesMustNotExtendInternalClassesRuleSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +71,7 @@ public class CodeStructureVerifier {
      */
     public static class Builder {
 
+        private final Set<ArchRule> rulesToSkip = new HashSet<>();
         private final Set<ArchRule> rules = new HashSet<>();
         private Class<?> clazz;
         private String[] packages;
@@ -78,6 +82,15 @@ public class CodeStructureVerifier {
         public Builder withRule(ArchRule rule) {
             if (rule == null) throw new NullPointerException("rule cannot be null");
             rules.add(rule);
+            return this;
+        }
+
+        /**
+         * Skip a specific rule.
+         */
+        public Builder skipRule(ArchRule rule) {
+            if (rule == null) throw new NullPointerException("rule cannot be null");
+            rulesToSkip.add(rule);
             return this;
         }
 
@@ -113,6 +126,7 @@ public class CodeStructureVerifier {
         private void installDefaultRules() {
             rules.add(new MainMethodRuleSupplier().get());
             rules.add(new NonInternalClassesMustNotExtendInternalClassesRuleSupplier().get());
+            rules.add(new DtoAliasMustInvokeBootstrapRuleSupplier().get());
         }
 
         private JavaClasses getJavaClasses() {
@@ -128,10 +142,21 @@ public class CodeStructureVerifier {
         }
 
         /**
+         * Skips rules if skipping has been specified. Unfortunately comparing descriptions of the skippable rules and
+         * the pre-configured rules is the only way to check for equivalence.
+         */
+        private void skipRules() {
+            for (ArchRule ruleToSkip : rulesToSkip) {
+                rules.removeIf(rule -> rule.getDescription().equals(ruleToSkip.getDescription()));
+            }
+        }
+
+        /**
          * Build the {@link CodeStructureVerifier} instance.
          */
         public CodeStructureVerifier build() {
             installDefaultRules();
+            skipRules();
             JavaClasses javaClasses;
             javaClasses = getJavaClasses();
             return new CodeStructureVerifier(javaClasses, rules);
