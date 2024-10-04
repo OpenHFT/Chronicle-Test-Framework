@@ -157,8 +157,7 @@ public class CodeStructureVerifier {
         public CodeStructureVerifier build() {
             installDefaultRules();
             skipRules();
-            JavaClasses javaClasses;
-            javaClasses = getJavaClasses();
+            JavaClasses javaClasses = getJavaClasses();
             return new CodeStructureVerifier(javaClasses, rules);
         }
 

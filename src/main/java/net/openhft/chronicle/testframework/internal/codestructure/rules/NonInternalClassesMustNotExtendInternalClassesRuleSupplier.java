@@ -23,7 +23,8 @@ public class NonInternalClassesMustNotExtendInternalClassesRuleSupplier implemen
                 if (javaClass.getSuperclass().isPresent()) {
                     String fullName = javaClass.getSuperclass().get().getName();
                     boolean packageIsInternal = fullName.matches(RuleUtil.INTERNAL_PACKAGE_REGEX);
-                    events.add(new SimpleConditionEvent(javaClass, !packageIsInternal, "Non-internal class extends internal class"));
+                    events.add(new SimpleConditionEvent(javaClass, !packageIsInternal,
+                            String.format("The non-internal class %s extends internal class %s", javaClass.getName(), fullName)));
                 }
             }
         }).allowEmptyShould(true);

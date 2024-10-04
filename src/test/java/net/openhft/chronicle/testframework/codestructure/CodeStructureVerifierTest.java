@@ -26,6 +26,12 @@ class CodeStructureVerifierTest {
                     .verify();
         }
 
+        @Test
+        void scanEverythingInPackageAndFindArchitectureErrors() {
+            String packageToScan = this.getClass().getPackage().getName();
+            assertThrows(AssertionError.class, () -> CodeStructureVerifier.builder().importPackages(packageToScan).build().verify(), "Architecture Violation [Priority: MEDIUM]");
+        }
+
     }
 
     @Nested
