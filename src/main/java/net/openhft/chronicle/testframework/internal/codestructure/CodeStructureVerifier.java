@@ -2,6 +2,7 @@ package net.openhft.chronicle.testframework.internal.codestructure;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.CompositeArchRule;
 import net.openhft.chronicle.testframework.internal.codestructure.rules.DtoAliasMustInvokeBootstrapRuleSupplier;
@@ -71,6 +72,7 @@ public class CodeStructureVerifier {
      */
     public static class Builder {
 
+        private final Set<ImportOption> importOptions = new HashSet<>();
         private final Set<ArchRule> rulesToSkip = new HashSet<>();
         private final Set<ArchRule> rules = new HashSet<>();
         private Class<?> clazz;
@@ -91,6 +93,11 @@ public class CodeStructureVerifier {
         public Builder skipRule(ArchRule rule) {
             if (rule == null) throw new NullPointerException("rule cannot be null");
             rulesToSkip.add(rule);
+            return this;
+        }
+
+        public Builder skipTests() {
+            importOptions.add(new ImportOption.DoNotIncludeTests());
             return this;
         }
 
@@ -131,10 +138,11 @@ public class CodeStructureVerifier {
 
         private JavaClasses getJavaClasses() {
             JavaClasses javaClasses;
+            ClassFileImporter classFileImporter = new ClassFileImporter(importOptions);
             if (clazz != null) {
-                javaClasses = new ClassFileImporter().importClasses(clazz);
+                javaClasses = classFileImporter.importClasses(clazz);
             } else if (packages != null && packages.length > 0) {
-                javaClasses = new ClassFileImporter().importPackages(packages);
+                javaClasses = classFileImporter.importPackages(packages);
             } else {
                 throw new IllegalArgumentException("Cannot build test runner with no packages");
             }
