@@ -27,9 +27,34 @@ class CodeStructureVerifierTest {
         }
 
         @Test
+        void explicitlyExcludeAClassShouldStopItFromFailingATest() {
+            CodeStructureVerifier.builder()
+                    .importClass(net.openhft.chronicle.testframework.codestructure.broken.DtoAlias.class) // This would break if the class wasn't excluded from scanning
+                    .skipClass(net.openhft.chronicle.testframework.codestructure.broken.DtoAlias.class) // Skip this class
+                    .build()
+                    .verify();
+        }
+
+        @Test
         void scanEverythingInPackageAndFindArchitectureErrors() {
             String packageToScan = this.getClass().getPackage().getName();
             assertThrows(AssertionError.class, () -> CodeStructureVerifier.builder().importPackages(packageToScan).build().verify(), "Architecture Violation [Priority: MEDIUM]");
+        }
+
+        /**
+         * If this test fails you likely need to add another call to {@link CodeStructureVerifier.Builder#skipClass(Class)}.
+         */
+        @Test
+        void scanEverythingInPackageButSkipAllBrokenClasses() {
+            String packageToScan = this.getClass().getPackage().getName();
+            CodeStructureVerifier.builder()
+                    .importPackages(packageToScan)
+                    .skipClass(NonCompliantMainNoStaticBlock.class)
+                    .skipClass(net.openhft.chronicle.testframework.codestructure.DtoAlias.class)
+                    .skipClass(net.openhft.chronicle.testframework.codestructure.broken.DtoAlias.class)
+                    .skipClass(ExtendsInternal.class)
+                    .build()
+                    .verify();
         }
 
     }

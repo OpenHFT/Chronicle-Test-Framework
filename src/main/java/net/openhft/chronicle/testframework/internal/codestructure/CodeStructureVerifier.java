@@ -11,6 +11,9 @@ import net.openhft.chronicle.testframework.internal.codestructure.rules.NonInter
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,6 +78,7 @@ public class CodeStructureVerifier {
         private final Set<ImportOption> importOptions = new HashSet<>();
         private final Set<ArchRule> rulesToSkip = new HashSet<>();
         private final Set<ArchRule> rules = new HashSet<>();
+        private final Set<String> classesToExclude = new HashSet<>();
         private Class<?> clazz;
         private String[] packages;
 
@@ -120,6 +124,26 @@ public class CodeStructureVerifier {
             return this;
         }
 
+        private static String parseClassName(URI fileUri) {
+            // Convert URI to Path
+            Path path = Paths.get(fileUri);
+            // Remove the base path up to the classes directory
+            Path relativePath = path.subpath(path.getNameCount() - 7, path.getNameCount());
+            // Remove the ".class" extension
+            String classNamePath = relativePath.toString().replace(".class", "");
+            // Convert path separators to dots
+            String className = classNamePath.replace('/', '.').replace('\\', '.');
+            className = className.replaceFirst("^target\\.classes\\.", "");
+            className = className.replaceFirst("^test-classes\\.", "");
+            return className;
+        }
+
+        public Builder skipClass(Class<?> clazz) {
+            if (clazz == null) throw new NullPointerException("clazz cannot be null");
+            classesToExclude.add(clazz.getName());
+            return this;
+        }
+
         /**
          * Set up default imports to scan that will cover most use cases and be used in most tests.
          */
@@ -137,16 +161,23 @@ public class CodeStructureVerifier {
         }
 
         private JavaClasses getJavaClasses() {
-            JavaClasses javaClasses;
+            skipClasses();
             ClassFileImporter classFileImporter = new ClassFileImporter(importOptions);
             if (clazz != null) {
-                javaClasses = classFileImporter.importClasses(clazz);
+                return classFileImporter.importClasses(clazz);
             } else if (packages != null && packages.length > 0) {
-                javaClasses = classFileImporter.importPackages(packages);
+                return classFileImporter.importPackages(packages);
             } else {
                 throw new IllegalArgumentException("Cannot build test runner with no packages");
             }
-            return javaClasses;
+        }
+
+        private void skipClasses() {
+            importOptions.add(location -> {
+                String className = parseClassName(location.asURI());
+
+                return !classesToExclude.contains(className);
+            });
         }
 
         /**
