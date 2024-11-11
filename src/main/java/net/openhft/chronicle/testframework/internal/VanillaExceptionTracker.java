@@ -99,10 +99,17 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
                 LOGGER.debug("Ignored {}", ignoredException.getValue());
         }
 
-        if (hasExceptions()) {
+        Set<T> unexpectedExceptions = exceptions.keySet()
+            .stream().filter(ignorePredicate.negate()).collect(Collectors.toSet());
+
+        if (!unexpectedExceptions.isEmpty()) {
             dumpException();
 
-            final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
+            final String msg =
+                unexpectedExceptions.size() + " unexpected exceptions were detected: " +
+                unexpectedExceptions.stream()
+                    .map(messageExtractor)
+                    .collect(Collectors.joining(", "));
             throw new AssertionError(msg);
         }
         resetRunnable.run();
