@@ -13,6 +13,17 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Collects metric weights during API analysis.
+ *
+ * <p>Instances are supplied with {@link Metric metrics} by
+ * {@link ApiMetrics} as classes and members are scanned. Each call to
+ * {@link #accept(Metric, ClassInfo, HasName)} adds the metric's weight to a
+ * running total under keys derived from the analysed element.</p>
+ *
+ * <p>Aggregated results may then be obtained as overall totals or grouped
+ * views via {@link #result()}, {@link #result1()} and {@link #result2()}.</p>
+ */
 public interface Accumulator {
 
     /**
@@ -45,20 +56,23 @@ public interface Accumulator {
     /**
      * Returns the aggregation grouped by the first column only.
      * <p>
-     * The returned map is unmodifiable and may contain a {@code null} key when
-     * a key extractor yields {@code null}.
+     * Keys are derived from the first key extractor and each value is the sum
+     * of metric weights for that key. The returned map is unmodifiable and may
+     * contain a {@code null} key when a key extractor yields {@code null}.
      *
-     * @return map of first column keys to totals
+     * @return map from first column keys to aggregated weights
      */
     Map<String, Double> result1();
 
     /**
      * Returns the aggregation grouped by the first and second columns.
      * <p>
-     * Implementations that do not support two-level grouping must throw
-     * {@link UnsupportedOperationException}.
+     * The outer map is keyed by values from the first extractor and the inner
+     * map is keyed by the second. Each entry holds the sum of metric weights for
+     * that pair. Implementations that do not support two-level grouping must
+     * throw {@link UnsupportedOperationException}.
      *
-     * @return nested map of column keys to totals
+     * @return nested map from first and second keys to aggregated weights
      * @throws UnsupportedOperationException if two-level grouping is not supported
      */
     Map<String, Map<String, Double>> result2();
@@ -153,7 +167,8 @@ public interface Accumulator {
      * Convenience factory for an accumulator per method.
      *
      * <p>Each call returns a supplier that creates a fresh accumulator grouping
-     * metrics by method signature.</p>
+     * metrics by the fully qualified method signature, including parameter
+     * types.</p>
      *
      * @return supplier for the standard per-method accumulator
      */
@@ -164,8 +179,9 @@ public interface Accumulator {
     /**
      * Convenience factory for an accumulator per class and metric.
      *
-     * <p>The resulting accumulator groups first by class name and then by
-     * metric, providing a class-centric view of the analysis.</p>
+     * <p>The resulting accumulator groups first by class name and then by the
+     * metric's identifying name, providing a class-centric view of the
+     * analysis.</p>
      *
      * @return supplier for the standard per-class and metric accumulator
      */
