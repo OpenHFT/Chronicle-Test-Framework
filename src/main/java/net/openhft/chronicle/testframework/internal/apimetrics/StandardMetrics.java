@@ -10,6 +10,34 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/**
+ * Provides the standard metrics used for API analysis.
+ *
+ * <p>The metrics examine class, method and field characteristics:
+ * <ul>
+ *   <li>{@link #CLASS_PUBLIC} - public classes (weight 10).</li>
+ *   <li>{@link #CLASS_PROTECTED} - protected classes (weight 5).</li>
+ *   <li>{@link #CLASS_EXTENDABLE_ACROSS_PACKAGE_BOUNDARIES}
+ *       - public or protected classes that are neither final nor enums
+ *       (weight 20).</li>
+ *   <li>{@link #METHOD_PUBLIC} - public methods (weight 2).</li>
+ *   <li>{@link #METHOD_PROTECTED} - protected methods (weight 1).</li>
+ *   <li>{@link #METHOD_PUBLIC_AND_OVERRIDABLE}
+ *       - public methods that may be overridden because neither the method
+ *       nor its declaring class is final or an enum (weight 3).</li>
+ *   <li>{@link #METHOD_PROTECTED_AND_OVERRIDABLE}
+ *       - protected methods that may be overridden when the class is not final
+ *       or an enum (weight 2).</li>
+ *   <li>{@link #FIELD_PUBLIC}
+ *       - public, non-static, non-final fields excluding enum constants
+ *       (weight 5).</li>
+ *   <li>{@link #FIELD_PUBLIC_STATIC_FINAL}
+ *       - public static final fields excluding enum constants (weight 2).</li>
+ *   <li>{@link #FIELD_PROTECTED} - protected fields (weight 2).</li>
+ * </ul>
+ * This class cannot be instantiated.
+ */
+
 final class StandardMetrics {
 
     static final Metric<ClassInfo> CLASS_PUBLIC = Metric.of(ClassInfo.class, predicateOfClass(Modifier::isPublic), "Class Public", 10);
