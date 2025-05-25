@@ -228,3 +228,16 @@ Stream<DynamicTest> demo() {
             });
 }
 ----
+
+== API Metrics Accumulators
+
+The framework includes a small set of predefined accumulator suppliers used by the API metrics analysis. They help to group metric counts in common ways.
+
+* `perMethod()` groups by the full method signature so that overloaded methods are reported separately.
+* `perClassAndMetric()` groups first by class and then by metric, giving a table of metric totals for each class.
+* `PER_METRIC` provides totals for each metric across all classes.
+* `PER_CLASS` totals all metrics for each class without distinction.
+* `PER_PACKAGE` reports a single total for each package.
+* `PER_METHOD_REFERENCE` groups by method name only, ignoring parameter types.
+
+The convenience factories in `Accumulator` expose the first two suppliers for general use. The others are mainly for internal analyses but may be reused when custom behaviour is needed.
