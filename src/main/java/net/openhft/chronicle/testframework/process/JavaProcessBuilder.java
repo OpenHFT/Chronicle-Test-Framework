@@ -5,6 +5,22 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Builder for launching a separate Java process.
+ * <p>
+ * Typical usage is:
+ * <pre>
+ * {@code
+ * JavaProcessBuilder.create(MyMain.class)
+ *         .withJvmArguments("-Xmx1g")
+ *         .withProgramArguments("arg1", "arg2")
+ *         .start();
+ * }
+ * </pre>
+ * When {@link #inheritingIO()} is used the spawned process shares the same
+ * standard streams, which is handy when running locally but can upset the
+ * Maven Surefire and Failsafe plugins. Use with caution in CI.
+ */
 public interface JavaProcessBuilder {
 
     /**
