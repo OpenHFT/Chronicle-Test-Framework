@@ -15,7 +15,12 @@ import java.util.stream.Collectors;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
- * Defines an ArchUnit rule that enforces the presence of a static block that calls DtoAlias.init() in classes that contain a main method.
+ * ArchUnit rule ensuring every class with a main method has a static
+ * initialiser that calls {@code DtoAlias.init()}.
+ * <p>
+ * A main method is a static method named {@code main} that accepts one
+ * {@code String[]} parameter. The static block registers alias metadata
+ * before {@code main} runs.
  */
 public class MainMethodRuleSupplier implements Supplier<ArchRule> {
 
@@ -24,6 +29,11 @@ public class MainMethodRuleSupplier implements Supplier<ArchRule> {
         return classes().that().containAnyMethodsThat(new MainMethodPredicate()).should(new ContainsStaticBlockCondition()).allowEmptyShould(true);
     }
 
+    /**
+     * Matches methods regarded as a main method.
+     * A method qualifies if it is static, named {@code main}
+     * and takes one {@code String[]} parameter.
+     */
     private static class MainMethodPredicate extends DescribedPredicate<JavaMethod> {
         public MainMethodPredicate() {
             super("are static main methods");
@@ -39,6 +49,10 @@ public class MainMethodRuleSupplier implements Supplier<ArchRule> {
         }
     }
 
+    /**
+     * Checks the presence of a static block calling {@code DtoAlias.init()}.
+     * This ensures alias information is loaded before any main method runs.
+     */
     private static class ContainsStaticBlockCondition extends ArchCondition<JavaClass> {
 
         public ContainsStaticBlockCondition() {
