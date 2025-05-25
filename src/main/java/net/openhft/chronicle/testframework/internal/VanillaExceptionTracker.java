@@ -14,7 +14,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * A test utility class for recording and executing assertions about the presence (or absence) of exceptions
+ * Implementation of {@link ExceptionTracker} used in tests to collect and
+ * assert exceptions. Each thrown exception is inserted into the supplied map so
+ * that it can be analysed once the test completes. Predicates may be registered
+ * to mark expected or ignored exceptions. When {@link #checkExceptions()} is
+ * called the tracker:
+ * <ul>
+ *   <li>verifies that every expected predicate matched at least one exception</li>
+ *   <li>removes any ignored exceptions from the map</li>
+ *   <li>fails if unexpected exceptions remain</li>
+ * </ul>
+ * After the check the tracker is finalised and must not be reused.
  *
  * @param <T> The class used to represent thrown exceptions
  */
@@ -109,30 +119,44 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     }
 
     /**
-     * Does the exception key match the string
+     * Helper used by {@code expectException} and {@code ignoreException} to
+     * decide whether a recorded exception matches a text fragment. The message
+     * of the key and the entire cause chain are searched.
      *
      * @param k       The exception key
-     * @param message The string
-     * @return true if the string appears in the message or in that or any of the Throwables in its stack trace
+     * @param message The string to look for
+     * @return {@code true} if the text appears in the exception message or any
+     * of the throwables in its stack trace
      */
     private boolean containsString(T k, String message) {
         return contains(messageExtractor.apply(k), message) || throwableContainsTextRecursive(message, throwableExtractor.apply(k));
     }
 
+    /**
+     * Null safe helper used by {@link #containsString(Object, String)}.
+     *
+     * @param text    The text to search
+     * @param message The fragment to find
+     * @return {@code true} if the fragment is present
+     */
     private static boolean contains(String text, String message) {
         return text != null && text.contains(message);
     }
 
     /**
-     * Does this Throwable or any of its causes contain the specified text?
+     * Searches the supplied throwable and its causes for the given text.
      *
-     * @param text The substring to search for
-     * @return true if there are any matches for it, false otherwise
+     * @param text      The substring to search for
+     * @param throwable The starting throwable
+     * @return {@code true} if a match is found
      */
     private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable) {
         return throwableContainsTextRecursive(text, throwable, new HashSet<>());
     }
 
+    /**
+     * Recursive worker that guards against cycles in the cause chain.
+     */
     private static boolean throwableContainsTextRecursive(@NotNull String text, Throwable throwable, Set<Integer> seenThrowableIDs) {
         if (throwable == null || seenThrowableIDs.contains(System.identityHashCode(throwable))) {
             return false;
@@ -144,6 +168,10 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         return throwableContainsTextRecursive(text, throwable.getCause(), seenThrowableIDs);
     }
 
+    /**
+     * Determines whether any recorded exceptions remain after applying the
+     * ignore predicate.
+     */
     private boolean hasExceptions() {
         for (T k : exceptions.keySet()) {
             if (!ignorePredicate.test(k))
@@ -153,6 +181,10 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         return false;
     }
 
+    /**
+     * Logs all remaining exceptions and their repeat counts. Used when the
+     * test is about to fail.
+     */
     private void dumpException() {
         for (@NotNull Map.Entry<T, Integer> entry : exceptions.entrySet()) {
             final T key = entry.getKey();
@@ -163,6 +195,10 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         }
     }
 
+    /**
+     * Prevents the tracker from being used once {@link #checkExceptions()} has
+     * been run.
+     */
     private void checkFinalised() {
         if (finalised) {
             throw new IllegalStateException("VanillaExceptionTracker is single use, you create it, add expectations/ignores, run tests, call check and then dispose of it.");
