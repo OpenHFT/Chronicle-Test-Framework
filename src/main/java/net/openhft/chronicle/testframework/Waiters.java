@@ -7,12 +7,13 @@ import java.util.function.Supplier;
 import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 
 /**
- * A utility class providing methods to create wait conditions. These conditions pause the execution of the
- * program until certain criteria are met or until a specified amount of time has elapsed.
+ * Helpers for waiting until a condition becomes true.
  * <p>
- * The class provides functionality for boolean as well as generic conditions and uses a builder pattern
- * for customization of the waiting behavior, such as the maximum time to wait and the interval to check
- * the condition.
+ * The {@code builder()} methods return a {@link WaiterBuilder} used to customise
+ * the waiting behaviour before calling {@link WaiterBuilder#run()}. Timing is
+ * controlled through {@code maxTimeToWaitMs} and {@code checkIntervalMs}. A
+ * waiter polls the supplier at the chosen interval and throws a
+ * {@link ConditionNotMetException} if the timeout expires.
  */
 public class Waiters {
 
@@ -70,6 +71,13 @@ public class Waiters {
         return new WaiterBuilder<>(valueSupplier, conditionTester);
     }
 
+    /**
+     * Builder used to wait for a condition.
+     * <p>
+     * Created via the {@code Waiters.builder()} methods. Adjust the timing with
+     * {@link #maxTimeToWaitMs(long)} and {@link #checkIntervalMs(long)} then
+     * invoke {@link #run()} to perform the wait.
+     */
     public static class WaiterBuilder<T> implements Runnable {
         // Supplier that provides a value
         private final Supplier<T> valueSupplier;
@@ -93,11 +101,11 @@ public class Waiters {
         }
 
         /**
-         * Wait for the condition to be true, throw an {@link ConditionNotMetException}
-         * if the condition is not met in time.
+         * Polls the supplier until the predicate is satisfied or the timeout elapses.
          * <p>
-         * This method is overridden from the Runnable interface, allowing the WaiterBuilder
-         * to be run as a separate thread.
+         * Called by the test thread or from an executor via the {@link Runnable}
+         * interface. Throws {@link ConditionNotMetException} when the wait
+         * exceeds {@code maxTimeToWaitMs}.
          */
         @Override
         public void run() {
