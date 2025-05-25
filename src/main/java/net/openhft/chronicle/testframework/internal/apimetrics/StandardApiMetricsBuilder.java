@@ -10,6 +10,22 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Standard implementation of {@link ApiMetrics.ApiMetricsBuilder}.
+ * <p>
+ * The builder starts empty. Users specify the packages to scan, any packages
+ * to exclude, the metrics to apply and the accumulators that gather results.
+ * Package exclusions override inclusions.
+ * <p>
+ * Metrics and accumulators can be registered one by one or via
+ * {@link #addStandardMetrics()} and {@link #addStandardAccumulators()}, which
+ * include Chronicle's predefined sets. If no metrics are added {@link #build()}
+ * will throw an {@link IllegalStateException}. Accumulators are optional, but
+ * an empty set yields no output.
+ * <p>
+ * The build step scans the configured packages, respecting exclusions, and
+ * separates results from public and internal packages.
+ */
 public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBuilder {
 
     // Configurations
@@ -61,6 +77,14 @@ public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBui
     }
 
     @Override
+    /**
+     * Scans the configured packages and builds the resulting {@link ApiMetrics}.
+     * Packages with names containing {@code .internal.} or ending with
+     * {@code .internal} are treated as internal and are aggregated separately.
+     *
+     * @return the constructed metrics instance
+     * @throws IllegalStateException if no metrics have been supplied
+     */
     public ApiMetrics build() {
         if (metrics.isEmpty())
             throw new IllegalStateException("No Metrics provided");
