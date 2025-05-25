@@ -6,6 +6,12 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Default implementation of {@link Metric} based on a predicate.
+ * The metric applies to nodes of a given type when the predicate succeeds.
+ *
+ * @param <T> node type evaluated by the metric
+ */
 public class StandardMetric<T> implements Metric<T> {
 
     private final Class<T> nodeType;
@@ -14,6 +20,14 @@ public class StandardMetric<T> implements Metric<T> {
     private final double weight;
     //private final double factor;
 
+    /**
+     * Constructs a metric using the supplied configuration.
+     *
+     * @param nodeType class of node this metric concerns
+     * @param filter   predicate that decides applicability
+     * @param name     human readable name for reporting
+     * @param weight   value added to the score when applicable
+     */
     public StandardMetric(final Class<T> nodeType,
                           final Predicate<? super T> filter,
                           final String name,
