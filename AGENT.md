@@ -68,3 +68,30 @@ mvn -q verify
 
 see src/main/adoc/project-requirements.adoc for details on project requirements.
 
+## 8 Elevating the Workflow with Real-Time Documentation
+
+Building upon our existing Iterative Workflow, the newest recommendation is to emphasise *real-time updates* to documentation.
+Ensure the relevant `.adoc` files are updated as soon as features, requirements, implementation details, or tests change.
+This tight loop informs the AI accurately and creates immediate clarity for all team members.
+
+### Benefits
+
+- _Confidence in Documentation_: As the newest post highlights, accurate docs prevent "miscommunications" that derail real-world outcomes.
+- _Better Onboarding_: An up-to-date AsciiDoc set means new developers grasp the system's design and requirements more quickly.
+- _Incremental Changes_: Thanks to the incremental mode, AIDE flags any newly updated files so you can keep the documentation synchronised.
+
+### Benefits of Keeping Requirements, Tests, and Code In Sync
+
+- _Reduced Drift_: Minimises gaps between documentation, tested behaviour, and implementation.
+- _Faster Feedback_: AI can quickly generate stubs based on docs/tests and highlight inconsistencies discovered during analysis.
+- _Better Quality_: Frequent checks align the code with specified requirements and verifiable tests.
+- _Smoother Onboarding_: Up-to-date AsciiDoc clarifies the system for new developers or team members switching context.
+
+### Best Practices
+
+- *Maintain Sync*: Keep documentation (AsciiDoc), tests, and code synchronised in version control. Changes in one area should prompt reviews and potential updates in the others.
+- *Doc-First for New Work*: For *new* features or requirements, aim to update documentation first, then use AI to help produce or refine corresponding code and tests. For refactoring or initial bootstrapping, updates might flow from code/tests back to documentation, which should then be reviewed and finalised.
+- *Small Commits*: Each commit should ideally relate to a single requirement or coherent change, making reviews easier for both humans and AI analysis tools.
+- *Team Buy-In*: Encourage everyone to review AI outputs critically and contribute to maintaining the synchronicity of all artefacts.
+
+
