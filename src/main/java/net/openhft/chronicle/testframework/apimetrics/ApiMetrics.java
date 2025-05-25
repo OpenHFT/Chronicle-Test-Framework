@@ -41,17 +41,17 @@ public interface ApiMetrics {
 
     /**
      * Interface for a builder that allows constructing an ApiMetrics object.
-     * This builder allows the specification of packages to analyze, packages to exclude from analysis,
+     * This builder allows the specification of packages to analyse, packages to exclude from analysis,
      * metrics to apply, and accumulators for aggregating metrics.
      * The build method applies all the specifications and returns the final ApiMetrics object.
      */
     interface ApiMetricsBuilder {
 
         /**
-         * Adds the provided {@code paket} and all its underlying packages to the set of packages to analyze.
+         * Adds the provided {@code paket} and all its underlying packages to the set of packages to analyse.
          * This method helps in specifying the packages that need to be included in the metrics analysis.
          *
-         * @param paket Package to analyze (non-null)
+         * @param paket Package to analyse (non-null)
          * @return this builder
          */
         default ApiMetricsBuilder addPackage(final Package paket) {
@@ -59,19 +59,19 @@ public interface ApiMetrics {
         }
 
         /**
-         * Adds the provided {@code packageName} and all its underlying packages to the set of packages to analyze.
+         * Adds the provided {@code packageName} and all its underlying packages to the set of packages to analyse.
          * This method helps in specifying the packages that need to be included in the metrics analysis by name.
          *
-         * @param packageName String representing the package to analyze (non-null)
+         * @param packageName String representing the package to analyse (non-null)
          * @return this builder
          */
         ApiMetricsBuilder addPackage(final String packageName);
 
         /**
-         * Adds the provided {@code paket} and all its underlying packages to the set of excluded packages not to analyze.
+         * Adds the provided {@code paket} and all its underlying packages to the set of excluded packages not to analyse.
          * This method helps in specifying the packages that should be excluded from the metrics analysis.
          *
-         * @param paket Package not to analyze (non-null)
+         * @param paket Package not to analyse (non-null)
          * @return this builder
          */
         default ApiMetricsBuilder addPackageExclusion(final Package paket) {
@@ -79,17 +79,17 @@ public interface ApiMetrics {
         }
 
         /**
-         * Adds the provided {@code packageName} and all its underlying packages to the set of excluded packages not to analyze.
+         * Adds the provided {@code packageName} and all its underlying packages to the set of excluded packages not to analyse.
          * This method helps in specifying the packages that should be excluded from the metrics analysis by name.
          *
-         * @param packageName String representing the package not to analyze (non-null)
+         * @param packageName String representing the package not to analyse (non-null)
          * @return this builder
          */
         ApiMetricsBuilder addPackageExclusion(final String packageName);
 
         /**
          * Add the provided {@code metric} as applicable when analysing the set of packages.
-         * This allows customization of the metrics used in the analysis.
+         * This allows customisation of the metrics used in the analysis.
          *
          * @param metric Metric to add (non-null)
          * @return this builder
