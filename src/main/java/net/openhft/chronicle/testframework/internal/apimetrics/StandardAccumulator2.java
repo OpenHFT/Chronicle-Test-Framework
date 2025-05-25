@@ -13,6 +13,17 @@ import static java.util.Map.Entry.comparingByKey;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Aggregates metric weights across two dimensions.
+ *
+ * <p>Each call to {@link #accept(Metric, ClassInfo, HasName)} adds the metric's
+ * weight to a nested map keyed by the supplied extractor functions. The optional
+ * predicate allows callers to filter out unwanted metrics.
+ *
+ * <p>Totals are available as the grand sum, per first dimension or per pair of
+ * dimensions through {@link #result()}, {@link #result1()} and
+ * {@link #result2()} respectively.
+ */
 public final class StandardAccumulator2 implements Accumulator {
 
     private final String columnName;
@@ -22,6 +33,10 @@ public final class StandardAccumulator2 implements Accumulator {
     private final Product.TriFunction<Metric<?>, ClassInfo, HasName, Boolean> predicate;
     private final Map<String, Map<String, Double>> map = new HashMap<>();
 
+    /**
+     * Builds an accumulator using the provided extractors and predicate.
+     * Metrics are counted only when the predicate returns {@code true}.
+     */
     public StandardAccumulator2(final String columnName,
                                 final Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor,
                                 final String columnName2,
