@@ -252,7 +252,7 @@ The enhancement of CTF will proactively incorporate AI in two main ways:
 This is primarily covered by REQ-FR-AI-* requirements. The strategy is to make CTF "AI-friendly" so that:
 * **AI-APP-CTF-001: AI can understand CTF test structures:** Semantic annotations and clear APIs will enable AI to better parse and understand tests written with CTF.
 * **AI-APP-CTF-002: AI can leverage CTF features for test generation:** AI tools can be guided to use CTF's data generators and OpenHFT-specific utilities to create more comprehensive and relevant tests.
-* _Example:_ An AI agent, knowing about `ChronicleQueueTestUtil` and `Permutation.of()`, could generate tests that permute different types of messages written to a queue and verify their processing.
+*  _Example:_ An AI agent, using `ChronicleQueueTestUtil` and `Permutation.of()`, could generate tests that try every ordering of different message types written to a queue, verifying that each ordering is processed correctly.
 * **AI-APP-CTF-003: AI can assist in refactoring tests to use CTF:** As CTF evolves with more powerful utilities, AI can help migrate older tests (or tests not using CTF optimally) to leverage these new features, improving test quality and conciseness.
 * **AI-APP-CTF-004: AI can perform advanced test analysis:** With richer semantic information from CTF tests, AI might be able to perform more sophisticated analyses, such as identifying redundant tests, suggesting coverage improvements for specific OpenHFT behaviors, or even predicting flaky tests based on patterns.
 
