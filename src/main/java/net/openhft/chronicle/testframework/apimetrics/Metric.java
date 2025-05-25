@@ -5,12 +5,14 @@ import net.openhft.chronicle.testframework.internal.apimetrics.StandardMetric;
 import java.util.function.Predicate;
 
 /**
- * The Metric interface provides a contract for defining metrics
- * that can be applied to different types like classes, methods, and fields.
- * This is used to measure various properties, such as visibility and extendability,
- * based on defined weights for each metric.
+ * A Metric defines a rule used when scoring an API element. Typical metrics
+ * check for public or protected classes, methods that can be overridden and
+ * public fields. Each metric carries a weight showing its relative importance.
+ * For instance a public class may have weight 10 while a protected method may
+ * weigh 1. Accumulators sum the weights of all applicable metrics to produce an
+ * overall score.
  *
- * @param <T> The type of element to which this metric can be applied.
+ * @param <T> the type of element to which this metric can be applied.
  */
 public interface Metric<T> {
 
