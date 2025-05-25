@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 interface TriConsumer<T, U, V> {
 
     /**
-     * Performs this operation on the given arguments.
+     * Performs the operation on the three arguments.
      *
      * @param t the first input argument
      * @param u the second input argument
@@ -39,9 +39,10 @@ interface TriConsumer<T, U, V> {
      * composed operation.  If performing this operation throws an exception,
      * the {@code after} operation will not be performed.
      *
-     * <p>This can be useful in scenarios where you have several operations that
-     * must be performed on the same set of input parameters, possibly by different parts
-     * of your code.
+     * <p>This can be useful when several operations must be performed on the same
+     * set of input parameters, possibly by different parts of your code.  It
+     * enables pipelines of operations where each consumer handles the same
+     * inputs in turn.
      *
      * @param after the operation to perform after this operation
      * @return a composed {@code TriConsumer} that performs in sequence this
