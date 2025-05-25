@@ -5,10 +5,16 @@ import net.openhft.chronicle.testframework.internal.SeriesUtil;
 import java.util.stream.LongStream;
 
 /**
- * This class provides utility methods to generate series of numbers,
- * such as powers of two, powers of two and adjacent values, Fibonacci series, and prime numbers.
+ * Utility for common numeric series.
  * <p>
- * This class is a final utility class and cannot be instantiated.
+ * Each method exposes a particular growth pattern:
+ * <ul>
+ *     <li>{@link #powersOfTwo()} numbers doubling from one up to two to the power of sixty-three.</li>
+ *     <li>{@link #powersOfTwoAndAdjacent()} the powers of two with their immediate neighbours.</li>
+ *     <li>{@link #fibonacci()} the Fibonacci sequence where each term is the sum of the previous two.</li>
+ *     <li>{@link #primes()} an ascending stream of prime numbers.</li>
+ * </ul>
+ * This class cannot be instantiated.
  */
 public final class Series {
 
@@ -17,37 +23,40 @@ public final class Series {
     }
 
     /**
-     * Creates and returns a new LongStream of powers of two: 1, 2, ..., 2^63.
+     * Streams the powers of two from one to two to the power of sixty-three.
+     * Each step doubles the previous value.
      *
-     * @return the powers of two series as a LongStream
+     * @return the powers of two series as a {@link LongStream}
      */
     public static LongStream powersOfTwo() {
         return SeriesUtil.powersOfTwo(); // Delegating to internal utility
     }
 
     /**
-     * Creates and returns a new LongStream of powers of two and adjacent values:
-     * 0, 1, 2, ..., 15, 16, 17, 31, 32, 33.
+     * Streams each power of two together with the number before and after it.
+     * Values climb quickly as the next power is reached.
      *
-     * @return the powers of two and adjacent series as a LongStream
+     * @return the powers of two and adjacent series as a {@link LongStream}
      */
     public static LongStream powersOfTwoAndAdjacent() {
         return SeriesUtil.powersOfTwoAndAdjacent(); // Delegating to internal utility
     }
 
     /**
-     * Creates and returns a new LongStream of the Fibonacci series: 0, 1, 1, 2, 3, 5, ...
+     * Streams the Fibonacci numbers starting at zero and one. Each term
+     * is the sum of the previous two so the gaps widen over time.
      *
-     * @return the Fibonacci series as a LongStream
+     * @return the Fibonacci series as a {@link LongStream}
      */
     public static LongStream fibonacci() {
         return SeriesUtil.fibonacci(); // Delegating to internal utility
     }
 
     /**
-     * Creates and returns a new LongStream of all the prime numbers: 2, 3, 5, 7, ...
+     * Streams the prime numbers in ascending order. The distance between
+     * primes tends to grow as the values increase.
      *
-     * @return the prime number series as a LongStream
+     * @return the prime number series as a {@link LongStream}
      */
     public static LongStream primes() {
         return SeriesUtil.primes(); // Delegating to internal utility
