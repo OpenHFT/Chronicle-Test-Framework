@@ -11,7 +11,11 @@ import java.util.function.Supplier;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
- * Defines an ArchUnit rule that enforces that non-internal classes do not extend internal classes.
+ * Supplies a rule that fails when a non-internal class extends an internal one.
+ * The rule relies on the regular expression
+ * {@link RuleUtil#INTERNAL_PACKAGE_REGEX} which matches any class whose
+ * package path contains {@code .impl.} or {@code .internal.}.  Any class
+ * outside those packages must not inherit from a class within them.
  */
 public class NonInternalClassesMustNotExtendInternalClassesRuleSupplier implements Supplier<ArchRule> {
 
