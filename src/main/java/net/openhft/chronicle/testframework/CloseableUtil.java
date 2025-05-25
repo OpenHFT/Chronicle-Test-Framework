@@ -4,12 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class to handle closing of {@link java.io.Closeable} or {@link AutoCloseable} resources.
- * This class provides a method to close a resource without throwing any exceptions,
- * logging them instead. The class is stateless and therefore thread-safe. The logging
- * behaviour is to emit a WARN level message through an {@link org.slf4j.Logger}.
- * Since this class is defined as an enum without instances, it cannot be instantiated
- * and is essentially a utility class.
+ * Utility for closing {@link java.io.Closeable} or {@link AutoCloseable} resources.
+ * The enum defines no instances and therefore holds no state. A static
+ * {@link org.slf4j.Logger} records any exception at WARN level. The absence of
+ * instance state means the class is thread-safe.
  */
 public enum CloseableUtil {
     ; // This enum has no instances, acting as a utility class
@@ -18,11 +16,12 @@ public enum CloseableUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(CloseableUtil.class);
 
     /**
-     * Closes the provided {@link AutoCloseable} resource quietly, without throwing any exceptions.
-     * If an exception does occur while closing the resource it is logged at WARN level
-     * and not propagated. The method is thread-safe because it holds no mutable state.
+     * Closes the provided {@link AutoCloseable} quietly without propagating exceptions.
+     * Intended for use in {@code finally} blocks where further failures must be suppressed.
+     * Any exception is logged at WARN level using the static logger. The method is
+     * thread-safe because the enum holds no instance state.
      *
-     * @param closeable the closeable resource to close, may be any object implementing {@link AutoCloseable}
+     * @param closeable the resource to close, may be {@code null}
      */
     public static void closeQuietly(AutoCloseable closeable) {
         try {
