@@ -17,7 +17,10 @@ import java.util.stream.Collectors;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
- * Ensures that any DtoAlias instances call appropriate bootstrap methods.
+ * Supplies an ArchUnit rule requiring each {@code DtoAlias} class to call the
+ * {@code Bootstrap.bootstrap()} method from Chronicle Core and the bootstrap
+ * method in the same package.  Both calls must appear exactly once inside a
+ * static initialiser block.
  */
 public class DtoAliasMustInvokeBootstrapRuleSupplier implements Supplier<ArchRule> {
 
@@ -28,6 +31,10 @@ public class DtoAliasMustInvokeBootstrapRuleSupplier implements Supplier<ArchRul
 
     private static class ContainsStaticBlockCallingBootstrap extends ArchCondition<JavaClass> {
 
+        /**
+         * Fully qualified name of the bootstrap method defined in Chronicle Core.
+         * Used to detect the mandatory invocation from a static block.
+         */
         public static final String CORE_BOOTSTRAP_METHOD_TARGET = "net.openhft.chronicle.core.Bootstrap.bootstrap()";
 
         public ContainsStaticBlockCallingBootstrap() {
