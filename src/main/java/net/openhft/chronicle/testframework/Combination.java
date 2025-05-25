@@ -26,8 +26,9 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Utility class that provides functionality to generate all possible combinations
- * of a given set of elements. The class eagerly calculates the combinations.
+ * Utility class that provides functionality to generate every combination of a
+ * set of elements. A combination is any subset of the supplied items, including
+ * the empty set. The class eagerly calculates the combinations.
  * <p>
  * This class cannot be instantiated.
  *
@@ -76,8 +77,7 @@ public final class Combination {
      * <p>
      * The order of the combinations in the stream is unspecified.
      * <p>
-     * It is unspecified if the method lazily consumes the provided stream before providing
-     * the result or not.
+     * The input stream is fully consumed.
      *
      * @param <T>   element type
      * @param items a stream of items to combine
