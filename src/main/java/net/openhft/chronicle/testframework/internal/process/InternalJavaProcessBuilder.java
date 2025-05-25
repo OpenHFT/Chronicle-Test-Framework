@@ -19,6 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Builds Java command lines for launching child processes in tests.
+ *
+ * <p>The builder gathers JVM arguments, program arguments and classpath
+ * entries. When {@link #start()} is called it spawns the given main class as a
+ * separate process. Module flags from the current JVM are propagated so that
+ * tests run under the same settings.
+ */
 public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalJavaProcessBuilder.class);
@@ -113,6 +121,10 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         }
     }
 
+    /**
+     * Stores the arguments to pass to the spawned process.
+     * Replaces any values set by previous calls.
+     */
     @Override
     public InternalJavaProcessBuilder withProgramArguments(String... programArguments) {
         this.programArguments = programArguments;
@@ -137,6 +149,12 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         return this;
     }
 
+    /**
+     * Spawns the configured Java process.
+     * <p>
+     * Module flags from this JVM are propagated and the process shares IO
+     * streams when {@link #inheritingIO()} has been called.
+     */
     @Override
     public Process start() {
         // Because Java17 must be run using various module flags, these must be propagated
