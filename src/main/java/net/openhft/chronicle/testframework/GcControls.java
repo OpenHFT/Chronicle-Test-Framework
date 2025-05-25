@@ -23,32 +23,37 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * Provides utility methods for interacting with garbage collection (GC) within the JVM.
+ * Utilities for interacting with the JVM's garbage collector.
  * <p>
- * These utilities are used to request and wait for garbage collection cycles.
- * Please note that relying on explicit garbage collection is inherently unreliable,
- * and these methods should be used with caution.
+ * These methods attempt to trigger a GC cycle and optionally wait for one to
+ * occur. The JVM treats explicit requests as hints only, so a cycle may not run
+ * immediately or at all. Waiting relies on the GC count increasing and does not
+ * guarantee that any memory has been reclaimed.
  */
 @SuppressWarnings("java:S1215") // Sonar warning suppression for System.gc usage
 public enum GcControls {
     ; // Enum with no instances signifies a utility class
 
     /**
-     * Requests a garbage collection (GC) cycle to be performed.
+     * Requests that the JVM performs a garbage collection cycle.
      * <p>
-     * This method is a hint to the JVM, and there's no guarantee the GC will actually be performed.
+     * The call merely hints that a collection would be useful. The JVM may
+     * ignore it or defer the cycle. No guarantee is made that a GC has run when
+     * this method returns.
      */
     public static void requestGcCycle() {
         System.gc(); // Request a garbage collection cycle
     }
 
     /**
-     * Requests a garbage collection (GC) cycle and blocks until it occurs or a timeout is reached.
+     * Requests a collection and waits for the GC count to increase.
      * <p>
-     * This method waits for up to one second for a GC cycle to occur. If the GC does not occur
-     * within this time, an {@code IllegalStateException} is thrown.
+     * The method polls the collector count for up to one second after calling
+     * {@link #requestGcCycle()}. If the count does not change in that period an
+     * {@link IllegalStateException} is thrown. A successful return only indicates
+     * that a GC cycle was observed, not that memory has been reclaimed.
      *
-     * @throws IllegalStateException if the GC doesn't occur within one second
+     * @throws IllegalStateException if no GC cycle is detected within the timeout
      */
     public static void waitForGcCycle() {
         final long gcCount = getGcCount(); // Initial GC count
