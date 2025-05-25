@@ -9,14 +9,17 @@ public enum ThreadUtil {
     ;
 
     /**
-     * Pauses the current thread's execution for the specified amount of time.
-     * If the thread is interrupted during the sleep, it will catch the
-     * InterruptedException and set the interrupt status of the current thread.
+     * Pause the current thread for the supplied time in milliseconds.
      * <p>
-     * This method is intended to provide similar functionality to Jvm.pause(...)
-     * but does not depend on chronicle-core.
+     * The actual delay can be slightly longer than requested, typically around
+     * one millisecond due to scheduler granularity. If the thread is interrupted
+     * while sleeping, the interrupt status is restored and the method returns
+     * without throwing.
+     * <p>
+     * This mirrors the behaviour of {@code Jvm.pause(...)} but does not depend
+     * on chronicle-core.
      *
-     * @param timeInMillis The amount of time to pause for in milliseconds.
+     * @param timeInMillis the time to pause in milliseconds
      */
     public static void pause(long timeInMillis) {
         try {
