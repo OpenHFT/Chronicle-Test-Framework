@@ -6,9 +6,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * The ApiMetrics interface represents a contract for gathering and managing API metrics.
- * It provides methods to access accumulators for both public (non-internal) and internal packages,
- * allowing granular control and understanding of metrics across different parts of the application.
+ * Container for the aggregated results of API metric analysis. Metrics collected
+ * from packages that are not marked as {@code internal} are kept separate from
+ * those found in internal packages. Results are retrieved via
+ * {@link #accumulators()} for public packages and
+ * {@link #internalAccumulators()} for internal ones.
  */
 public interface ApiMetrics {
 
@@ -39,8 +41,9 @@ public interface ApiMetrics {
      * Builder used to configure and create {@link ApiMetrics}.
      * <p>
      * Packages to scan are registered with {@link #addPackage(String)} while
-     * {@link #addPackageExclusion(String)} removes unwanted packages. At least
-     * one metric must be added otherwise {@link #build()} will throw an
+     * {@link #addPackageExclusion(String)} removes unwanted packages. If no
+     * package is added the build will succeed but no classes will be examined.
+     * At least one metric must be added otherwise {@link #build()} will throw an
      * {@link IllegalStateException}. Accumulators define how results are
      * aggregated and may be omitted.
      */
@@ -48,6 +51,7 @@ public interface ApiMetrics {
 
         /**
          * Adds the supplied {@code paket} and its sub-packages to the scan list.
+         * Internally invokes {@code addPackage(paket.getName())}.
          *
          * @param paket package to analyse (non-null)
          * @return this builder
@@ -91,7 +95,9 @@ public interface ApiMetrics {
         ApiMetricsBuilder addMetric(final Metric<?> metric);
 
         /**
-         * Adds Chronicle's default metrics.
+         * Adds Chronicle's default metrics. These cover counts of public and
+         * protected classes, methods and fields, giving a quick view of the
+         * exposed API surface.
          *
          * @return this builder
          */
@@ -106,7 +112,8 @@ public interface ApiMetrics {
         ApiMetricsBuilder addAccumulator(final Supplier<Accumulator> accumulator);
 
         /**
-         * Adds Chronicle's default accumulators.
+         * Adds Chronicle's default accumulators. The set aggregates by metric,
+         * package and class, providing an overview from several angles.
          *
          * @return this builder
          */
