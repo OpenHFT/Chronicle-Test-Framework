@@ -18,18 +18,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Runs a set of tests to check for potential code structure issues. Intended to be used from within unit tests to
- * assert that the structure of the codebase meets a number of predefined rules. Create a builder, instantiate the
- * verifier and run the {@link #verify()} method. This method will throw an {@link AssertionError} if any of the rules
- * are violated. A simple usage example is shown below:
- *
+ * Verifies project code structure against a set of ArchUnit rules.
+ * <p>
+ * The verifier installs a standard collection of rules covering main
+ * methods, use of internal classes and invocation of the DtoAlias
+ * bootstrap. Callers may add or skip additional rules. When
+ * {@link #verify()} is invoked all active rules are merged via
+ * {@link CompositeArchRule} and executed on the imported classes. Any
+ * violation results in an {@link AssertionError}.
+ * <p>
+ * Example:
  * <pre>
- * {@code
+ * CodeStructureVerifier verifier =
  *     CodeStructureVerifier.builder()
- *      .importClass(ExampleClass.class)
- *      .build()
- *      .verify()
- * }
+ *         .importClass(ExampleClass.class)
+ *         .build();
+ * verifier.verify();
  * </pre>
  */
 public class CodeStructureVerifier {
@@ -63,6 +67,14 @@ public class CodeStructureVerifier {
 
     /**
      * Creates a new builder.
+     * <p>
+     * Example:
+     * <pre>
+     * CodeStructureVerifier.builder()
+     *     .importPackages("com.example")
+     *     .build()
+     *     .verify();
+     * </pre>
      *
      * @return the builder
      */
@@ -71,7 +83,17 @@ public class CodeStructureVerifier {
     }
 
     /**
-     * A builder that constructs {@link CodeStructureVerifier} instances.
+     * Collects configuration used to construct a
+     * {@link CodeStructureVerifier}.
+     * <p>
+     * A set of standard ArchUnit rules is installed automatically. These
+     * include checks for main methods, use of internal classes and use
+     * of the DtoAlias bootstrap. Extra rules may be added with
+     * {@link #withRule(ArchRule)} and unwanted ones skipped with
+     * {@link #skipRule(ArchRule)}. Classes or packages to analyse are
+     * imported via {@link ClassFileImporter}. The {@link #build()}
+     * method applies the configuration and returns a verifier ready to
+     * run the rules.
      */
     public static class Builder {
 
