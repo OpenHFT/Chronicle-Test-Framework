@@ -66,6 +66,27 @@ Stream<DynamicTest> demo() {
 }
 ----
 
+== API Metrics Builder
+
+The API metrics feature analyses the public and internal surface of your
+packages. Create the builder via `ApiMetrics.builder()` then supply the
+packages to scan, the metrics to apply and the accumulators that gather the
+results.
+
+[source,java]
+----
+ApiMetrics metrics = ApiMetrics.builder()
+        .addStandardMetrics()
+        .addStandardAccumulators()
+        .addPackage("com.example")
+        .build();
+----
+
+The builder applies no defaults. If you omit metrics or accumulators the
+result will be empty. Packages with `.internal.` in the name, or those ending
+in `.internal`, are collected in a separate internal group.
+
+
 == Combinations
 
 Combinations work like this:
