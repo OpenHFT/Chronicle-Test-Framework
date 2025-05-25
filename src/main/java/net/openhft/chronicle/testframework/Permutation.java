@@ -26,7 +26,14 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 
 /**
- * General Permutation support from
+ * Utility methods for generating permutations of small collections. Intended
+ * mainly for test cases where exploring every ordering is useful.
+ * <p>
+ * The factorial growth of permutations means performance drops quickly as the
+ * number of elements increases; in practice it is viable only for modest list
+ * sizes. Consider sampling when dealing with larger collections.
+ * <p>
+ * General permutation support from
  * http://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html
  *
  * @author Per Minborg
