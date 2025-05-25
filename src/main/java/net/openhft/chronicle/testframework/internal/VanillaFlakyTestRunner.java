@@ -7,7 +7,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.util.Objects.requireNonNull;
 import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 
-public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyTestRunner.RunnableThrows<X> {
+/**
+ * Executes a flaky test action with retry semantics.
+ *
+ * <p>The runner is thread-safe in that only one {@link #run()} call may
+ * execute at a time. Concurrent or nested invocations result in an
+ * {@link AssertionError}. The action is retried until it succeeds or the
+ * configured number of attempts is exhausted.
+ */
+public final class VanillaFlakyTestRunner<X extends Throwable>
+        implements FlakyTestRunner.RunnableThrows<X> {
 
     private final AtomicBoolean inRun = new AtomicBoolean();
     private final VanillaFlakyTestRunnerBuilder<X> builder;
@@ -16,6 +25,16 @@ public final class VanillaFlakyTestRunner<X extends Throwable> implements FlakyT
         this.builder = requireNonNull(builder);
     }
 
+    /**
+     * Executes the action until it succeeds or the retry limit is reached.
+     *
+     * <p>If the action fails on an intermediate attempt the error logger is
+     * invoked, optional garbage collection is requested and the thread pauses
+     * for the configured delay. The method rethrows the final exception if all
+     * attempts fail.
+     *
+     * @throws X if the action fails on the last try
+     */
     @Override
     public void run() throws X {
         if (!inRun.compareAndSet(false, true))
