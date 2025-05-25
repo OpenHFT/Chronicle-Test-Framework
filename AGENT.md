@@ -66,7 +66,7 @@ mvn -q verify
 
 ## 7  Project requirements
 
-see src/main/adoc/project-requirements.adoc for details on project requirements.
+see [Project Requirements](src/main/adoc/project-requirements.adoc) for details on project requirements.
 
 ## 8 Elevating the Workflow with Real-Time Documentation
 
