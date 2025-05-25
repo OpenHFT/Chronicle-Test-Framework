@@ -8,17 +8,26 @@ public final class SeriesUtil {
     private SeriesUtil() {
     }
 
+    /**
+     * Returns the sequence 1, 2, 4 and so on up to {@code 1L << 63}.
+     */
     public static LongStream powersOfTwo() {
         return LongStream.range(0, Long.SIZE)
                 .map(i -> 1L << i);
     }
 
+    /**
+     * Each power of two plus the numbers either side of it, without duplicates.
+     */
     public static LongStream powersOfTwoAndAdjacent() {
         return powersOfTwo()
                 .flatMap(p -> LongStream.rangeClosed(p - 1, p + 1))
                 .distinct();
     }
 
+    /**
+     * The Fibonacci numbers starting at 0 and 1.
+     */
     public static LongStream fibonacci() {
         return LongStream.concat(
                 LongStream.of(0),
@@ -27,6 +36,9 @@ public final class SeriesUtil {
         );
     }
 
+    /**
+     * All prime numbers from 2 upwards.
+     */
     public static LongStream primes() {
         return LongStream.iterate(2, i -> i + 1)
                 .filter(SeriesUtil::isPrime);
