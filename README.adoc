@@ -20,7 +20,7 @@ This library provides support classes for writing JUnit tests. It supports both 
 
 == Permutations
 
-Permutaions work like this:
+Permutations work like this:
 
 [source, java]
 ----
@@ -118,11 +118,8 @@ Testing using combinations:
 
 [source, java]
 ----
-@TestFactory
-// Try all combinations of cosmic ray interference
-    @TestFactory
-        // Try all combinations of the Robot state machine
-    Stream<DynamicTest> demo() {
+@TestFactory // Try all combinations of cosmic ray interference for the Robot state machine
+Stream<DynamicTest> demo() {
         return DynamicTest.stream(Combination.<Consumer<FaultTolerantBitSet>>of(
                         FaultTolerantBitSet::cosmicRayBit3,
                         FaultTolerantBitSet::cosmicRayBit23,
@@ -138,7 +135,7 @@ Testing using combinations:
 
 == Combinations and Permutations
 
-Combinations and Permutaions can be combined to create powerful exhaustive test vectors:
+Combinations and Permutations can be combined to create powerful exhaustive test vectors:
 
 [source, java]
 ----
@@ -202,7 +199,7 @@ Product2Impl{first=C, second=3}
 Products can use built-in tuples like `Product2Impl` or we can provide custom constructors to use our own.
 
 
-Testing using combinations:
+Testing using products:
 
 [source, java]
 ----
