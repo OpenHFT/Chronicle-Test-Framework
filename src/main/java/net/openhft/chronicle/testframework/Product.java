@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
  * List&lt;String&gt; ts = List.of("A", "B");
  * List&lt;Integer&gt; us = List.of(1, 2);
  * Product.of(ts, us)
- *         .forEach(p -> System.out.println(p.first() + ", " + p.second()));
+ *         .forEach(p -&gt; System.out.println(p.first() + ", " + p.second()));
  * </pre>
  */
 public final class Product {
@@ -42,7 +42,7 @@ public final class Product {
      * Example:
      * <pre>
      * Product.of(List.of("A"), List.of(1))
-     *         .forEach(p -> System.out.println(p.first() + ":" + p.second()));
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second()));
      * </pre>
      *
      * @param <T> element type for the first collection
@@ -72,7 +72,7 @@ public final class Product {
      * </ul>
      * Example:
      * <pre>
-     * Product.of(List.of("A"), List.of(1), (a, b) -> a + b)
+     * Product.of(List.of("A"), List.of(1), (a, b) -&gt; a + b)
      *         .forEach(System.out::println);
      * </pre>
      *
@@ -108,7 +108,7 @@ public final class Product {
      * Example:
      * <pre>
      * Product.of(Stream.of("A"), Stream.of(1))
-     *         .forEach(p -> System.out.println(p.first() + ":" + p.second()));
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second()));
      * </pre>
      *
      * @param <T> element type for the first factor
@@ -135,7 +135,7 @@ public final class Product {
      * </ul>
      * Example:
      * <pre>
-     * Product.of(Stream.of("A"), Stream.of(1), (a, b) -> a + b)
+     * Product.of(Stream.of("A"), Stream.of(1), (a, b) -&gt; a + b)
      *         .forEach(System.out::println);
      * </pre>
      *
@@ -168,7 +168,7 @@ public final class Product {
      * Example:
      * <pre>
      * Product.of(List.of("A"), List.of(1), List.of(true))
-     *         .forEach(p -> System.out.println(p.first() + ":" + p.second() + ":" + p.third()));
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second() + ":" + p.third()));
      * </pre>
      *
      * @param <T> element type for the first factor
@@ -199,7 +199,7 @@ public final class Product {
      * </ul>
      * Example:
      * <pre>
-     * Product.of(List.of("A"), List.of(1), List.of(true), (a, b, c) -> a + b + c)
+     * Product.of(List.of("A"), List.of(1), List.of(true), (a, b, c) -&gt; a + b + c)
      *         .forEach(System.out::println);
      * </pre>
      *
@@ -236,7 +236,7 @@ public final class Product {
      * Example:
      * <pre>
      * Product.of(Stream.of("A"), Stream.of(1), Stream.of(true))
-     *         .forEach(p -> System.out.println(p.first() + ":" + p.second() + ":" + p.third()));
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second() + ":" + p.third()));
      * </pre>
      *
      * @param <T> element type for the first factor
@@ -267,7 +267,7 @@ public final class Product {
      * </ul>
      * Example:
      * <pre>
-     * Product.of(Stream.of("A"), Stream.of(1), Stream.of(true), (a, b, c) -> a + b + c)
+     * Product.of(Stream.of("A"), Stream.of(1), Stream.of(true), (a, b, c) -&gt; a + b + c)
      *         .forEach(System.out::println);
      * </pre>
      *
