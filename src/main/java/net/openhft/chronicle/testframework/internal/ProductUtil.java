@@ -11,11 +11,25 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Utility methods for forming Cartesian products of collections or streams.
+ *
+ * <p>The {@code of} methods combine the supplied inputs and return a
+ * {@link Stream} containing one element for each tuple. The element type is
+ * determined by the constructor function provided. Overloads without a
+ * constructor yield the default {@code Product2Impl} or {@code Product3Impl}
+ * types.
+ */
 public final class ProductUtil {
 
     private ProductUtil() {
     }
 
+    /**
+     * Forms the Cartesian product of two collections.
+     *
+     * @return a stream containing one element per pair
+     */
     public static <T, U, R> Stream<R> of(Collection<T> ts,
                                          Collection<U> us,
                                          BiFunction<? super T, ? super U, ? extends R> constructor) {
@@ -27,6 +41,12 @@ public final class ProductUtil {
                         .map(u -> constructor.apply(t, u)));
     }
 
+    /**
+     * Forms the Cartesian product of two streams. The first stream is consumed
+     * lazily.
+     *
+     * @return a stream containing one element per pair
+     */
     public static <T, U, R> Stream<R> of(Stream<T> ts,
                                          Stream<U> us,
                                          BiFunction<? super T, ? super U, ? extends R> constructor) {
@@ -39,6 +59,11 @@ public final class ProductUtil {
                         .map(u -> constructor.apply(t, u)));
     }
 
+    /**
+     * Forms the Cartesian product of three collections.
+     *
+     * @return a stream containing one element per triple
+     */
     public static <T, U, V, R> Stream<R> of(Collection<T> ts,
                                             Collection<U> us,
                                             Collection<V> vs,
@@ -53,6 +78,12 @@ public final class ProductUtil {
                                 .map(v -> constructor.apply(t, u, v)))));
     }
 
+    /**
+     * Forms the Cartesian product of three streams. The first stream is
+     * consumed lazily.
+     *
+     * @return a stream containing one element per triple
+     */
     public static <T, U, V, R> Stream<R> of(Stream<T> ts,
                                             Stream<U> us,
                                             Stream<V> vs,
@@ -69,6 +100,9 @@ public final class ProductUtil {
                                 .map(v -> constructor.apply(t, u, v)))));
     }
 
+    /**
+     * Default {@link Product.Product2} implementation storing a pair of values.
+     */
     public static final class Product2Impl<T, U> implements Product.Product2<T, U> {
 
         private final T first;
@@ -116,6 +150,9 @@ public final class ProductUtil {
         }
     }
 
+    /**
+     * Default {@link Product.Product3} implementation storing a triple of values.
+     */
     public static final class Product3Impl<T, U, V> implements Product.Product3<T, U, V> {
 
         private final T first;
