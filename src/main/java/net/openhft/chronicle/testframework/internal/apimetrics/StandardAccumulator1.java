@@ -14,6 +14,16 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Aggregates metric weightings for a single column.
+ *
+ * <p>Each metric is examined by the supplied predicate. When the predicate
+ * returns {@code true} the key extractor determines the column value and the
+ * metric's weight is added to the running total for that key.</p>
+ *
+ * <p>The overall result is the sum of all recorded weights, while
+ * {@link #result1()} exposes the per-key values.</p>
+ */
 public final class StandardAccumulator1 implements Accumulator {
 
     private final String columnName;
@@ -30,11 +40,21 @@ public final class StandardAccumulator1 implements Accumulator {
     }
 
     @Override
+    /**
+     * Returns the label used for this aggregation.
+     */
     public List<String> aggregationNames() {
         return Collections.singletonList(columnName);
     }
 
     @Override
+    /**
+     * Adds the metric to the accumulation if it satisfies the predicate.
+     *
+     * @param metric     the metric under consideration
+     * @param classInfo  class information for context
+     * @param leaf       the method or field being measured
+     */
     public void accept(Metric<?> metric, ClassInfo classInfo, HasName leaf) {
         if (Boolean.TRUE.equals(predicate.apply(metric, classInfo, leaf))) {
             final String key = keyExtractor.apply(metric, classInfo, leaf);
@@ -43,6 +63,9 @@ public final class StandardAccumulator1 implements Accumulator {
     }
 
     @Override
+    /**
+     * Returns the sum of all accumulated weights.
+     */
     public Double result() {
         return map.values().stream()
                 .mapToDouble(d -> d)
@@ -50,16 +73,27 @@ public final class StandardAccumulator1 implements Accumulator {
     }
 
     @Override
+    /**
+     * Provides an unmodifiable view of the per-key totals.
+     */
     public Map<String, Double> result1() {
         return Collections.unmodifiableMap(map);
     }
 
     @Override
+    /**
+     * This accumulator does not support a second level of grouping.
+     *
+     * @throws UnsupportedOperationException always
+     */
     public Map<String, Map<String, Double>> result2() {
         throw new UnsupportedOperationException("This aggregation is of level 1");
     }
 
     @Override
+    /**
+     * Produces a textual summary of the accumulation.
+     */
     public String toString() {
         final int maxCol = map.keySet().stream()
                 .mapToInt(String::length)
