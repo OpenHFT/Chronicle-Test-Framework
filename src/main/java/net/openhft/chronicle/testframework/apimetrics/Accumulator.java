@@ -23,11 +23,15 @@ public interface Accumulator {
     List<String> aggregationNames();
 
     /**
-     * Merges the provided parameter into this accumulator mutating itself.
+     * Adds the supplied metric to this accumulator.
+     * <p>
+     * {@code classInfo} denotes the declaring class of {@code leaf}. When
+     * {@code leaf} is itself a {@link ClassInfo} the two parameters refer to the
+     * same object.
      *
-     * @param metric applicable
-     * @param classInfo ClassInfo applicable for the leaf
-     * @param leaf ClassInfo, MethodInfo or FieldInfo provided
+     * @param metric     metric under consideration
+     * @param classInfo  enclosing class information
+     * @param leaf       class, method or field being measured
      */
     void accept(Metric<?> metric, ClassInfo classInfo, HasName leaf);
 
@@ -40,6 +44,9 @@ public interface Accumulator {
 
     /**
      * Returns the aggregation grouped by the first column only.
+     * <p>
+     * The returned map is unmodifiable and may contain a {@code null} key when
+     * a key extractor yields {@code null}.
      *
      * @return map of first column keys to totals
      */
@@ -47,13 +54,20 @@ public interface Accumulator {
 
     /**
      * Returns the aggregation grouped by the first and second columns.
+     * <p>
+     * Implementations that do not support two-level grouping must throw
+     * {@link UnsupportedOperationException}.
      *
      * @return nested map of column keys to totals
+     * @throws UnsupportedOperationException if two-level grouping is not supported
      */
     Map<String, Map<String, Double>> result2();
 
     /**
      * Creates a level one accumulator using an always true predicate.
+     *
+     * <p>Null keys returned by the extractor are allowed and will be
+     * accumulated under a {@code null} entry.</p>
      *
      * @param columnName   name of the aggregation column
      * @param keyExtractor function used to extract the key
@@ -68,6 +82,9 @@ public interface Accumulator {
 
     /**
      * Creates a level one accumulator using the supplied predicate.
+     *
+     * <p>Null keys returned by the extractor are allowed and will be
+     * accumulated under a {@code null} entry.</p>
      *
      * @param columnName   name of the aggregation column
      * @param keyExtractor function used to extract the key
@@ -85,6 +102,9 @@ public interface Accumulator {
 
     /**
      * Creates a level two accumulator using an always true predicate.
+     *
+     * <p>Null keys from either extractor are allowed and will be stored using
+     * a {@code null} map key.</p>
      *
      * @param columnName    name of the first aggregation column
      * @param keyExtractor  function used to extract the first key
@@ -105,6 +125,9 @@ public interface Accumulator {
 
     /**
      * Creates a level two accumulator using the supplied predicate.
+     *
+     * <p>Null keys from either extractor are allowed and will be stored using
+     * a {@code null} map key.</p>
      *
      * @param columnName    name of the first aggregation column
      * @param keyExtractor  function used to extract the first key
@@ -129,6 +152,9 @@ public interface Accumulator {
     /**
      * Convenience factory for an accumulator per method.
      *
+     * <p>Each call returns a supplier that creates a fresh accumulator grouping
+     * metrics by method signature.</p>
+     *
      * @return supplier for the standard per-method accumulator
      */
     static Supplier<Accumulator> perMethod() {
@@ -137,6 +163,9 @@ public interface Accumulator {
 
     /**
      * Convenience factory for an accumulator per class and metric.
+     *
+     * <p>The resulting accumulator groups first by class name and then by
+     * metric, providing a class-centric view of the analysis.</p>
      *
      * @return supplier for the standard per-class and metric accumulator
      */
