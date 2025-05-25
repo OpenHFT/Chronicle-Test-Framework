@@ -28,13 +28,14 @@ public interface DtoTester {
      * <li>two fresh instances compare equal,</li>
      * <li>the resetter clears each applied mutator,</li>
      * <li>{@code hashCode()} changes after a mutator is used, and</li>
-     * <li>validation fails until all mandatory mutators are applied.</li>
+     * <li>validation fails until all mandatory mutators are applied and then
+     * succeeds even if optional mutators are used.</li>
      * </ul>
      */
     void test();
 
     /**
-     * Starts building a tester for the supplied type.
+     * Starts building a tester for the supplied DTO class type.
      *
      * @param type        class of the DTO
      * @param constructor supplier creating fresh instances
@@ -55,8 +56,8 @@ public interface DtoTester {
     interface Builder<T> {
 
         /**
-         * Registers a getter and setter pair. This is a placeholder and is
-         * not yet used by the tests.
+         * Registers a getter and setter pair. Intended for future property
+         * level tests.
          *
          * @param getter property read function
          * @param setter property write function
@@ -86,7 +87,7 @@ public interface DtoTester {
          * Registers a mutator with a descriptive name and type.
          *
          * @param type        whether the mutator is mandatory or optional
-         * @param mutatorName descriptive name of the mutator
+         * @param mutatorName descriptive name used in diagnostics
          * @param mutator     mutation logic
          * @return this builder for chaining
          */
@@ -125,6 +126,9 @@ public interface DtoTester {
      * Enum for defining mutator types.
      */
     enum MutatorType {
-        MANDATORY, OPTIONAL
+        /** Mutator that must be applied for validation to pass. */
+        MANDATORY,
+        /** Mutator that may be applied but is not required for validation. */
+        OPTIONAL
     }
 }
