@@ -4,9 +4,14 @@
  * metrics, accumulators, and builders, allowing for detailed analysis of code
  * structures, including classes, methods, and fields.
  *
- * <p>This package enables users to create customized metrics or utilize standard
+ * <p>This package enables users to create customised metrics or utilise standard
  * metrics, aggregate the results through accumulators, and build and execute
  * analysis through the ApiMetricsBuilder.
+ *
+ * <p>The usual workflow involves defining a set of metrics, configuring one or
+ * more accumulators to gather scores, and then building an {@code ApiMetrics}
+ * instance with the builder. That instance can be applied to the chosen
+ * packages.
  *
  * <p>Example usage might include analyzing code for compliance with specific
  * coding standards, detecting patterns, or generating reports for code quality
