@@ -5,18 +5,18 @@
 :toclevels: 2
 :icons: font
 
-image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework/badge.svg[caption="",link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework]
-image:https://javadoc.io/badge2/net.openhft/chronicle-test-framework/javadoc.svg[link="https://www.javadoc.io/doc/net.openhft/chronicle-test-framework/latest/index.html"]
+image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework]
+image:https://javadoc.io/badge2/net.openhft/chronicle-test-framework/javadoc.svg[Javadoc,link="https://www.javadoc.io/doc/net.openhft/chronicle-test-framework/latest/index.html"]
 //image:https://javadoc-badge.appspot.com/net.openhft/chronicle-test-framework.svg?label=javadoc[JavaDoc, link=https://www.javadoc.io/doc/net.openhft/chronicle-test-framework]
-image:https://img.shields.io/github/license/OpenHFT/Chronicle-Test-Framework[GitHub]
-image:https://img.shields.io/badge/release%20notes-subscribe-brightgreen[link="https://chronicle.software/release-notes/"]
-image:https://sonarcloud.io/api/project_badges/measure?project=OpenHFT_ChronicleTestFramework&metric=alert_status[link="https://sonarcloud.io/dashboard?id=OpenHFT_Chronicle-Test-Framework"]
+image:https://img.shields.io/github/license/OpenHFT/Chronicle-Test-Framework[Licence]
+image:https://img.shields.io/badge/release%20notes-subscribe-brightgreen[Release Notes,link="https://chronicle.software/release-notes/"]
+image:https://sonarcloud.io/api/project_badges/measure?project=OpenHFT_ChronicleTestFramework&metric=alert_status[Quality Gate,link="https://sonarcloud.io/dashboard?id=OpenHFT_Chronicle-Test-Framework"]
 
 toc::[]
 
 == About
 
-This library provides support classes for writing JUnit tests. It supports both Junit4 and JUnit5.
+Chronicle Test Framework provides test-data generators and API metrics tools for JUnit 4 and JUnit 5. Use the combinators to create permutations, combinations and products, or analyse your packages with the metrics builder.
 
 == Permutations
 
@@ -48,7 +48,7 @@ Testing using permutations:
 [source, java]
 ----
 @TestFactory
-// Exhaustively tests that the order of setter invocation does not matter
+// Exhaustively verifies that any order of setter invocation yields the same result
 Stream<DynamicTest> demo() {
     // Operations
     final Consumer<MyBean> setA = myBean -> myBean.setA(1);
@@ -83,8 +83,10 @@ ApiMetrics metrics = ApiMetrics.builder()
 ----
 
 The builder applies no defaults. If you omit metrics or accumulators the
-result will be empty. Packages with `.internal.` in the name, or those ending
-in `.internal`, are collected in a separate internal group.
+result will be empty. Default metrics and accumulators are only added when you
+call the relevant `addStandard` methods. Packages with `.internal.` in the
+name, or those ending in `.internal`, are collected in a separate internal
+group.
 
 
 == Combinations
@@ -151,6 +153,7 @@ This will produce the following output:
 
 [source, text]
 ----
+[]
 [A]
 [B]
 [C]
@@ -235,6 +238,6 @@ The framework includes a small set of predefined accumulator suppliers used by t
 * `PER_METRIC` provides totals for each metric across all classes.
 * `PER_CLASS` totals all metrics for each class without distinction.
 * `PER_PACKAGE` reports a single total for each package.
-* `PER_METHOD_REFERENCE` groups by method name only, ignoring parameter types.
+* `PER_METHOD_REFERENCE` groups by method name only, ignoring parameter types, so all overloads are counted as one.
 
 The convenience factories in `Accumulator` expose the first two suppliers for general use. The others are mainly for internal analyses but may be reused when custom behaviour is needed.
