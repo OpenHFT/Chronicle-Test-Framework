@@ -31,12 +31,34 @@ public interface Accumulator {
      */
     void accept(Metric<?> metric, ClassInfo classInfo, HasName leaf);
 
+    /**
+     * Returns the total value accumulated across all keys.
+     *
+     * @return aggregated total
+     */
     Double result();
 
+    /**
+     * Returns the aggregation grouped by the first column only.
+     *
+     * @return map of first column keys to totals
+     */
     Map<String, Double> result1();
 
+    /**
+     * Returns the aggregation grouped by the first and second columns.
+     *
+     * @return nested map of column keys to totals
+     */
     Map<String, Map<String, Double>> result2();
 
+    /**
+     * Creates a level one accumulator using an always true predicate.
+     *
+     * @param columnName   name of the aggregation column
+     * @param keyExtractor function used to extract the key
+     * @return configured Accumulator
+     */
     static Accumulator of(String columnName,
                           Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor) {
         requireNonNull(columnName);
@@ -44,6 +66,14 @@ public interface Accumulator {
         return of(columnName, keyExtractor, (m, ci, l) -> true);
     }
 
+    /**
+     * Creates a level one accumulator using the supplied predicate.
+     *
+     * @param columnName   name of the aggregation column
+     * @param keyExtractor function used to extract the key
+     * @param predicate    filter applied before accumulation
+     * @return configured Accumulator
+     */
     static Accumulator of(String columnName,
                           Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor,
                           Product.TriFunction<Metric<?>, ClassInfo, HasName, Boolean> predicate) {
@@ -53,6 +83,15 @@ public interface Accumulator {
         return new StandardAccumulator1(columnName, keyExtractor, predicate);
     }
 
+    /**
+     * Creates a level two accumulator using an always true predicate.
+     *
+     * @param columnName    name of the first aggregation column
+     * @param keyExtractor  function used to extract the first key
+     * @param columnName2   name of the second aggregation column
+     * @param keyExtractor2 function used to extract the second key
+     * @return configured Accumulator
+     */
     static Accumulator of(final String columnName,
                           final Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor,
                           final String columnName2,
@@ -64,6 +103,16 @@ public interface Accumulator {
         return of(columnName, keyExtractor, columnName2, keyExtractor2, (m, ci, l) -> true);
     }
 
+    /**
+     * Creates a level two accumulator using the supplied predicate.
+     *
+     * @param columnName    name of the first aggregation column
+     * @param keyExtractor  function used to extract the first key
+     * @param columnName2   name of the second aggregation column
+     * @param keyExtractor2 function used to extract the second key
+     * @param predicate     filter applied before accumulation
+     * @return configured Accumulator
+     */
     static Accumulator of(final String columnName,
                           final Product.TriFunction<Metric<?>, ClassInfo, HasName, String> keyExtractor,
                           final String columnName2,
@@ -77,10 +126,20 @@ public interface Accumulator {
         return new StandardAccumulator2(columnName, keyExtractor, columnName2, keyExtractor2, predicate);
     }
 
+    /**
+     * Convenience factory for an accumulator per method.
+     *
+     * @return supplier for the standard per-method accumulator
+     */
     static Supplier<Accumulator> perMethod() {
         return StandardAccumulators.PER_METHOD;
     }
 
+    /**
+     * Convenience factory for an accumulator per class and metric.
+     *
+     * @return supplier for the standard per-class and metric accumulator
+     */
     static Supplier<Accumulator> perClassAndMetric() {
         return StandardAccumulators.PER_CLASS_AND_METRIC;
     }
