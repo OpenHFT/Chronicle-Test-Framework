@@ -8,10 +8,10 @@ import java.util.function.Function;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Utility class to build delegator instances that forward method invocations
- * to a specified delegate object. This class facilitates a fluent API for customizing
- * the behaviour of the delegator. The builder creates the delegator as a
- * dynamic proxy using {@link java.lang.reflect.Proxy}.
+ * Helper for creating dynamic proxies that forward every invocation to a
+ * supplied delegate. The fluent API lets callers choose the interface the
+ * proxy exposes and customise the result of {@code toString()}. The proxy is
+ * constructed with {@link java.lang.reflect.Proxy}.
  * <p>
  * This class cannot be instantiated.
  */
@@ -22,14 +22,14 @@ public final class Delegation {
     }
 
     /**
-     * Creates and returns a new builder for a delegator instance that will use the provided
-     * {@code delegate} as the delegate. Method invocations on the built instance will be delegated to the
-     * provided delegate.
+     * Starts a builder that delegates calls to the supplied {@code delegate}.
+     * If {@link Builder#as(Class)} is not invoked the proxy exposes only the
+     * methods defined on {@link Object}.
      *
-     * @param delegate The object to delegate invocations to
-     * @param <D>      Provided delegate type
-     * @return New delegator builder
-     * @throws NullPointerException if the provided delegate is {@code null}.
+     * @param delegate object receiving all method invocations
+     * @param <D>      type of the delegate
+     * @return new delegator builder
+     * @throws NullPointerException if {@code delegate} is {@code null}
      */
     public static <D> Builder<Object, D> of(@NotNull final D delegate) {
         requireNonNull(delegate);
@@ -49,19 +49,20 @@ public final class Delegation {
         // Future: Add capability to override any method using T::method references
 
         /**
-         * Specifies the interface the delegate should be viewed as.
-         * <p>
-         * The default view is {@link Object}.
+         * Sets the interface that the proxy will implement. Without calling
+         * this method the proxy only exposes the methods of {@link Object}.
          *
-         * @param type the interface the proxy should implement, non-null
-         * @param <N>  the new view type
+         * @param type interface class, non-null
+         * @param <N>  new view type
          * @return this builder
          */
         <N extends D> Builder<N, D> as(Class<N> type);
 
         /**
-         * Defines the function used when {@code toString()} is invoked on the
-         * proxy. The default is the delegate's {@link Object#toString()}.
+         * Supplies a function used to produce the proxy's string form. The
+         * function is applied to the delegate whenever {@code toString()} is
+         * called. If unspecified, the delegate's {@link Object#toString()} is
+         * used.
          *
          * @param toStringFunction function applied to the delegate, non-null
          * @return this builder
