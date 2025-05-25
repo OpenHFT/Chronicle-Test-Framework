@@ -2,7 +2,7 @@
 Guidance for AI agents, bots and humans who contribute to Chronicle Software’s OpenHFT projects.
 
 ## 1  Purpose  
-Codex-style agents can accelerate development, but only if they respect our house rules.  This file tells you:
+LLM-based agents can accelerate development, but only if they respect our house rules.  This file tells you:
 
 * how to run and verify the build;
 * how to write documentation and Javadoc in **British English** with **7-bit
@@ -16,7 +16,7 @@ Codex-style agents can accelerate development, but only if they respect our hous
 | Requirement | Rationale |
 |-------------|-----------|
 | **British English** spelling (`organisation`, `licence`, *not* `organization`, `license`). | Keeps wording consistent with Chronicle’s London HQ and existing docs.  See the University of Oxford style guide for reference.  |
-| **ASCII-7 only** (code-points 0-127).  Avoid smart quotes, non-breaking spaces and accented characters. | ASCII-7 survives every toolchain Chronicle uses, incl. low-latency binary wire formats that expect the 8th bit to be 0 .  |
+| **ASCII-7 only** (code-points 0-127).  Avoid smart quotes, non-breaking spaces and accented characters. | ASCII-7 survives every toolchain Chronicle uses, incl. low-latency binary wire formats that expect the 8th bit to be 0.  |
 | If you must show a symbol that does not exist in ASCII-7, spell it out (`micro-second`, `>=`, `alpha`) rather than inserting Unicode. | Extended or “8-bit ASCII” variants are *not* portable and are therefore disallowed. |
 
 ---
@@ -62,7 +62,7 @@ mvn -q verify
 ## 6  What to ask the reviewers
 
 - *Is this asciidoc documentation precise enough for a clean-room re-implementation?*
-- Does the Javadoc explain the *why* and *how* of the code, that a junior developer wouldn't be expected to work out.
+- Does the Javadoc explain the *why* and *how* of the code, that a junior developer would not be expected to work out.
 
 ## 7  Project requirements
 
