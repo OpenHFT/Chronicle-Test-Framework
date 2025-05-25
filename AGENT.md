@@ -64,3 +64,7 @@ mvn -q verify
 - *Is this asciidoc documentation precise enough for a clean-room re-implementation?*
 - Does the Javadoc explain the *why* and *how* of the code, that a junior developer wouldn't be expected to work out.
 
+## 7  Project requirements
+
+see src/main/adoc/project-requirements.adoc for details on project requirements.
+
