@@ -29,6 +29,10 @@ import java.util.concurrent.locks.LockSupport;
  * occur. The JVM treats explicit requests as hints only, so a cycle may not run
  * immediately or at all. Waiting relies on the GC count increasing and does not
  * guarantee that any memory has been reclaimed.
+ * <p>
+ * Behaviour differs between JVM vendors and collector implementations. Some
+ * collectors ignore {@code System.gc()} requests and the available collection
+ * counters vary.
  */
 @SuppressWarnings("java:S1215") // Sonar warning suppression for System.gc usage
 public enum GcControls {
@@ -38,8 +42,8 @@ public enum GcControls {
      * Requests that the JVM performs a garbage collection cycle.
      * <p>
      * The call merely hints that a collection would be useful. The JVM may
-     * ignore it or defer the cycle. No guarantee is made that a GC has run when
-     * this method returns.
+     * ignore it or defer the cycle. No guarantee is made that a cycle runs at
+     * once or that this method blocks until it completes.
      */
     public static void requestGcCycle() {
         System.gc(); // Request a garbage collection cycle
@@ -48,12 +52,13 @@ public enum GcControls {
     /**
      * Requests a collection and waits for the GC count to increase.
      * <p>
-     * The method polls the collector count for up to one second after calling
-     * {@link #requestGcCycle()}. If the count does not change in that period an
-     * {@link IllegalStateException} is thrown. A successful return only indicates
-     * that a GC cycle was observed, not that memory has been reclaimed.
+     * The method polls {@link #getGcCount()} every ten milliseconds for around
+     * one second after calling {@link #requestGcCycle()}. If the count does not
+     * change in that period an {@link IllegalStateException} is thrown. A
+     * successful return only indicates that a GC cycle was observed, not that
+     * memory has been reclaimed.
      *
-     * @throws IllegalStateException if no GC cycle is detected within the timeout
+     * @throws IllegalStateException if no GC cycle is detected within the time-out
      */
     public static void waitForGcCycle() {
         final long gcCount = getGcCount(); // Initial GC count
@@ -71,10 +76,10 @@ public enum GcControls {
     /**
      * Retrieves the total count of garbage collection (GC) cycles that have occurred.
      * <p>
-     * This method returns the sum of collection counts for all types of garbage collectors
-     * within the JVM.
+     * The counts reported by every collector MXBean are summed so the result
+     * reflects all collectors active in the JVM.
      *
-     * @return The number of GCs of all types that have occurred
+     * @return the number of GCs of all types that have occurred
      */
     public static long getGcCount() {
         return ManagementFactory.getGarbageCollectorMXBeans().stream()
