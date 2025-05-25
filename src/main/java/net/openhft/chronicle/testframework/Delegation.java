@@ -10,7 +10,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * Utility class to build delegator instances that forward method invocations
  * to a specified delegate object. This class facilitates a fluent API for customizing
- * the behavior of the delegator.
+ * the behaviour of the delegator. The builder creates the delegator as a
+ * dynamic proxy using {@link java.lang.reflect.Proxy}.
  * <p>
  * This class cannot be instantiated.
  */
@@ -36,8 +37,9 @@ public final class Delegation {
     }
 
     /**
-     * Interface for building a delegation object. Allows customization of the type view
-     * and the {@code toString()} method of the delegate.
+     * Interface for building a delegation object. Allows customisation of the
+     * type view and the {@code toString()} method of the delegate. The instance
+     * produced by {@link #build()} is a dynamic proxy.
      *
      * @param <T> Target type
      * @param <D> Delegation type
@@ -47,32 +49,29 @@ public final class Delegation {
         // Future: Add capability to override any method using T::method references
 
         /**
-         * Specifies the type the delegate should be viewed as.
+         * Specifies the interface the delegate should be viewed as.
          * <p>
-         * The default view is {@link Object }.
+         * The default view is {@link Object}.
          *
-         * @param type The class to view the delegate as (non-null)
-         * @param <N>  The new type of how the delegate should be viewed
-         * @return This builder, for chaining
+         * @param type the interface the proxy should implement, non-null
+         * @param <N>  the new view type
+         * @return this builder
          */
         <N extends D> Builder<N, D> as(Class<N> type);
 
         /**
-         * Specifies the {@code toString()} function the view should use.
-         * <p>
-         * The default view is {@link Object#toString()}.
+         * Defines the function used when {@code toString()} is invoked on the
+         * proxy. The default is the delegate's {@link Object#toString()}.
          *
-         * @param toStringFunction The function to be applied to the delegate (non-null)
-         * @return This builder, for chaining
+         * @param toStringFunction function applied to the delegate, non-null
+         * @return this builder
          */
         Builder<T, D> toStringFunction(Function<? super D, String> toStringFunction);
 
         /**
-         * Creates and returns a new view of type T of the underlying delegate of type D.
-         * <p>
-         * This method finalizes the builder and returns the configured delegator.
+         * Builds and returns the configured proxy.
          *
-         * @return A new view of the delegate
+         * @return a dynamic proxy that forwards calls to the delegate
          */
         T build();
     }
