@@ -40,7 +40,7 @@ mvn -q verify
 
 ## Commit-message & PR etiquette
 
-1. **Subject line <= 72 chars**, imperative mood: "Fix roll-cycle offset in `ExcerptAppender`".
+1. **Subject line <= 72 chars**, imperative mood: Fix roll-cycle offset in `ExcerptAppender`.
 2. Reference the JIRA/GitHub issue if it exists.
 3. In *body*: *root cause -> fix -> measurable impact* (latency, allocation, etc.). Use ASCII bullet points.
 4. **Run `mvn verify`** again after rebasing.
