@@ -167,8 +167,13 @@ public class CodeStructureVerifier {
 
         private void skipClasses() {
             importOptions.add(location -> {
-                String className = parseClassName(location.asURI());
-                return !classesToExclude.contains(className);
+                try {
+                    String className = parseClassName(location.asURI());
+                    return !classesToExclude.contains(className);
+                } catch (RuntimeException e) {
+                    log.debug("Failed to parse class name from location: {}", location, e);
+                    return false;
+                }
             });
         }
 
