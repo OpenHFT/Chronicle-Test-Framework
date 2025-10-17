@@ -13,6 +13,17 @@ import java.nio.channels.spi.SelectorProvider;
 import static net.openhft.chronicle.testframework.CloseableUtil.closeQuietly;
 import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 
+/**
+ * Handles a single proxied socket connection.
+ *
+ * <p>When {@link #run()} is invoked an outbound channel is opened to the
+ * supplied remote address. Bytes read from either side are written to the
+ * other while traffic forwarding is enabled. Traffic may be paused with
+ * {@link #stopForwardingTraffic()} without closing the sockets.
+ *
+ * <p>Invoking {@link #close()} stops the run loop and waits for it to finish so
+ * that both channels are closed cleanly.
+ */
 public class ProxyConnection implements Closeable, Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyConnection.class);
@@ -23,6 +34,13 @@ public class ProxyConnection implements Closeable, Runnable {
     private volatile boolean running = true;
     private volatile boolean finished = false;
     private volatile boolean forwardingTraffic = true;
+
+    /**
+     * Create a new proxy connection.
+     *
+     * @param inboundChannel The accepted client channel, closed when the run loop terminates
+     * @param remoteAddress  Upstream host and port to connect to
+     */
 
     public ProxyConnection(SocketChannel inboundChannel, InetSocketAddress remoteAddress) {
         this.inboundChannel = inboundChannel;

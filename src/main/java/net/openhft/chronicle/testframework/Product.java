@@ -9,6 +9,22 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Utilities for building Cartesian products of collections or streams.
+ * <p>
+ * Each {@code of} method emits a {@link Stream} containing every
+ * combination of the supplied elements. Any empty input yields an empty
+ * stream and a {@code NullPointerException} is thrown for {@code null}
+ * arguments.
+ * <p>
+ * Example:
+ * <pre>
+ * List&lt;String&gt; ts = List.of("A", "B");
+ * List&lt;Integer&gt; us = List.of(1, 2);
+ * Product.of(ts, us)
+ *         .forEach(p -&gt; System.out.println(p.first() + ", " + p.second()));
+ * </pre>
+ */
 public final class Product {
 
     // Suppresses default constructor, ensuring non-instantiability.
@@ -16,23 +32,24 @@ public final class Product {
     }
 
     /**
-     * Creates and returns a Stream representing the Cartesian product of the given {@code ts} and {@code us} collections.
+     * Returns a stream of pairs formed from {@code ts} and {@code us}.
      * <p>
-     * This method returns a Stream of {@link Product2} objects, which pairs each element in {@code ts} with each
-     * element in {@code us}. The order of the product is by {@code T} (most significant factor) and then {@code U}.
-     * <p>
-     * The provided collections must not be {@code null}, or a {@code NullPointerException} will be thrown.
-     * <p>
+     * Edge cases:
+     * <ul>
+     * <li>An empty input yields an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
      * Example:
-     * If {@code ts = ["A", "B"]} and {@code us = [1, 2]}, the method will return a Stream with elements:
-     * {@code [("A", 1), ("A", 2), ("B", 1), ("B", 2)]}.
+     * <pre>
+     * Product.of(List.of("A"), List.of(1))
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second()));
+     * </pre>
      *
-     * @param <T> The element type for the first collection
-     * @param <U> The element type for the second collection
-     * @param ts  The first collection of elements (non-null)
-     * @param us  The second collection of elements (non-null)
-     * @return the Cartesian product of the given elements, represented as a Stream of {@link Product2} objects
-     * @throws NullPointerException if any of the provided collections are {@code null}
+     * @param <T> element type for the first collection
+     * @param <U> element type for the second collection
+     * @param ts  first collection, not {@code null}
+     * @param us  second collection, not {@code null}
+     * @return the Cartesian product as a {@link Stream} of {@link Product2}
      */
     public static <T, U> Stream<Product2<T, U>> of(@NotNull final Collection<T> ts,
                                                    @NotNull final Collection<U> us) {
@@ -45,26 +62,27 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying the provided
-     * {@code constructor} to each tuple (pair of elements).
+     * Returns a stream created by applying {@code constructor} to all pairs
+     * from {@code ts} and {@code us}.
      * <p>
-     * This method calculates the Cartesian product of two collections, {@code ts} and {@code us},
-     * by pairing each element in {@code ts} with each element in {@code us} and applying the provided
-     * {@code constructor} to each pair. The order of the product is determined first by {@code T}
-     * (most significant factor) and then by {@code U}.
-     * <p>
+     * Edge cases:
+     * <ul>
+     * <li>Empty inputs produce an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
      * Example:
-     * If {@code ts = ["A", "B"]} and {@code us = [1, 2]}, and the constructor concatenates the elements,
-     * the method will return a Stream with elements {@code ["A1", "A2", "B1", "B2"]}.
+     * <pre>
+     * Product.of(List.of("A"), List.of(1), (a, b) -&gt; a + b)
+     *         .forEach(System.out::println);
+     * </pre>
      *
-     * @param <T>         Element type for the first collection
-     * @param <U>         Element type for the second collection
-     * @param <R>         Return type after applying the constructor to each tuple
-     * @param ts          The first collection of elements (non-null)
-     * @param us          The second collection of elements (non-null)
-     * @param constructor A BiFunction to be applied to all pairs, creating the result type {@code R} (non-null)
-     * @return A Stream representing the Cartesian product of the given elements after applying the constructor
-     * @throws NullPointerException if any of the provided parameters are {@code null}
+     * @param <T>         element type for the first collection
+     * @param <U>         element type for the second collection
+     * @param <R>         result type after applying the constructor
+     * @param ts          first collection, not {@code null}
+     * @param us          second collection, not {@code null}
+     * @param constructor function applied to each pair, not {@code null}
+     * @return stream of constructed results
      */
     public static <T, U, R> Stream<R> of(@NotNull final Collection<T> ts,
                                          @NotNull final Collection<U> us,
@@ -79,21 +97,25 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying a default
-     * Product2 constructor to each tuple.
+     * Returns a stream of pairs from {@code ts} and {@code us} using the
+     * default {@link Product2} implementation.
      * <p>
-     * The cartesian product is the combination of all possible pairs between the first stream {@code ts} and the second stream {@code us}.
-     * The order of the product is by {@code T} (most significant factor) and then {@code U}.
-     * <p>
-     * This method applies a default constructor {@code ProductUtil.Product2Impl::new} to create objects of type {@code Product2<T, U>}
-     * representing each tuple in the product.
+     * Edge cases:
+     * <ul>
+     * <li>An empty input yields an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
+     * Example:
+     * <pre>
+     * Product.of(Stream.of("A"), Stream.of(1))
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second()));
+     * </pre>
      *
-     * @param <T> element type for the first factor order
-     * @param <U> element type for the second factor order
-     * @param ts  the first factor order (non-null)
-     * @param us  the second factor order (non-null)
-     * @return a Stream of {@code Product2<T, U>} representing the cartesian product of the given elements
-     * @throws NullPointerException if any of the provided parameters are {@code null}.
+     * @param <T> element type for the first factor
+     * @param <U> element type for the second factor
+     * @param ts  first stream, not {@code null}
+     * @param us  second stream, not {@code null}
+     * @return stream of {@code Product2} pairs
      */
     public static <T, U> Stream<Product2<T, U>> of(@NotNull final Stream<T> ts,
                                                    @NotNull final Stream<U> us) {
@@ -103,24 +125,27 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying the provided
-     * {@code constructor} to each tuple.
+     * Returns a stream created by applying {@code constructor} to each pair
+     * from the two streams.
      * <p>
-     * Similar to the previous method, this function creates pairs of all possible combinations
-     * between two streams, {@code ts} and {@code us}, and then applies the provided {@code constructor}
-     * to each pair to create objects of type {@code R}.
-     * <p>
-     * The order of the product is determined first by {@code T} (most significant factor) and then by {@code U}.
-     * The provided stream {@code ts} is consumed lazily, and the other provided streams are not.
+     * Edge cases:
+     * <ul>
+     * <li>Empty inputs produce an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
+     * Example:
+     * <pre>
+     * Product.of(Stream.of("A"), Stream.of(1), (a, b) -&gt; a + b)
+     *         .forEach(System.out::println);
+     * </pre>
      *
-     * @param <T>         Element type for the first stream
-     * @param <U>         Element type for the second stream
-     * @param <R>         Return type after applying the constructor to each tuple
-     * @param ts          The first stream of elements (non-null)
-     * @param us          The second stream of elements (non-null)
-     * @param constructor A BiFunction to be applied to all pairs, creating the result type {@code R} (non-null)
-     * @return A Stream representing the Cartesian product of the given elements after applying the constructor
-     * @throws NullPointerException if any of the provided parameters are {@code null}
+     * @param <T>         element type for the first stream
+     * @param <U>         element type for the second stream
+     * @param <R>         result type after applying the constructor
+     * @param ts          first stream, not {@code null}
+     * @param us          second stream, not {@code null}
+     * @param constructor function applied to each pair, not {@code null}
+     * @return stream of constructed results
      */
     public static <T, U, R> Stream<R> of(@NotNull final Stream<T> ts,
                                          @NotNull final Stream<U> us,
@@ -132,24 +157,27 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying a default
-     * Product3 constructor to each tuple.
+     * Returns triples from {@code ts}, {@code us} and {@code vs} using the
+     * default {@link Product3} implementation.
      * <p>
-     * The cartesian product is formed by creating all possible combinations of the three
-     * collections {@code ts}, {@code us}, and {@code vs}, with the order being determined first
-     * by {@code T} (most significant factor), then by {@code U}, and finally by {@code V}.
-     * <p>
-     * The default constructor {@code ProductUtil.Product3Impl::new} is used to create objects of type
-     * {@code Product3<T, U, V>} representing each tuple in the product.
+     * Edge cases:
+     * <ul>
+     * <li>An empty input yields an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
+     * Example:
+     * <pre>
+     * Product.of(List.of("A"), List.of(1), List.of(true))
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second() + ":" + p.third()));
+     * </pre>
      *
-     * @param <T> element type for the first factor order
-     * @param <U> element type for the second factor order
-     * @param <V> element type for the third factor order
-     * @param ts  the first factor order (non-null)
-     * @param us  the second factor order (non-null)
-     * @param vs  the third factor order (non-null)
-     * @return a Stream of {@code Product3<T, U, V>} representing the cartesian product of the given elements
-     * @throws NullPointerException if any of the provided parameters are {@code null}.
+     * @param <T> element type for the first factor
+     * @param <U> element type for the second factor
+     * @param <V> element type for the third factor
+     * @param ts  first collection, not {@code null}
+     * @param us  second collection, not {@code null}
+     * @param vs  third collection, not {@code null}
+     * @return stream of {@code Product3} triples
      */
     public static <T, U, V> Stream<Product3<T, U, V>> of(@NotNull final Collection<T> ts,
                                                          @NotNull final Collection<U> us,
@@ -161,26 +189,29 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying the provided
-     * {@code constructor} to each tuple.
+     * Returns triples by applying {@code constructor} to each combination of
+     * {@code ts}, {@code us} and {@code vs}.
      * <p>
-     * Similar to the previous method, this function creates all possible combinations between
-     * the three collections {@code ts}, {@code us}, and {@code vs}, and then applies the provided
-     * {@code constructor} to each tuple to create objects of type {@code R}.
-     * <p>
-     * The order of the product is determined first by {@code T} (most significant factor), then
-     * by {@code U}, and finally by {@code V}.
+     * Edge cases:
+     * <ul>
+     * <li>An empty input yields an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
+     * Example:
+     * <pre>
+     * Product.of(List.of("A"), List.of(1), List.of(true), (a, b, c) -&gt; a + b + c)
+     *         .forEach(System.out::println);
+     * </pre>
      *
-     * @param <T>         Element type for the first collection
-     * @param <U>         Element type for the second collection
-     * @param <V>         Element type for the third collection
-     * @param <R>         Return type after applying the constructor to each tuple
-     * @param ts          The first collection of elements (non-null)
-     * @param us          The second collection of elements (non-null)
-     * @param vs          The third collection of elements (non-null)
-     * @param constructor A TriFunction to be applied to all tuples, creating the result type {@code R} (non-null)
-     * @return A Stream representing the Cartesian product of the given elements after applying the constructor
-     * @throws NullPointerException if any of the provided parameters are {@code null}
+     * @param <T>         element type for the first collection
+     * @param <U>         element type for the second collection
+     * @param <V>         element type for the third collection
+     * @param <R>         result type after applying the constructor
+     * @param ts          first collection, not {@code null}
+     * @param us          second collection, not {@code null}
+     * @param vs          third collection, not {@code null}
+     * @param constructor function applied to each triple, not {@code null}
+     * @return stream of constructed results
      */
     public static <T, U, V, R> Stream<R> of(@NotNull final Collection<T> ts,
                                             @NotNull final Collection<U> us,
@@ -194,23 +225,27 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying a default
-     * Product3 constructor to each tuple.
+     * Returns a stream of triples from three streams using the default
+     * {@link Product3} implementation.
      * <p>
-     * The order of the product is by T (most significant factor) and then U and then V. The provided stream
-     * {@code ts} is consumed lazily, and the other provided streams are not, which allows for more efficient
-     * processing of large or infinite streams.
-     * <p>
-     * The default constructor {@code ProductUtil.Product3Impl::new} is used to represent each tuple in the product.
+     * Edge cases:
+     * <ul>
+     * <li>An empty input yields an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
+     * Example:
+     * <pre>
+     * Product.of(Stream.of("A"), Stream.of(1), Stream.of(true))
+     *         .forEach(p -&gt; System.out.println(p.first() + ":" + p.second() + ":" + p.third()));
+     * </pre>
      *
-     * @param <T> element type for the first factor order
-     * @param <U> element type for the second factor order
-     * @param <V> element type for the third factor order
-     * @param ts  the first factor order (non-null)
-     * @param us  the second factor order (non-null)
-     * @param vs  the third factor order (non-null)
-     * @return a Stream of {@code Product3<T, U, V>} representing the cartesian product of the given elements
-     * @throws NullPointerException if any of the provided parameters are {@code null}.
+     * @param <T> element type for the first factor
+     * @param <U> element type for the second factor
+     * @param <V> element type for the third factor
+     * @param ts  first stream, not {@code null}
+     * @param us  second stream, not {@code null}
+     * @param vs  third stream, not {@code null}
+     * @return stream of {@code Product3} triples
      */
     public static <T, U, V> Stream<Product3<T, U, V>> of(@NotNull final Stream<T> ts,
                                                          @NotNull final Stream<U> us,
@@ -222,27 +257,29 @@ public final class Product {
     }
 
     /**
-     * Creates and returns the cartesian product of the given elements by applying the provided
-     * {@code constructor} to each tuple.
+     * Returns triples produced by applying {@code constructor} to every
+     * combination of the three streams.
      * <p>
-     * This function creates all possible combinations between the three streams {@code ts}, {@code us},
-     * and {@code vs}, and then applies the provided {@code constructor} to each tuple to create objects
-     * of type {@code R}.
-     * <p>
-     * The order of the product is determined first by {@code T} (most significant factor), then
-     * by {@code U}, and finally by {@code V}. The stream {@code ts} is consumed lazily, while the
-     * others are not.
+     * Edge cases:
+     * <ul>
+     * <li>An empty input yields an empty stream.</li>
+     * <li>{@code null} arguments cause a {@link NullPointerException}.</li>
+     * </ul>
+     * Example:
+     * <pre>
+     * Product.of(Stream.of("A"), Stream.of(1), Stream.of(true), (a, b, c) -&gt; a + b + c)
+     *         .forEach(System.out::println);
+     * </pre>
      *
-     * @param <T>         Element type for the first stream
-     * @param <U>         Element type for the second stream
-     * @param <V>         Element type for the third stream
-     * @param <R>         Return type after applying the constructor to each tuple
-     * @param ts          The first stream of elements (non-null)
-     * @param us          The second stream of elements (non-null)
-     * @param vs          The third stream of elements (non-null)
-     * @param constructor A TriFunction to be applied to all tuples, creating the result type {@code R} (non-null)
-     * @return A Stream representing the cartesian product of the given elements after applying the constructor
-     * @throws NullPointerException if any of the provided parameters are {@code null}
+     * @param <T>         element type for the first stream
+     * @param <U>         element type for the second stream
+     * @param <V>         element type for the third stream
+     * @param <R>         result type after applying the constructor
+     * @param ts          first stream, not {@code null}
+     * @param us          second stream, not {@code null}
+     * @param vs          third stream, not {@code null}
+     * @param constructor function applied to each triple, not {@code null}
+     * @return stream of constructed results
      */
     public static <T, U, V, R> Stream<R> of(@NotNull final Stream<T> ts,
                                             @NotNull final Stream<U> us,

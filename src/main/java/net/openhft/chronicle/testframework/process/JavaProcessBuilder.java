@@ -5,28 +5,44 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Builder for launching a separate Java process.
+ * <p>
+ * Typical usage is:
+ * <pre>
+ * {@code
+ * JavaProcessBuilder.create(MyMain.class)
+ *         .withJvmArguments("-Xmx1g")
+ *         .withProgramArguments("arg1", "arg2")
+ *         .start();
+ * }
+ * </pre>
+ * When {@link #inheritingIO()} is used the spawned process shares the same
+ * standard streams. This is convenient for local debugging but tends to break
+ * the Maven Surefire and Failsafe plugins, so avoid it in CI jobs.
+ */
 public interface JavaProcessBuilder {
 
     /**
-     * Provide program arguments to execute with
+     * Provide program arguments for the spawned process.
      *
-     * @param programArguments The list of program arguments
+     * @param programArguments the arguments passed to the main method
      * @return this builder
      */
     JavaProcessBuilder withProgramArguments(@NotNull String... programArguments);
 
     /**
-     * Provide JVM arguments to execute with
+     * Provide JVM arguments for the spawned process.
      *
-     * @param jvmArguments The list of JVM arguments
+     * @param jvmArguments options and system properties for the new JVM
      * @return this builder
      */
     JavaProcessBuilder withJvmArguments(@NotNull String... jvmArguments);
 
     /**
-     * Provide classpath entries to run with, by default uses classpath of spawning process
+     * Provide classpath entries. By default the child uses the parent classpath.
      *
-     * @param classpathEntries The classpath entries to run with
+     * @param classpathEntries additional classpath entries for the child
      * @return this builder
      */
     JavaProcessBuilder withClasspathEntries(@NotNull String... classpathEntries);
@@ -59,9 +75,12 @@ public interface JavaProcessBuilder {
     }
 
     /**
-     * Log stdout and stderr for a process
+     * Log stdout and stderr for a process.
      * <p>
-     * ProcessBuilder.inheritIO() didn't play nicely with Maven failsafe plugin
+     * Use this when {@link #inheritingIO()} is unsuitable, such as on a CI
+     * server. The method captures the output and logs it without inheriting the
+     * streams. ProcessBuilder.inheritIO() did not play nicely with the Maven
+     * failsafe plugin.
      * <p>
      * https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream
      */

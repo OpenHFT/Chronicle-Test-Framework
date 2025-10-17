@@ -9,11 +9,16 @@ import java.util.function.Function;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Provides a runner for handling flaky tests, allowing configuration of various options like
- * retry count, delay between iterations, and logging.
+ * Manages flaky tests by running an action until it succeeds or the iteration
+ * limit is reached. Configure the behaviour via {@link #builder(RunnableThrows)}
+ * or {@link #builderUnchecked(Runnable)}.
  * <p>
- * This class is part of a builder pattern allowing users to define how flaky tests should be
- * handled, enabling them to configure and adapt the behavior as needed.
+ * Use when a test fails intermittently because of race conditions or external
+ * factors. Options include iteration delay, garbage collection and custom
+ * loggers.
+ * <p>
+ * This runner is not thread-safe. Each instance must run on one thread only
+ * and cannot be nested. Concurrent or nested calls cause an {@link AssertionError}.
  */
 public final class FlakyTestRunner {
 

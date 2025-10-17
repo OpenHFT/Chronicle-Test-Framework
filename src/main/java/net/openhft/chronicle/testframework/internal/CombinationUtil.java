@@ -35,6 +35,11 @@ public final class CombinationUtil {
     private CombinationUtil() {
     }
 
+    /**
+     * Produce a stream containing every combination of the supplied items.
+     * The method iterates over all subset sizes and uses recursion to build
+     * each set in insertion order.
+     */
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a List from an array is safe
     public static <T> Stream<Set<T>> of(final T... items) {
@@ -45,30 +50,35 @@ public final class CombinationUtil {
                 }).flatMap(identity());
     }
 
+    /**
+     * Convenience wrapper that generates combinations for a collection.
+     */
     @SuppressWarnings("unchecked")
     public static <T> Stream<Set<T>> of(final Collection<T> items) {
         return of((T[]) items.toArray());
     }
 
+    /**
+     * Convenience wrapper that generates combinations for a stream.
+     */
     @SuppressWarnings("unchecked")
     public static <T> Stream<Set<T>> of(final Stream<T> items) {
         return of((T[]) items.toArray());
     }
 
+    /**
+     * Recursively fill {@code data} with a subset of size {@code r} chosen from
+     * {@code arr} and emit it once complete.
+     */
     private static <T> Stream<Set<T>> combinationHelper(
             T[] arr, T[] data,
             int start, int end,
             int index, int r) {
 
-        // Current combination is ready to be printed, print it
         if (index == r) {
             return Stream.of(asSet(data, r));
         }
 
-        // replace index with all possible elements. The condition
-        // "end-i+1 >= r-index" makes sure that including one element
-        // at index will make a combination with remaining elements
-        // at remaining positions
         return IntStream.rangeClosed(start, end)
                 .filter(i -> end - i + 1 >= r - index)
                 .mapToObj(i -> {
@@ -77,6 +87,10 @@ public final class CombinationUtil {
                 }).flatMap(identity());
     }
 
+    /**
+     * Collect the first {@code newSize} elements of the array into a
+     * {@link LinkedHashSet}.
+     */
     private static <T> Set<T> asSet(T[] array, int newSize) {
         return Stream.of(array)
                 .limit(newSize)

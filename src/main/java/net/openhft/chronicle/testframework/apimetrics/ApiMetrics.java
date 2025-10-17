@@ -6,52 +6,54 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * The ApiMetrics interface represents a contract for gathering and managing API metrics.
- * It provides methods to access accumulators for both public (non-internal) and internal packages,
- * allowing granular control and understanding of metrics across different parts of the application.
+ * Container for the aggregated results of API metric analysis. Metrics collected
+ * from packages that are not marked as {@code internal} are kept separate from
+ * those found in internal packages. Results are retrieved via
+ * {@link #accumulators()} for public packages and
+ * {@link #internalAccumulators()} for internal ones.
  */
 public interface ApiMetrics {
 
     /**
-     * Returns a stream of Accumulators used for public (non-internal) packages.
-     * These Accumulators represent the metrics collected for visible or externally-facing parts of the API.
+     * Provides the accumulators applied to non-internal packages in the order they were added.
      *
-     * @return a stream of public Accumulators
+     * @return stream of public accumulators
      */
     Stream<Accumulator> accumulators();
 
     /**
-     * Returns a stream of Accumulators used for internal packages.
-     * These Accumulators represent the metrics collected for hidden or internally-used parts of the API.
+     * Provides the accumulators applied to internal packages in the order they were added.
      *
-     * @return a stream of internal Accumulators
+     * @return stream of internal accumulators
      */
     Stream<Accumulator> internalAccumulators();
 
     /**
-     * Creates and returns a new ApiMetricsBuilder.
-     * This method facilitates the creation of ApiMetrics instances with custom configurations,
-     * allowing flexibility in defining how the metrics are collected and aggregated.
+     * Returns a fresh builder for {@link ApiMetrics}.
      *
-     * @return a new ApiMetricsBuilder instance
+     * @return new builder
      */
     static ApiMetricsBuilder builder() {
         return new StandardApiMetricsBuilder();
     }
 
     /**
-     * Interface for a builder that allows constructing an ApiMetrics object.
-     * This builder allows the specification of packages to analyze, packages to exclude from analysis,
-     * metrics to apply, and accumulators for aggregating metrics.
-     * The build method applies all the specifications and returns the final ApiMetrics object.
+     * Builder used to configure and create {@link ApiMetrics}.
+     * <p>
+     * Packages to scan are registered with {@link #addPackage(String)} while
+     * {@link #addPackageExclusion(String)} removes unwanted packages. If no
+     * package is added the build will succeed but no classes will be examined.
+     * At least one metric must be added otherwise {@link #build()} will throw an
+     * {@link IllegalStateException}. Accumulators define how results are
+     * aggregated and may be omitted.
      */
     interface ApiMetricsBuilder {
 
         /**
-         * Adds the provided {@code paket} and all its underlying packages to the set of packages to analyze.
-         * This method helps in specifying the packages that need to be included in the metrics analysis.
+         * Adds the supplied {@code paket} and its sub-packages to the scan list.
+         * Internally invokes {@code addPackage(paket.getName())}.
          *
-         * @param paket Package to analyze (non-null)
+         * @param paket package to analyse (non-null)
          * @return this builder
          */
         default ApiMetricsBuilder addPackage(final Package paket) {
@@ -59,19 +61,17 @@ public interface ApiMetrics {
         }
 
         /**
-         * Adds the provided {@code packageName} and all its underlying packages to the set of packages to analyze.
-         * This method helps in specifying the packages that need to be included in the metrics analysis by name.
+         * Adds the named package and its sub-packages to the scan list.
          *
-         * @param packageName String representing the package to analyze (non-null)
+         * @param packageName package to analyse (non-null)
          * @return this builder
          */
         ApiMetricsBuilder addPackage(final String packageName);
 
         /**
-         * Adds the provided {@code paket} and all its underlying packages to the set of excluded packages not to analyze.
-         * This method helps in specifying the packages that should be excluded from the metrics analysis.
+         * Excludes the supplied {@code paket} and its sub-packages from scanning.
          *
-         * @param paket Package not to analyze (non-null)
+         * @param paket package not to analyse (non-null)
          * @return this builder
          */
         default ApiMetricsBuilder addPackageExclusion(final Package paket) {
@@ -79,53 +79,51 @@ public interface ApiMetrics {
         }
 
         /**
-         * Adds the provided {@code packageName} and all its underlying packages to the set of excluded packages not to analyze.
-         * This method helps in specifying the packages that should be excluded from the metrics analysis by name.
+         * Excludes the named package and its sub-packages from scanning.
          *
-         * @param packageName String representing the package not to analyze (non-null)
+         * @param packageName package not to analyse (non-null)
          * @return this builder
          */
         ApiMetricsBuilder addPackageExclusion(final String packageName);
 
         /**
-         * Add the provided {@code metric} as applicable when analysing the set of packages.
-         * This allows customization of the metrics used in the analysis.
+         * Registers a metric to apply when analysing the packages.
          *
-         * @param metric Metric to add (non-null)
+         * @param metric metric to add (non-null)
          * @return this builder
          */
         ApiMetricsBuilder addMetric(final Metric<?> metric);
 
         /**
-         * Add a set of standard metrics as applicable when analysing the set of packages.
-         * This method includes a predefined set of metrics suitable for general analysis.
+         * Adds Chronicle's default metrics. These cover counts of public and
+         * protected classes, methods and fields, giving a quick view of the
+         * exposed API surface.
          *
          * @return this builder
          */
         ApiMetricsBuilder addStandardMetrics();
 
         /**
-         * Adds the supplied accumulator to the builder.
-         * Accumulators help in aggregating metrics over a specified set of classes, methods, or fields.
+         * Adds an accumulator used to aggregate metric values.
          *
-         * @param accumulator Supplier for the Accumulator to be added
+         * @param accumulator supplier for the accumulator
          * @return this builder
          */
         ApiMetricsBuilder addAccumulator(final Supplier<Accumulator> accumulator);
 
         /**
-         * Adds a set of standard accumulators to the builder.
-         * Standard accumulators provide common aggregation functionalities for metrics analysis.
+         * Adds Chronicle's default accumulators. The set aggregates by metric,
+         * package and class, providing an overview from several angles.
          *
          * @return this builder
          */
         ApiMetricsBuilder addStandardAccumulators();
 
         /**
-         * Analyses and returns ApiMetrics thereby applying all the metrics and accumulators to the set of packages to analyse.
-         * This method constructs and returns the final ApiMetrics object, ready for use.
+         * Scans the configured packages and returns the aggregated metrics.
          *
          * @return the ApiMetrics
+         * @throws IllegalStateException if no metrics have been added
          */
         ApiMetrics build();
     }

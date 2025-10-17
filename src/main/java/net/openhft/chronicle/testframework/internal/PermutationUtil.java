@@ -21,8 +21,14 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
- * General Permutation support from
+ * Utility methods for enumerating permutations. The algorithm maps the
+ * permutation number to the factorial number system and selects elements one
+ * by one. It was adapted from
  * http://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html
+ *
+ * Valid inputs are limited so that all factorial calculations fit within a
+ * {@code long}. Collections larger than twenty items will therefore cause an
+ * {@link IllegalArgumentException}.
  *
  * @author Per Minborg
  */
@@ -32,6 +38,13 @@ public final class PermutationUtil {
     private PermutationUtil() {
     }
 
+    /**
+     * Calculates {@code n!} for {@code 0 <= n <= 20}.
+     *
+     * @param n value to factorise, between zero and twenty inclusive
+     * @return factorial of {@code n}
+     * @throws IllegalArgumentException if {@code n} is outside the valid range
+     */
     public static long factorial(final int n) {
         if (n > 20 || n < 0) {
             throw new IllegalArgumentException(n + " is out of range");
@@ -39,9 +52,28 @@ public final class PermutationUtil {
         return LongStream.rangeClosed(2, n).reduce(1, (a, b) -> a * b);
     }
 
+    /**
+     * Returns the {@code no}-th permutation of the supplied collection.
+     * The collection size must be between zero and twenty inclusive.
+     *
+     * <p>The method uses the factorial number system to decide which
+     * element to remove at each step.</p>
+     *
+     * @param no    ordinal of the permutation, starting at zero and less
+     *              than {@code factorial(items.size())}
+     * @param items collection of items to permute
+     * @param <T>   item type
+     * @return chosen permutation as a {@link List}
+     * @throws IllegalArgumentException if the ordinal is out of range
+     */
     public static <T> List<T> permutation(final long no, final Collection<T> items) {
+        Objects.requireNonNull(items);
+        final long count = factorial(items.size());
+        if (no < 0 || no >= count) {
+            throw new IllegalArgumentException("ordinal " + no + " is out of range");
+        }
         return permutationHelper(no,
-                new LinkedList<>(Objects.requireNonNull(items)),
+                new LinkedList<>(items),
                 new ArrayList<>());
     }
 
@@ -54,17 +86,41 @@ public final class PermutationUtil {
         return permutationHelper((int) (no % subFactorial), in, out);
     }
 
+    /**
+     * Convenience overload accepting an array.
+     *
+     * @param items array of items to permute
+     * @param <T>   item type
+     * @return stream of permutations
+     */
     @SafeVarargs
     @SuppressWarnings("varargs") // Creating a List from an array is safe
     public static <T> Stream<List<T>> of(final T... items) {
         return of(Arrays.asList(items));
     }
 
+    /**
+     * Creates a stream of all permutations of the supplied collection.
+     * The collection size must be between zero and twenty inclusive.
+     *
+     * @param items collection to permute
+     * @param <T>   item type
+     * @return stream of permutations
+     */
     public static <T> Stream<List<T>> of(final Collection<T> items) {
         return LongStream.range(0, factorial(items.size()))
                 .mapToObj(no -> permutation(no, items));
     }
 
+    /**
+     * Convenience overload that accepts a stream of items.
+     * The stream is consumed and converted to an array before creating
+     * permutations.
+     *
+     * @param items stream of items to permute
+     * @param <T>   item type
+     * @return stream of permutations
+     */
     @SuppressWarnings("unchecked")
     public static <T> Stream<List<T>> of(final Stream<T> items) {
         return of((T[]) items.toArray());

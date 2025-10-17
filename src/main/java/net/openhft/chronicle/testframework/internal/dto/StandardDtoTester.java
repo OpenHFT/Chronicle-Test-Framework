@@ -12,6 +12,20 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Executes a standard suite of checks on a DTO built via {@link DtoTesterBuilder}.
+ * <p>
+ * The tester expects the builder to supply fresh instances and, when provided,
+ * a resetter and validator. It verifies that:
+ * <ul>
+ * <li>instances can be created and are distinct,</li>
+ * <li>{@code equals(Object)} works for two fresh instances,</li>
+ * <li>the resetter restores the state after every mutator,</li>
+ * <li>{@code hashCode()} changes once a mutator is applied,</li>
+ * <li>validation fails until all mandatory mutators are used and then passes.</li>
+ * </ul>
+ */
+
 final class StandardDtoTester<T> implements DtoTester {
 
     private static final int MAX_COMBINATION_INPUT = 14;
@@ -47,6 +61,10 @@ final class StandardDtoTester<T> implements DtoTester {
             throw new AssertionError("Two distinct fresh instances do not equals() each other");
     }
 
+    /**
+     * Runs each mutator then calls the supplied resetter and checks that the
+     * object matches a fresh instance afterwards.
+     */
     private void assertResettable() {
         if (builder.resetter() == null)
             // Nothing to assert
@@ -66,6 +84,10 @@ final class StandardDtoTester<T> implements DtoTester {
             throw new AssertionError("Resettable: The mutators " + failed + " were applied but the resetter did not reset these mutations");
     }
 
+    /**
+     * Applies every mutator and warns when {@code hashCode()} returns the same
+     * value as for a fresh instance.
+     */
     private void checkHashCode() {
         final T fresh = createInstance();
         final List<String> failed = newList();

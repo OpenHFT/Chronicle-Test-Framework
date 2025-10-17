@@ -12,23 +12,34 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * DtoTester is an interface for testing Data Transfer Objects (DTOs).
- * It provides various methods to set up and execute tests that include
- * accessor checks, validation, mutation, and resetting.
+ * Entry point for testing Data Transfer Objects (DTOs).
+ * The {@code builder} creates a tester that performs a series of
+ * checks around construction, equality, mutators, reset logic and
+ * validation. The interface itself is small so that implementations
+ * can focus on the behavioural tests.
  */
 public interface DtoTester {
 
     /**
-     * Executes all the configured tests on the DTO.
+     * Executes the standard suite of checks for a DTO. The implementation
+     * created by {@link #builder(Class, Supplier)} verifies that
+     * <ul>
+     * <li>a new instance is produced each time,</li>
+     * <li>two fresh instances compare equal,</li>
+     * <li>the resetter clears each applied mutator,</li>
+     * <li>{@code hashCode()} changes after a mutator is used, and</li>
+     * <li>validation fails until all mandatory mutators are applied and then
+     * succeeds even if optional mutators are used.</li>
+     * </ul>
      */
     void test();
 
     /**
-     * Builds a new DtoTester with the given type and constructor.
+     * Starts building a tester for the supplied DTO class type.
      *
-     * @param type        The class of the DTO.
-     * @param constructor A supplier that constructs instances of the DTO.
-     * @return A builder instance to configure the tester.
+     * @param type        class of the DTO
+     * @param constructor supplier creating fresh instances
+     * @return builder used to configure the tester
      */
     @NotNull
     static <T> Builder<T> builder(@NotNull final Class<T> type,
@@ -38,58 +49,60 @@ public interface DtoTester {
     }
 
     /**
-     * Builder interface for configuring and building a DtoTester instance.
+     * Builder used to supply mutators, reset logic and validation rules.
      *
-     * @param <T> The type of the DTO.
+     * @param <T> the DTO type
      */
     interface Builder<T> {
 
         /**
-         * Adds accessors to the builder for testing.
+         * Registers a getter and setter pair. Intended for future property
+         * level tests.
          *
-         * @param getter The getter function.
-         * @param setter The setter function.
-         * @return This builder, for chaining.
+         * @param getter property read function
+         * @param setter property write function
+         * @return this builder for chaining
          */
         @NotNull <R> Builder<T> withAccessors(@NotNull Function<? super T, ? extends R> getter,
                                               @NotNull BiConsumer<? super T, ? super R> setter);
 
         /**
-         * Adds a resetter function to the builder.
+         * Supplies a function that restores the DTO to its initial state after
+         * each mutator.
          *
-         * @param resetter The reset function.
-         * @return This builder, for chaining.
+         * @param resetter action that clears all fields
+         * @return this builder for chaining
          */
         @NotNull Builder<T> withResetter(@NotNull Consumer<? super T> resetter);
 
         /**
-         * Adds a validation function to the builder.
+         * Provides validation logic that throws if the DTO is not valid.
          *
-         * @param validator The validation function.
-         * @return This builder, for chaining.
+         * @param validator validation rule
+         * @return this builder for chaining
          */
         @NotNull Builder<T> withValidator(@NotNull Consumer<? super T> validator);
 
         /**
-         * Adds a mutator to the builder for testing.
+         * Registers a mutator with a descriptive name and type.
          *
-         * @param type        The type of the mutator (MANDATORY/OPTIONAL).
-         * @param mutatorName The name of the mutator.
-         * @param mutator     The mutation function.
-         * @return This builder, for chaining.
+         * @param type        whether the mutator is mandatory or optional
+         * @param mutatorName descriptive name used in diagnostics
+         * @param mutator     mutation logic
+         * @return this builder for chaining
          */
         @NotNull <R> Builder<T> addMutator(@NotNull MutatorType type,
                                            @NotNull String mutatorName,
                                            @NotNull Consumer<? super T> mutator);
 
         /**
-         * Adds a mutator to the builder for testing, with a specified value.
+         * Convenience overload to register a mutator that sets a value.
          *
-         * @param mutatorType The type of the mutator (MANDATORY/OPTIONAL).
-         * @param mutatorName The name of the mutator.
-         * @param setter      The setter function.
-         * @param value       The value to set.
-         * @return This builder, for chaining.
+         * @param mutatorType whether the mutator is mandatory or optional
+         * @param mutatorName descriptive name of the mutator
+         * @param setter      setter to apply
+         * @param value       value to pass to the setter
+         * @return this builder for chaining
          */
         default @NotNull <R> Builder<T> addMutator(@NotNull final MutatorType mutatorType,
                                                    @NotNull final String mutatorName,
@@ -113,6 +126,9 @@ public interface DtoTester {
      * Enum for defining mutator types.
      */
     enum MutatorType {
-        MANDATORY, OPTIONAL
+        /** Mutator that must be applied for validation to pass. */
+        MANDATORY,
+        /** Mutator that may be applied but is not required for validation. */
+        OPTIONAL
     }
 }

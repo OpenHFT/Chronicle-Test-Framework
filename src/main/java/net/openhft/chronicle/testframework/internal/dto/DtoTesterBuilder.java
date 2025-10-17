@@ -10,6 +10,17 @@ import java.util.function.*;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Builder used by {@link DtoTester} implementations.
+ * <p>
+ * Mutator functions and validation rules are added here and stored with the
+ * names supplied by the caller. Mutators are split into mandatory and optional
+ * groups. The mandatory set describes the smallest collection of changes
+ * required for the DTO to become valid. Optional mutators are applied
+ * individually and in combination so that the tester can verify that each
+ * change affects equality and hashCode and that the resetter and validator
+ * behave as expected.
+ */
 public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
 
     @NotNull
@@ -26,6 +37,12 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
     private Consumer<? super T> resetter;
     private Consumer<? super T> validator;
 
+    /**
+     * Creates a builder for the supplied DTO type.
+     *
+     * @param type     class of the DTO under test
+     * @param supplier supplier used to create new instances
+     */
     public DtoTesterBuilder(@NotNull final Class<T> type,
                             @NotNull final Supplier<? extends T> supplier) {
         this.type = requireNonNull(type);
@@ -35,6 +52,9 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         validations = newList();
     }
 
+    /**
+     * Placeholder for future accessor checks.
+     */
     @Override
     @NotNull
     public <R> DtoTester.Builder<T> withAccessors(@NotNull final Function<? super T, ? extends R> getter,
@@ -45,6 +65,12 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         return this;
     }
 
+    /**
+     * Registers a function that resets all fields of the DTO.
+     *
+     * @param resetter action that clears the state of a DTO
+     * @return this builder for chaining
+     */
     @Override
     @NotNull
     public DtoTester.Builder<T> withResetter(@NotNull final Consumer<? super T> resetter) {
@@ -52,6 +78,12 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         return this;
     }
 
+    /**
+     * Supplies a validator that throws if the DTO is in an invalid state.
+     *
+     * @param validator validation logic to execute
+     * @return this builder for chaining
+     */
     @Override
     @NotNull
     public DtoTester.Builder<T> withValidator(@NotNull final Consumer<? super T> validator) {
@@ -59,6 +91,14 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         return this;
     }
 
+    /**
+     * Adds a mutator to be applied during testing.
+     *
+     * @param type        whether the mutator is mandatory or optional
+     * @param mutatorName descriptive name of the mutator
+     * @param mutator     mutation logic
+     * @return this builder for chaining
+     */
     @Override
     @NotNull
     public <R> DtoTester.Builder<T> addMutator(@NotNull final DtoTester.MutatorType type,
@@ -88,8 +128,13 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         return this;
     }
 
- */
+    */
 
+    /**
+     * Creates a {@link DtoTester} using the information added so far.
+     *
+     * @return a configured tester instance
+     */
     @Override
     public DtoTester build() {
         return new StandardDtoTester<>(this);
@@ -134,6 +179,9 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         return new ArrayList<>();
     }
 
+    /**
+     * Simple holder for a mutator and its name.
+     */
     static final class NamedMutator<T> extends AbstractNamedHolderRecord<Consumer<? super T>> {
         public NamedMutator(@NotNull final String name,
                             @NotNull final Consumer<? super T> mutator) {
@@ -145,6 +193,9 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         }
     }
 
+    /**
+     * Holder for a validation rule and its name.
+     */
     static final class NamedPredicate<T> extends AbstractNamedHolderRecord<Predicate<? super T>> {
 
         public NamedPredicate(@NotNull final String name,
@@ -157,12 +208,21 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         }
     }
 
+    /**
+     * Base class for associating a name with a value.
+     */
     abstract static class AbstractNamedHolderRecord<H> {
         @NotNull
         private final String name;
         @NotNull
         private final H holder;
 
+        /**
+         * Creates a record with a name and value.
+         *
+         * @param name   descriptive name
+         * @param holder value to be held
+         */
         public AbstractNamedHolderRecord(@NotNull final String name,
                                          @NotNull final H holder) {
             this.name = requireNonNull(name);

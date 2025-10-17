@@ -17,7 +17,10 @@ import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 import static net.openhft.chronicle.testframework.Waiters.waitForCondition;
 
 /**
- * A TCP Proxy, will proxy a single port to a single upstream port
+ * A lightweight TCP proxy that listens on one port and forwards all traffic to
+ * a single upstream port. When created with an ephemeral accept port (0), the
+ * {@link #socketAddress()} method waits for the server socket to open so that
+ * the chosen port can be reported.
  */
 public class TcpProxy implements Closeable, Runnable {
 
@@ -35,7 +38,8 @@ public class TcpProxy implements Closeable, Runnable {
     private ServerSocketChannel serverSocket;
 
     /**
-     * Create a tcp proxy with the specified accept port.
+     * Creates a proxy that listens on the supplied port and forwards to the
+     * given address. Passing {@code 0} uses an ephemeral port.
      */
     public TcpProxy(int acceptPort, InetSocketAddress connectAddress, ExecutorService executorService) {
         this.connectAddress = connectAddress;
@@ -45,16 +49,17 @@ public class TcpProxy implements Closeable, Runnable {
     }
 
     /**
-     * Create a tcp proxy with an ephemeral accept port.
+     * Creates a proxy with an ephemeral accept port.
      */
     public TcpProxy(InetSocketAddress connectAddress, ExecutorService executorService) {
         this(0, connectAddress, executorService);
     }
 
     /**
-     * @return The socket address used for accepting connections. If an ephemeral port has been used (0) then this
-     * method will wait up to {@link TcpProxy#SERVER_SOCKET_OPEN_WAIT_TIME} milliseconds for the server socket to be
-     * non-null and open so that the address and port can be queried.
+     * Returns the address on which the proxy accepts connections. When the
+     * proxy is constructed with port {@code 0} this method waits up to
+     * {@link #SERVER_SOCKET_OPEN_WAIT_TIME} ms for the server socket to open so
+     * that the allocated port can be obtained.
      */
     public InetSocketAddress socketAddress() {
         if (socketAddress.getPort() == 0) {
@@ -72,6 +77,10 @@ public class TcpProxy implements Closeable, Runnable {
         }
     }
 
+    /**
+     * Accepts inbound connections and relays traffic to the upstream address.
+     * Intended to be run on its own thread.
+     */
     @Override
     public void run() {
         running = true;
@@ -112,20 +121,35 @@ public class TcpProxy implements Closeable, Runnable {
         finished = true;
     }
 
+    /**
+     * Closes all active connections and stops accepting new ones until
+     * {@link #acceptNewConnections()} is called.
+     */
     public void dropConnectionsAndPauseNewConnections() {
         acceptingNewConnections = false;
         connections.forEach(ProxyConnection::close);
     }
 
+    /**
+     * Keeps current connections open but stops forwarding traffic. New
+     * connections are rejected until {@link #acceptNewConnections()} is
+     * invoked.
+     */
     public void stopForwardingTrafficAndPauseNewConnections() {
         acceptingNewConnections = false;
         connections.forEach(ProxyConnection::stopForwardingTraffic);
     }
 
+    /**
+     * Allows new connections after a pause.
+     */
     public void acceptNewConnections() {
         acceptingNewConnections = true;
     }
 
+    /**
+     * Stops the proxy and waits for all resources to close.
+     */
     @Override
     public void close() throws IllegalStateException {
         running = false;
@@ -137,9 +161,9 @@ public class TcpProxy implements Closeable, Runnable {
     }
 
     /**
-     * Is the proxy open for connection
+     * Reports whether the server socket is bound and ready for connections.
      *
-     * @return true if the socket is open and ready to accept connections, false otherwise
+     * @return true if open
      */
     public boolean isOpen() {
         return isOpen;

@@ -8,9 +8,10 @@ import java.util.function.Function;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Utility class to build delegator instances that forward method invocations
- * to a specified delegate object. This class facilitates a fluent API for customizing
- * the behavior of the delegator.
+ * Helper for creating dynamic proxies that forward every invocation to a
+ * supplied delegate. The fluent API lets callers choose the interface the
+ * proxy exposes and customise the result of {@code toString()}. The proxy is
+ * constructed with {@link java.lang.reflect.Proxy}.
  * <p>
  * This class cannot be instantiated.
  */
@@ -21,14 +22,14 @@ public final class Delegation {
     }
 
     /**
-     * Creates and returns a new builder for a delegator instance that will use the provided
-     * {@code delegate} as the delegate. Method invocations on the built instance will be delegated to the
-     * provided delegate.
+     * Starts a builder that delegates calls to the supplied {@code delegate}.
+     * If {@link Builder#as(Class)} is not invoked the proxy exposes only the
+     * methods defined on {@link Object}.
      *
-     * @param delegate The object to delegate invocations to
-     * @param <D>      Provided delegate type
-     * @return New delegator builder
-     * @throws NullPointerException if the provided delegate is {@code null}.
+     * @param delegate object receiving all method invocations
+     * @param <D>      type of the delegate
+     * @return new delegator builder
+     * @throws NullPointerException if {@code delegate} is {@code null}
      */
     public static <D> Builder<Object, D> of(@NotNull final D delegate) {
         requireNonNull(delegate);
@@ -36,8 +37,9 @@ public final class Delegation {
     }
 
     /**
-     * Interface for building a delegation object. Allows customization of the type view
-     * and the {@code toString()} method of the delegate.
+     * Interface for building a delegation object. Allows customisation of the
+     * type view and the {@code toString()} method of the delegate. The instance
+     * produced by {@link #build()} is a dynamic proxy.
      *
      * @param <T> Target type
      * @param <D> Delegation type
@@ -47,32 +49,30 @@ public final class Delegation {
         // Future: Add capability to override any method using T::method references
 
         /**
-         * Specifies the type the delegate should be viewed as.
-         * <p>
-         * The default view is {@link Object }.
+         * Sets the interface that the proxy will implement. Without calling
+         * this method the proxy only exposes the methods of {@link Object}.
          *
-         * @param type The class to view the delegate as (non-null)
-         * @param <N>  The new type of how the delegate should be viewed
-         * @return This builder, for chaining
+         * @param type interface class, non-null
+         * @param <N>  new view type
+         * @return this builder
          */
         <N extends D> Builder<N, D> as(Class<N> type);
 
         /**
-         * Specifies the {@code toString()} function the view should use.
-         * <p>
-         * The default view is {@link Object#toString()}.
+         * Supplies a function used to produce the proxy's string form. The
+         * function is applied to the delegate whenever {@code toString()} is
+         * called. If unspecified, the delegate's {@link Object#toString()} is
+         * used.
          *
-         * @param toStringFunction The function to be applied to the delegate (non-null)
-         * @return This builder, for chaining
+         * @param toStringFunction function applied to the delegate, non-null
+         * @return this builder
          */
         Builder<T, D> toStringFunction(Function<? super D, String> toStringFunction);
 
         /**
-         * Creates and returns a new view of type T of the underlying delegate of type D.
-         * <p>
-         * This method finalizes the builder and returns the configured delegator.
+         * Builds and returns the configured proxy.
          *
-         * @return A new view of the delegate
+         * @return a dynamic proxy that forwards calls to the delegate
          */
         T build();
     }
