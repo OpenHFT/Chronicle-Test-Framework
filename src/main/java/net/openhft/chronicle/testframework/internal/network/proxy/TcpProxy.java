@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.List;
@@ -84,7 +85,7 @@ public class TcpProxy implements Closeable, Runnable {
     @Override
     public void run() {
         running = true;
-        LOGGER.info("Starting proxy on {} proxying to {}", socketAddress, connectAddress);
+        LOGGER.info("Starting proxy on {} proxying to {}", sanitize(socketAddress), sanitize(connectAddress));
         try {
             serverSocket = ServerSocketChannel.open();
             serverSocket.bind(socketAddress, 10);
@@ -94,10 +95,10 @@ public class TcpProxy implements Closeable, Runnable {
                 if (acceptingNewConnections) {
                     final SocketChannel newConnection = serverSocket.accept();
                     if (newConnection != null) {
-                        LOGGER.info("Received inbound connection from {}", newConnection.socket().getRemoteSocketAddress());
+                        LOGGER.info("Received inbound connection from {}", sanitize(newConnection.socket().getRemoteSocketAddress()));
                         final ProxyConnection connection = new ProxyConnection(newConnection, connectAddress);
                         connections.add(connection);
-                        executorService.submit(connection);
+                        executorService.execute(connection);
                     }
                 }
                 for (int i = 0; i < connections.size(); i++) {
@@ -111,13 +112,13 @@ public class TcpProxy implements Closeable, Runnable {
                 }
                 pause(10);
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             LOGGER.error("proxy run failed", e);
         } finally {
             closeQuietly(serverSocket);
             isOpen = false;
         }
-        LOGGER.info("TCP proxy from {} proxying to {} terminated", socketAddress, connectAddress);
+        LOGGER.info("TCP proxy from {} proxying to {} terminated", sanitize(socketAddress), sanitize(connectAddress));
         finished = true;
     }
 
@@ -167,5 +168,12 @@ public class TcpProxy implements Closeable, Runnable {
      */
     public boolean isOpen() {
         return isOpen;
+    }
+
+    private static String sanitize(SocketAddress address) {
+        if (address == null) {
+            return null;
+        }
+        return address.toString().replace('\r', ' ').replace('\n', ' ');
     }
 }

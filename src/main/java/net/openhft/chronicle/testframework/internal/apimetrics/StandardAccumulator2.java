@@ -97,16 +97,33 @@ public final class StandardAccumulator2 implements Accumulator {
                 .max()
                 .orElse(10);
 
-        final String formatting = "%-" + maxCol + "s %-" + maxCol2 + "s %12.0f%n";
-
-        return String.format("*Accumulation per %s and %s *%n", columnName, columnName2) +
+        return String.format(Locale.ROOT, "*Accumulation per %s and %s *%n", columnName, columnName2) +
                 map.entrySet().stream()
                         .sorted(comparingByKey())
                         .flatMap(e -> e.getValue().entrySet().stream()
                                 .sorted(comparingByKey())
-                                .map(e2 -> String.format(formatting, e.getKey(), e2.getKey(), e2.getValue())))
+                                .map(e2 -> String.format(Locale.ROOT, "%s %s %12.0f%n",
+                                        padRight(e.getKey(), maxCol),
+                                        padRight(e2.getKey(), maxCol2),
+                                        e2.getValue())))
                         .collect(Collectors.joining())
-                + String.format(formatting, "_Total_", "", result());
+                + String.format(Locale.ROOT, "%s %s %12.0f%n",
+                        padRight("_Total_", maxCol),
+                        padRight("", maxCol2),
+                        result());
 
+    }
+
+    private static String padRight(String value, int width) {
+        String text = value == null ? "" : value;
+        if (text.length() >= width) {
+            return text;
+        }
+        StringBuilder builder = new StringBuilder(width);
+        builder.append(text);
+        while (builder.length() < width) {
+            builder.append(' ');
+        }
+        return builder.toString();
     }
 }

@@ -74,8 +74,8 @@ public final class ProductUtil {
         requireNonNull(constructor);
         return ts.stream()
                 .flatMap(t -> us.stream()
-                        .flatMap((u -> vs.stream()
-                                .map(v -> constructor.apply(t, u, v)))));
+                        .flatMap(u -> vs.stream()
+                                .map(v -> constructor.apply(t, u, v))));
     }
 
     /**
@@ -96,8 +96,8 @@ public final class ProductUtil {
         final List<V> innerV = vs.collect(Collectors.toList());
         return ts
                 .flatMap(t -> innerU.stream()
-                        .flatMap((u -> innerV.stream()
-                                .map(v -> constructor.apply(t, u, v)))));
+                        .flatMap(u -> innerV.stream()
+                                .map(v -> constructor.apply(t, u, v))));
     }
 
     /**

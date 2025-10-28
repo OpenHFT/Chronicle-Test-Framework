@@ -1,7 +1,7 @@
 package net.openhft.chronicle.testframework.internal;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.FlakyTestRunner;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Objects.requireNonNull;
@@ -36,11 +36,13 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
      * @throws X if the action fails on the last try
      */
     @Override
+    @SuppressFBWarnings(value = "DM_GC", justification = "Optional GC between flaky test iterations is intentional")
     public void run() throws X {
         if (!inRun.compareAndSet(false, true))
             throw new AssertionError("Can't run nested");
         try {
-            for (int i = 0; i < builder.maxIterations; i++) {
+            final int maxIterations = builder.flakyOnThisArchitecture ? builder.maxIterations : Math.max(1, builder.maxIterations);
+            for (int i = 0; i < maxIterations; i++) {
                 try {
                     builder.action.run();
                     if (i > 0) {
@@ -49,7 +51,7 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
                     break;
                 } catch (Throwable x) {
                     // Using Throwable above allows AssertionError to be retried
-                    if (i == (builder.maxIterations - 1)) {
+                    if (i == (maxIterations - 1)) {
                         throw x;
                     }
                     builder.errorLogger.accept("Rerunning failing test run " + (i + 2));

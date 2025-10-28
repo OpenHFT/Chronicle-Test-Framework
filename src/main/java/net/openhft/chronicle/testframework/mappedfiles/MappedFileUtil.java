@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,10 +34,6 @@ public enum MappedFileUtil {
     private static final Pattern LINE_PATTERN = Pattern.compile("([\\p{XDigit}\\-]+)\\s+([rwxsp\\-]+)\\s+(\\p{XDigit}+)\\s+(\\p{XDigit}+:\\p{XDigit}+)\\s+(\\d+)(?:\\s+(.*))?");
     // Index constants for the parsed groups.
     private static final int ADDRESS_INDEX = 1;
-    private static final int PERMS_INDEX = 2;
-    private static final int OFFSET_INDEX = 3;
-    private static final int DEV_INDEX = 4;
-    private static final int INODE_INDEX = 5;
     private static final int PATH_INDEX = 6;
 
     /**
@@ -51,7 +48,7 @@ public enum MappedFileUtil {
         final Set<String> fileList = new HashSet<>();
 
         if (Files.exists(PROC_SELF_MAPS) && Files.isReadable(PROC_SELF_MAPS)) {
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(PROC_SELF_MAPS)))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(PROC_SELF_MAPS), StandardCharsets.UTF_8))) {
                 processProcSelfMaps(fileList, reader);
             } catch (IOException e) {
                 throw new IllegalStateException("Getting mapped files failed", e);
@@ -72,10 +69,10 @@ public enum MappedFileUtil {
             if (matcher.matches()) {
                 processOneLine(fileList, matcher);
             } else {
-                LOGGER.warn("Found non-matching line in /proc/self/maps: {}", line);
+                    LOGGER.warn("Found non-matching line in /proc/self/maps: {}", sanitize(line));
+                }
             }
         }
-    }
 
     // Processes a single line and adds the file to the list if applicable
     private static void processOneLine(Set<String> fileList, Matcher matcher) {
@@ -86,9 +83,9 @@ public enum MappedFileUtil {
         if (filename.startsWith("/")) {
             fileList.add(filename);
         } else if (!filename.trim().isEmpty()) {
-            LOGGER.debug("Ignoring non-file {}", filename);
+                LOGGER.debug("Ignoring non-file {}", sanitize(filename));
+            }
         }
-    }
 
     /**
      * Parses the provided line using the pattern defined for parsing lines from "/proc/self/maps".
@@ -119,5 +116,12 @@ public enum MappedFileUtil {
      */
     public static String getAddress(Matcher matcher) {
         return matcher.group(ADDRESS_INDEX);
+    }
+
+    private static String sanitize(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace('\r', ' ').replace('\n', ' ');
     }
 }

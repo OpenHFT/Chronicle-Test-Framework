@@ -45,7 +45,7 @@ public final class SeriesUtil {
     }
 
     private static boolean isPrime(long number) {
-        return LongStream.rangeClosed(2, (int) (Math.sqrt(number)))
+        return LongStream.rangeClosed(2, (int) Math.sqrt(number))
                 .allMatch(n -> number % n != 0);
     }
 

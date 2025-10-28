@@ -5,6 +5,7 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.CompositeArchRule;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.internal.codestructure.rules.DtoAliasMustInvokeBootstrapRuleSupplier;
 import net.openhft.chronicle.testframework.internal.codestructure.rules.MainMethodRuleSupplier;
 import net.openhft.chronicle.testframework.internal.codestructure.rules.NonInternalClassesMustNotExtendInternalClassesRuleSupplier;
@@ -44,6 +45,7 @@ public class CodeStructureVerifier {
 
     private final Set<ArchRule> rules;
 
+    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Defensive programming to fail fast when configuration is invalid")
     private CodeStructureVerifier(JavaClasses javaClasses, Set<ArchRule> rules) {
         if (javaClasses == null)
             throw new IllegalArgumentException("Cannot set up test runner with no classes");
@@ -60,7 +62,7 @@ public class CodeStructureVerifier {
      * @throws AssertionError if any of the rules are violated
      */
     public void verify() {
-        log.info("Running code structure test with the following rules: {}", rules);
+        log.info("Running code structure test with the following rules: {}", sanitize(rules));
         CompositeArchRule compositeArchRule = CompositeArchRule.of(rules);
         compositeArchRule.check(javaClasses);
     }
@@ -146,6 +148,7 @@ public class CodeStructureVerifier {
             return this;
         }
 
+        @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "ArchUnit supplies managed classpath entries; URIs are not user controlled")
         private static String parseClassName(URI fileUri) {
             // Convert URI to Path
             Path path = Paths.get(fileUri);
@@ -193,7 +196,9 @@ public class CodeStructureVerifier {
                     String className = parseClassName(location.asURI());
                     return !classesToExclude.contains(className);
                 } catch (RuntimeException e) {
-                    log.debug("Failed to parse class name from location: {}", location, e);
+                    final String safeLocation = sanitize(location);
+                    log.debug("Failed to parse class name from location: {}", safeLocation);
+                    log.debug("Location parsing exception", e);
                     return false;
                 }
             });
@@ -219,6 +224,13 @@ public class CodeStructureVerifier {
             return new CodeStructureVerifier(javaClasses, rules);
         }
 
+    }
+
+    private static String sanitize(Object value) {
+        if (value == null) {
+            return null;
+        }
+        return value.toString().replace('\r', ' ').replace('\n', ' ');
     }
 
 }

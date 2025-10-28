@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework.internal;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.exception.ExceptionTracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     private final Function<T, String> exceptionRenderer;
     private boolean finalised = false;
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Tracker mutates caller-supplied map to report results")
     public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
                                    @NotNull final Function<T, Throwable> throwableExtractor,
                                    @NotNull final Runnable resetRunnable,
@@ -50,6 +52,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         this(messageExtractor, throwableExtractor, resetRunnable, exceptions, ignorePredicate, String::valueOf);
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Tracker mutates caller-supplied map to report results")
     public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
                                    @NotNull final Function<T, Throwable> throwableExtractor,
                                    @NotNull final Runnable resetRunnable,
@@ -106,7 +109,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         }
         for (Map.Entry<Predicate<T>, String> ignoredException : ignoredExceptions.entrySet()) {
             if (exceptions.keySet().removeIf(ignoredException.getKey()))
-                LOGGER.debug("Ignored {}", ignoredException.getValue());
+                LOGGER.debug("Ignored {}", sanitize(ignoredException.getValue()));
         }
 
         if (hasExceptions()) {
@@ -188,7 +191,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     private void dumpException() {
         for (@NotNull Map.Entry<T, Integer> entry : exceptions.entrySet()) {
             final T key = entry.getKey();
-            LOGGER.warn(exceptionRenderer.apply(key), throwableExtractor.apply(key));
+            LOGGER.warn(sanitize(exceptionRenderer.apply(key)), throwableExtractor.apply(key));
             final Integer value = entry.getValue();
             if (value > 1)
                 LOGGER.warn("Repeated {} times", value);
@@ -203,5 +206,12 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         if (finalised) {
             throw new IllegalStateException("VanillaExceptionTracker is single use, you create it, add expectations/ignores, run tests, call check and then dispose of it.");
         }
+    }
+
+    private static String sanitize(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace('\r', ' ').replace('\n', ' ');
     }
 }

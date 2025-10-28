@@ -1,11 +1,13 @@
 package net.openhft.chronicle.testframework.internal.network.proxy;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
@@ -42,19 +44,21 @@ public class ProxyConnection implements Closeable, Runnable {
      * @param remoteAddress  Upstream host and port to connect to
      */
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "ProxyConnection must operate on provided SocketChannel instance")
     public ProxyConnection(SocketChannel inboundChannel, InetSocketAddress remoteAddress) {
         this.inboundChannel = inboundChannel;
-        this.remoteAddress = remoteAddress;
+        this.remoteAddress = new InetSocketAddress(remoteAddress.getHostString(), remoteAddress.getPort());
     }
 
     @Override
     public void run() {
         running = true;
-        try (final SocketChannel outboundChannel = SelectorProvider.provider().openSocketChannel()) {
+        try (SocketChannel outboundChannel = SelectorProvider.provider().openSocketChannel()) {
             outboundChannel.configureBlocking(true);
             outboundChannel.connect(remoteAddress);
             LOGGER.info("Established connection between {} and {}",
-                    inboundChannel.socket().getRemoteSocketAddress(), outboundChannel.socket().getRemoteSocketAddress());
+                    sanitize(inboundChannel.socket().getRemoteSocketAddress()),
+                    sanitize(outboundChannel.socket().getRemoteSocketAddress()));
             outboundChannel.configureBlocking(false);
             inboundChannel.configureBlocking(false);
             while (running) {
@@ -66,7 +70,8 @@ public class ProxyConnection implements Closeable, Runnable {
                 }
             }
             LOGGER.info("Terminating connection between {} and {}",
-                    inboundChannel.socket().getRemoteSocketAddress(), outboundChannel.socket().getRemoteSocketAddress());
+                    sanitize(inboundChannel.socket().getRemoteSocketAddress()),
+                    sanitize(outboundChannel.socket().getRemoteSocketAddress()));
         } catch (IOException e) {
             LOGGER.error("Connection failed", e);
         } finally {
@@ -98,5 +103,12 @@ public class ProxyConnection implements Closeable, Runnable {
 
     public void stopForwardingTraffic() {
         forwardingTraffic = false;
+    }
+
+    private static String sanitize(SocketAddress socketAddress) {
+        if (socketAddress == null) {
+            return null;
+        }
+        return socketAddress.toString().replace('\r', ' ').replace('\n', ' ');
     }
 }

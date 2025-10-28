@@ -9,6 +9,7 @@ import net.openhft.chronicle.testframework.apimetrics.Metric;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -100,14 +101,25 @@ public final class StandardAccumulator1 implements Accumulator {
                 .max()
                 .orElse(10);
 
-        final String formatting = "%-" + maxCol + "s %12.0f%n";
-
-        return String.format("*Accumulation per %s*%n", columnName) +
+        return String.format(Locale.ROOT, "*Accumulation per %s*%n", columnName) +
                 map.entrySet().stream()
                         .sorted(Map.Entry.comparingByKey())
-                        .map(e -> String.format(formatting, e.getKey(), e.getValue()))
+                        .map(e -> String.format(Locale.ROOT, "%s %12.0f%n", padRight(e.getKey(), maxCol), e.getValue()))
                         .collect(Collectors.joining())
-                + String.format(formatting, "_Total_", result());
+                + String.format(Locale.ROOT, "%s %12.0f%n", padRight("_Total_", maxCol), result());
 
+    }
+
+    private static String padRight(String value, int width) {
+        String text = value == null ? "" : value;
+        if (text.length() >= width) {
+            return text;
+        }
+        StringBuilder builder = new StringBuilder(width);
+        builder.append(text);
+        while (builder.length() < width) {
+            builder.append(' ');
+        }
+        return builder.toString();
     }
 }

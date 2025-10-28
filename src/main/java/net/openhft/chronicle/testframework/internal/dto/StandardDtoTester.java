@@ -6,8 +6,6 @@ import net.openhft.chronicle.testframework.internal.dto.DtoTesterBuilder.NamedMu
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -101,6 +99,7 @@ final class StandardDtoTester<T> implements DtoTester {
         failed.forEach(n -> System.err.println("WARNING: hashCode() for the mutator " + n + " was not changed"));
     }
 
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     private void assertValidationRules() {
         if (builder.validator() == null)
             // Nothing to assert
@@ -128,7 +127,7 @@ final class StandardDtoTester<T> implements DtoTester {
                         builder.mandatoryMutators().stream().map(DtoTesterBuilder.AbstractNamedHolderRecord::name).collect(Collectors.joining(", ", "[", "]")) +
                         " but the validator passed without throwing" +
                         " an Exception on using only " + applied + " applied on a fresh instance -> " + t);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 // Happy path
             }
             namedMutator.mutator().accept(t);
@@ -148,6 +147,7 @@ final class StandardDtoTester<T> implements DtoTester {
         }
     }
 
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     private void assertOptionalsDoesNotPass(@NotNull final Set<NamedMutator<T>> set) {
         requireNonNull(set);
         final List<String> optionalApplied = newList();
@@ -159,26 +159,10 @@ final class StandardDtoTester<T> implements DtoTester {
                 builder.validator().accept(optionalTarget);
                 throw new AssertionError("There are at least one mandatory mutator but the validator passed without throwing " +
                         "an Exception on using only optional mutators " + optionalApplied + " applied on a fresh instance -> " + optionalTarget);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 // Happy path
             }
         }
-    }
-
-    private Collection<String> check(final Consumer<? super T> postMutatorAction,
-                                     final BiFunction<T, T, Boolean> tester) {
-
-        final T fresh = createInstance();
-        final List<String> failed = newList();
-        for (NamedMutator<T> namedMutator : builder.allMutators()) {
-            final T t = createInstance();
-            namedMutator.mutator().accept(t);
-            postMutatorAction.accept(t);
-            if (tester.apply(fresh, t)) {
-                failed.add(namedMutator.name());
-            }
-        }
-        return failed;
     }
 
     private T createInstance() {

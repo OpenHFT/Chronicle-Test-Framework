@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework.internal.process;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.process.JavaProcessBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -8,10 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,13 +70,12 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      * https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream
      */
     public static void printProcessOutput(String processName, Process process) {
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info(
-                    String.format("%n Output for %s%n stdout:%n%s stderr:%n%s",
-                            processName,
-                            getProcessStdOut(process),
-                            getProcessStdErr(process))
-            );
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Output for {} | stdout: [{}] | stderr: [{}]",
+                    sanitize(processName),
+                    sanitizeMultiline(getProcessStdOut(process)),
+                    sanitizeMultiline(getProcessStdErr(process)));
+        }
     }
 
     /**
@@ -94,7 +93,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      * @param process The process
      */
     public static String getProcessStdOut(Process process) {
-        return copyStreamToString(process.getErrorStream());
+        return copyStreamToString(process.getInputStream());
     }
 
     /**
@@ -112,13 +111,11 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
                 os.write(buffer, 0, read);
             }
         } catch (IOException e) {
-            // Ignore
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Unable to read process stream", e);
+            }
         }
-        try {
-            return os.toString(Charset.defaultCharset().name());
-        } catch (UnsupportedEncodingException e) {
-            throw new AssertionError(e);
-        }
+        return new String(os.toByteArray(), StandardCharsets.UTF_8);
     }
 
     /**
@@ -156,6 +153,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      * streams when {@link #inheritingIO()} has been called.
      */
     @Override
+    @SuppressFBWarnings(value = "COMMAND_INJECTION", justification = "ProcessBuilder invoked with pre-split argument list; no shell interpretation occurs")
     public Process start() {
         // Because Java17 must be run using various module flags, these must be propagated
         // to the child processes
@@ -177,16 +175,16 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
 
         String className = mainClass.getName();
         String javaBin = findJavaBinPath().toString();
-        List<String> allArgs = new ArrayList<>();
-        allArgs.add(javaBin);
-        allArgs.addAll(jvmArgsWithoutJavaAgents);
-        allArgs.add("-Dchronicle.analytics.disable=true");
-        allArgs.addAll(Arrays.asList(jvmArguments));
-        allArgs.add("-cp");
-        allArgs.add(classPath);
-        allArgs.add(className);
-        allArgs.addAll(Arrays.asList(programArguments));
-        ProcessBuilder processBuilder = new ProcessBuilder(allArgs.toArray(new String[]{}));
+        List<String> command = new ArrayList<>();
+        command.add(javaBin);
+        command.addAll(jvmArgsWithoutJavaAgents);
+        command.add("-Dchronicle.analytics.disable=true");
+        command.addAll(Arrays.asList(jvmArguments));
+        command.add("-cp");
+        command.add(classPath);
+        command.add(className);
+        command.addAll(Arrays.asList(programArguments));
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
         if (inheritIO) {
             LOGGER.warn("You've specified to inherit IO when spawning a Java process, this won't play nice with Maven surefire plugin, don't commit this, see https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream");
             processBuilder.inheritIO();
@@ -196,5 +194,19 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String sanitize(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace('\r', ' ').replace('\n', ' ');
+    }
+
+    private static String sanitizeMultiline(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace('\r', ' ').replace("\n", " | ");
     }
 }

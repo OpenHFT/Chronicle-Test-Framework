@@ -1,5 +1,6 @@
 package net.openhft.chronicle.testframework;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -24,10 +25,11 @@ public enum NetworkUtil {
      * @throws RuntimeException if an {@link IOException} occurs while creating
      *                          or closing the socket
      */
+    @SuppressFBWarnings(value = "UNENCRYPTED_SERVER_SOCKET", justification = "Ephemeral sockets are used exclusively in test setups")
     public static int getAvailablePort() {
         // Binds a temporary socket to obtain an ephemeral port.
         // The port is released when the socket closes.
-        try (final ServerSocket serverSocket = new ServerSocket(0)) {
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
             return serverSocket.getLocalPort();
         } catch (IOException e) {
             throw new RuntimeException("Failed to find an available port", e);

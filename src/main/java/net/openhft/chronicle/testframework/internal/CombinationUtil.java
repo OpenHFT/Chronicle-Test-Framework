@@ -53,7 +53,7 @@ public final class CombinationUtil {
     /**
      * Convenience wrapper that generates combinations for a collection.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.ClassCastExceptionWithToArray"})
     public static <T> Stream<Set<T>> of(final Collection<T> items) {
         return of((T[]) items.toArray());
     }
@@ -61,7 +61,7 @@ public final class CombinationUtil {
     /**
      * Convenience wrapper that generates combinations for a stream.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.ClassCastExceptionWithToArray"})
     public static <T> Stream<Set<T>> of(final Stream<T> items) {
         return of((T[]) items.toArray());
     }
