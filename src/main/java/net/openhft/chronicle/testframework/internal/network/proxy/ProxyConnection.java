@@ -8,6 +8,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
@@ -81,10 +82,10 @@ public class ProxyConnection implements Closeable, Runnable {
     }
 
     private void relayTraffic(SocketChannel sourceChannel, SocketChannel destinationChannel) throws IOException {
-        byteBuffer.clear();
+        ((Buffer) byteBuffer).clear();
         int read = sourceChannel.read(byteBuffer);
         if (read > 0) {
-            byteBuffer.flip();
+            ((Buffer) byteBuffer).flip();
             destinationChannel.write(byteBuffer);
         }
     }
