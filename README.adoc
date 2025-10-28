@@ -7,7 +7,7 @@
 
 image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework]
 image:https://javadoc.io/badge2/net.openhft/chronicle-test-framework/javadoc.svg[Javadoc,link="https://www.javadoc.io/doc/net.openhft/chronicle-test-framework/latest/index.html"]
-//image:https://javadoc-badge.appspot.com/net.openhft/chronicle-test-framework.svg?label=javadoc[JavaDoc, link=https://www.javadoc.io/doc/net.openhft/chronicle-test-framework]
+// image:https://javadoc-badge.appspot.com/net.openhft/chronicle-test-framework.svg?label=javadoc[JavaDoc, link=https://www.javadoc.io/doc/net.openhft/chronicle-test-framework]
 image:https://img.shields.io/github/license/OpenHFT/Chronicle-Test-Framework[Licence]
 image:https://img.shields.io/badge/release%20notes-subscribe-brightgreen[Release Notes,link="https://chronicle.software/release-notes/"]
 image:https://sonarcloud.io/api/project_badges/measure?project=OpenHFT_ChronicleTestFramework&metric=alert_status[Quality Gate,link="https://sonarcloud.io/dashboard?id=OpenHFT_Chronicle-Test-Framework"]
@@ -17,6 +17,17 @@ toc::[]
 == About
 
 Chronicle Test Framework provides test-data generators and API metrics tools for JUnit 4 and JUnit 5. Use the combinators to create permutations, combinations and products, or analyse your packages with the metrics builder.
+
+== Quality Checks
+
+Activate the `code-review` Maven profile before sending patches:
+
+[source,bash]
+----
+mvn -q -Pcode-review verify
+----
+
+The profile runs Checkstyle, SpotBugs, PMD, and JaCoCo with the shared Chronicle rules to catch regressions early.
 
 == Permutations
 
@@ -69,7 +80,8 @@ Stream<DynamicTest> demo() {
 == API Metrics Builder
 
 The API metrics feature analyses the public and internal surface of your
-packages. Create the builder via `ApiMetrics.builder()` then supply the
+packages.
+Create the builder via `ApiMetrics.builder()` then supply the
 packages to scan, the metrics to apply and the accumulators that gather the
 results.
 
@@ -82,9 +94,12 @@ ApiMetrics metrics = ApiMetrics.builder()
         .build();
 ----
 
-The builder applies no defaults. If you omit metrics or accumulators the
-result will be empty. Default metrics and accumulators are only added when you
-call the relevant `addStandard` methods. Packages with `.internal.` in the
+The builder applies no defaults.
+If you omit metrics or accumulators the
+result will be empty.
+Default metrics and accumulators are only added when you
+call the relevant `addStandard` methods.
+Packages with `.internal.` in the
 name, or those ending in `.internal`, are collected in a separate internal
 group.
 
@@ -231,7 +246,8 @@ Stream<DynamicTest> demo() {
 
 == API Metrics Accumulators
 
-The framework includes a small set of predefined accumulator suppliers used by the API metrics analysis. They help to group metric counts in common ways.
+The framework includes a small set of predefined accumulator suppliers used by the API metrics analysis.
+They help to group metric counts in common ways.
 
 * `perMethod()` groups by the full method signature so that overloaded methods are reported separately.
 * `perClassAndMetric()` groups first by class and then by metric, giving a table of metric totals for each class.
@@ -240,4 +256,5 @@ The framework includes a small set of predefined accumulator suppliers used by t
 * `PER_PACKAGE` reports a single total for each package.
 * `PER_METHOD_REFERENCE` groups by method name only, ignoring parameter types, so all overloads are counted as one.
 
-The convenience factories in `Accumulator` expose the first two suppliers for general use. The others are mainly for internal analyses but may be reused when custom behaviour is needed.
+The convenience factories in `Accumulator` expose the first two suppliers for general use.
+The others are mainly for internal analyses but may be reused when custom behaviour is needed.
