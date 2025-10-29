@@ -1,6 +1,5 @@
 package net.openhft.chronicle.testframework.internal;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.exception.ExceptionTracker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -43,7 +42,6 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
     private final Function<T, String> exceptionRenderer;
     private boolean finalised = false;
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Tracker mutates caller-supplied map to report results")
     public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
                                    @NotNull final Function<T, Throwable> throwableExtractor,
                                    @NotNull final Runnable resetRunnable,
@@ -52,7 +50,6 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         this(messageExtractor, throwableExtractor, resetRunnable, exceptions, ignorePredicate, String::valueOf);
     }
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Tracker mutates caller-supplied map to report results")
     public VanillaExceptionTracker(@NotNull final Function<T, String> messageExtractor,
                                    @NotNull final Function<T, Throwable> throwableExtractor,
                                    @NotNull final Runnable resetRunnable,

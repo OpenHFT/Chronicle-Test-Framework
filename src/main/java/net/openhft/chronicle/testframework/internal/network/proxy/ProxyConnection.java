@@ -1,6 +1,5 @@
 package net.openhft.chronicle.testframework.internal.network.proxy;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +43,6 @@ public class ProxyConnection implements Closeable, Runnable {
      * @param inboundChannel The accepted client channel, closed when the run loop terminates
      * @param remoteAddress  Upstream host and port to connect to
      */
-
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "ProxyConnection must operate on provided SocketChannel instance")
     public ProxyConnection(SocketChannel inboundChannel, InetSocketAddress remoteAddress) {
         this.inboundChannel = inboundChannel;
         this.remoteAddress = new InetSocketAddress(remoteAddress.getHostString(), remoteAddress.getPort());

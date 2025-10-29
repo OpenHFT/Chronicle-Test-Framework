@@ -4,6 +4,66 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/4.8.0/spotbugs/etc/findbugsfilter.xsd">
 
-    <!-- Chronicle-Test-Framework: add suppressions only with documented rationale. -->
+    <!-- Chronicle-Test-Framework: replacements for former @SuppressFBWarnings annotations. -->
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.NetworkUtil"/>
+        <Method name="getAvailablePort"/>
+        <Bug pattern="UNENCRYPTED_SERVER_SOCKET"/>
+        <Comment>Ephemeral sockets are used exclusively in test setups.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.internal.VanillaFlakyTestRunner"/>
+        <Method name="run"/>
+        <Bug pattern="DM_GC"/>
+        <Comment>Optional GC between flaky test iterations is intentional.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.internal.codestructure.CodeStructureVerifier"/>
+        <Method name="&lt;init&gt;"/>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+        <Comment>Defensive programming to fail fast when configuration is invalid.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.internal.codestructure.CodeStructureVerifier$Builder"/>
+        <Method name="parseClassName"/>
+        <Bug pattern="PATH_TRAVERSAL_IN"/>
+        <Comment>ArchUnit supplies managed classpath entries; URIs are not user controlled.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.internal.VanillaExceptionTracker"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Comment>Tracker mutates caller-supplied map to report results.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.internal.network.proxy.ProxyConnection"/>
+        <Method name="&lt;init&gt;"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Comment>ProxyConnection must operate on provided SocketChannel instance.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.internal.process.InternalJavaProcessBuilder"/>
+        <Method name="start"/>
+        <Bug pattern="COMMAND_INJECTION"/>
+        <Comment>ProcessBuilder invoked with pre-split argument list; no shell interpretation occurs.</Comment>
+    </Match>
+
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.GcControls"/>
+        <Method name="requestGcCycle"/>
+        <Bug pattern="DM_GC"/>
+        <Comment>Test utilities deliberately request GC for determinism.</Comment>
+    </Match>
+    <Match>
+        <Class name="net.openhft.chronicle.testframework.GcControls"/>
+        <Method name="waitForGcCycle"/>
+        <Bug pattern="DM_GC"/>
+        <Comment>Test utilities deliberately request GC for determinism.</Comment>
+    </Match>
 
 </FindBugsFilter>

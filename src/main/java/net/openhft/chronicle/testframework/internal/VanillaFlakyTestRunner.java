@@ -1,6 +1,5 @@
 package net.openhft.chronicle.testframework.internal;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.FlakyTestRunner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -36,7 +35,6 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
      * @throws X if the action fails on the last try
      */
     @Override
-    @SuppressFBWarnings(value = "DM_GC", justification = "Optional GC between flaky test iterations is intentional")
     public void run() throws X {
         if (!inRun.compareAndSet(false, true))
             throw new AssertionError("Can't run nested");

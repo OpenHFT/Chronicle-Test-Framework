@@ -1,6 +1,5 @@
 package net.openhft.chronicle.testframework.internal.process;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.openhft.chronicle.testframework.process.JavaProcessBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -153,7 +152,6 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      * streams when {@link #inheritingIO()} has been called.
      */
     @Override
-    @SuppressFBWarnings(value = "COMMAND_INJECTION", justification = "ProcessBuilder invoked with pre-split argument list; no shell interpretation occurs")
     public Process start() {
         // Because Java17 must be run using various module flags, these must be propagated
         // to the child processes

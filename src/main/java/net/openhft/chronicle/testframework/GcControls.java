@@ -16,7 +16,6 @@
 
 package net.openhft.chronicle.testframework;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -44,7 +43,6 @@ public enum GcControls {
      * ignore it or defer the cycle. No guarantee is made that a cycle runs at
      * once or that this method blocks until it completes.
      */
-    @SuppressFBWarnings(value = "DM_GC", justification = "Test utilities deliberately request GC for determinism")
     public static void requestGcCycle() {
         System.gc(); // Request a garbage collection cycle
     }
@@ -60,7 +58,6 @@ public enum GcControls {
      *
      * @throws IllegalStateException if no GC cycle is detected within the time-out
      */
-    @SuppressFBWarnings(value = "DM_GC", justification = "Test utilities deliberately request GC for determinism")
     public static void waitForGcCycle() {
         final long gcCount = getGcCount(); // Initial GC count
         System.gc(); // Request a garbage collection cycle
