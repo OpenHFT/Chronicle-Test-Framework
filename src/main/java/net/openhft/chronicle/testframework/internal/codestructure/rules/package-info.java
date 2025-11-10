@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 /**
  * Provides the default ArchUnit rule suppliers used by
  * {@link net.openhft.chronicle.testframework.internal.codestructure.CodeStructureVerifier}.

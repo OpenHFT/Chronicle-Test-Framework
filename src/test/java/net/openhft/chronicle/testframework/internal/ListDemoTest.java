@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 package net.openhft.chronicle.testframework.internal;
 
 import net.openhft.chronicle.testframework.Combination;
@@ -20,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ListDemoTest {
 
-    public static final Predicate<Integer> ODD = v -> v % 2 == 1;
+    private static final Predicate<Integer> ODD = v -> v % 2 == 1;
 
     private static final Collection<NamedConsumer<List<Integer>>> OPERATIONS =
             Arrays.asList(
@@ -112,7 +116,7 @@ public class ListDemoTest {
         private final T first;
         private final T second;
 
-        public Tuple(T first, T second) {
+        Tuple(T first, T second) {
             this.first = first;
             this.second = second;
         }
@@ -125,7 +129,7 @@ public class ListDemoTest {
             return second;
         }
 
-        public <R> Tuple<R> map(Function<? super T, ? extends R> mapper) {
+        <R> Tuple<R> map(Function<? super T, ? extends R> mapper) {
             requireNonNull(mapper);
             return new Tuple<>(mapper.apply(first), mapper.apply(second));
         }

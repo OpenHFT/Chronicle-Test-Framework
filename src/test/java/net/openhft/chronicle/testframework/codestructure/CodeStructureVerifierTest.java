@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 package net.openhft.chronicle.testframework.codestructure;
 
 import net.openhft.chronicle.testframework.internal.codestructure.CodeStructureVerifier;
@@ -13,7 +17,7 @@ class CodeStructureVerifierTest {
     class BuilderTests {
 
         @Test
-        public void builderWithImproperArgumentsShouldFail() {
+        void builderWithImproperArgumentsShouldFail() {
             assertThrows(IllegalArgumentException.class, () -> CodeStructureVerifier.builder().build().verify(), "Cannot build test runner with no packages");
         }
 
@@ -63,12 +67,12 @@ class CodeStructureVerifierTest {
     class MainMethodRuleTests {
 
         @Test
-        public void compliantMain() {
+        void compliantMain() {
             CodeStructureVerifier.builder().importClass(CompliantMain.class).build().verify();
         }
 
         @Test
-        public void nonCompliantMainNoStaticBlock() {
+        void nonCompliantMainNoStaticBlock() {
             assertThrows(AssertionError.class,
                     () -> CodeStructureVerifier.builder().importClass(NonCompliantMainNoStaticBlock.class).build().verify(),
                     "NonCompliantMainNoStaticBlock does not contain exactly one static block that calls DtoAlias.init()"

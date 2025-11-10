@@ -1,9 +1,13 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 package net.openhft.chronicle.testframework.codestructure;
 
 import org.jetbrains.annotations.VisibleForTesting;
 
 @VisibleForTesting
-public class Bootstrap {
+class Bootstrap {
     public static void bootstrap() {
         // Intentional no-op
     }

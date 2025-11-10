@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 package net.openhft.chronicle.testframework.internal;
 
 import net.openhft.chronicle.testframework.FlakyTestRunner;
@@ -69,7 +73,7 @@ class VanillaFlakyTestRunnerTest {
         assertDoesNotThrow(runner::run);
     }
 
-    void foo() {
+    private void foo() {
         // Do nothing and throw nothing
     }
 
@@ -101,7 +105,7 @@ class VanillaFlakyTestRunnerTest {
 
         private int countDown;
 
-        public MyAction(int countDown) {
+        MyAction(int countDown) {
             this.countDown = countDown;
         }
 

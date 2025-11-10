@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 /**
  * Contains internal builder and tester implementations used to verify DTO behaviour.
  * <p>

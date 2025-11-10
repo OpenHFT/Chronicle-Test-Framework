@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 /**
  * Provides the classes and interfaces necessary for API metrics analysis within
  * the Chronicle Test Framework. This package includes functionality for defining

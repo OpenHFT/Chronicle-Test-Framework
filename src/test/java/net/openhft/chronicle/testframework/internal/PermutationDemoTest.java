@@ -1,3 +1,7 @@
+//
+// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+//
+
 /*
  *
  * Copyright (c) 2006-2020, Speedment, Inc. All Rights Reserved.
@@ -64,10 +68,10 @@ final class PermutationDemoTest {
         int b;
         int c;
 
-        public MyBean() {
+        MyBean() {
         }
 
-        public MyBean(int a, int b, int c) {
+        MyBean(int a, int b, int c) {
             this.a = a;
             this.b = b;
             this.c = c;
@@ -77,7 +81,7 @@ final class PermutationDemoTest {
             return a;
         }
 
-        public void setA(int a) {
+        void setA(int a) {
             this.a = a;
         }
 
@@ -85,7 +89,7 @@ final class PermutationDemoTest {
             return b;
         }
 
-        public void setB(int b) {
+        void setB(int b) {
             this.b = b;
         }
 
@@ -93,7 +97,7 @@ final class PermutationDemoTest {
             return c;
         }
 
-        public void setC(int c) {
+        void setC(int c) {
             this.c = c;
         }
 
