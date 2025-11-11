@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * permutation number to the factorial number system and selects elements one
  * by one. It was adapted from
  * https://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html
- *
+ * <p>
  * Valid inputs are limited so that all factorial calculations fit within a
  * {@code long}. Collections larger than twenty items will therefore cause an
  * {@link IllegalArgumentException}.
