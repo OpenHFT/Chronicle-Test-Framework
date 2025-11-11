@@ -1,7 +1,6 @@
 /*
  * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
  */
-
 /**
  * Provides utility classes for working with mapped files, specifically targeting
  * Linux systems where the "/proc/self/maps" file provides information about
