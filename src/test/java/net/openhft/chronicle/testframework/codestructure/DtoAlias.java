@@ -3,7 +3,7 @@
  */
 package net.openhft.chronicle.testframework.codestructure;
 
-public class DtoAlias {
+class DtoAlias {
 
     static {
         Bootstrap.bootstrap();

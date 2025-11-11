@@ -3,11 +3,11 @@
  */
 package net.openhft.chronicle.testframework.internal.apimetrics;
 
-public class Foo {
+class Foo {
 
     public static final int ORIGO = 0;
 
-    public int x;
+    private int x;
     protected int y;
 
     public int x() {

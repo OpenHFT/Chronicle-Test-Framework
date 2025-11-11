@@ -79,7 +79,6 @@ public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBui
         return this;
     }
 
-    @Override
     /**
      * Scans the configured packages and builds the resulting {@link ApiMetrics}.
      * Packages with names containing {@code .internal.} or ending with
@@ -88,6 +87,7 @@ public final class StandardApiMetricsBuilder implements ApiMetrics.ApiMetricsBui
      * @return the constructed metrics instance
      * @throws IllegalStateException if no metrics have been supplied
      */
+    @Override
     public ApiMetrics build() {
         if (metrics.isEmpty())
             throw new IllegalStateException("No Metrics provided");

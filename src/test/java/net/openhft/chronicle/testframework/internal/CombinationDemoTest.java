@@ -1,7 +1,6 @@
 /*
  * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
  */
-
 /*
  *
  * Copyright (c) 2006-2020, Speedment, Inc. All Rights Reserved.
@@ -62,13 +61,13 @@ final class CombinationDemoTest {
 
     private static class FaultTolerantBitSet {
 
-        public void cosmicRayBit3() {
+        void cosmicRayBit3() {
         }
 
-        public void cosmicRayBit23() {
+        void cosmicRayBit23() {
         }
 
-        public void cosmicRayBit13() {
+        void cosmicRayBit13() {
         }
 
         boolean isValid() {

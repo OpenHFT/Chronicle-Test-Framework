@@ -54,7 +54,6 @@ final class DelegationBuilderTest {
         }
     }
 
-    interface ListOfFoo extends List<Foo> {
+    private interface ListOfFoo extends List<Foo> {
     }
-
 }

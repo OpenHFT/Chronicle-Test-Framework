@@ -72,7 +72,7 @@ class VanillaFlakyTestRunnerTest {
         assertDoesNotThrow(runner::run);
     }
 
-    void foo() {
+    private void foo() {
         // Do nothing and throw nothing
     }
 
@@ -104,7 +104,7 @@ class VanillaFlakyTestRunnerTest {
 
         private int countDown;
 
-        public MyAction(int countDown) {
+        MyAction(int countDown) {
             this.countDown = countDown;
         }
 
