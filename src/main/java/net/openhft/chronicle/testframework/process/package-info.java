@@ -1,7 +1,6 @@
-//
-// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
-//
-
+/*
+ * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+ */
 /**
  * The {@code net.openhft.chronicle.testframework.internal.process} package provides internal implementations
  * for configuring and launching Java processes within the Chronicle testing framework.

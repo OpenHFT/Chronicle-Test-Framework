@@ -1,7 +1,6 @@
-//
-// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
-//
-
+/*
+ * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+ */
 package net.openhft.chronicle.testframework.internal.apimetrics;
 
 import io.github.classgraph.ClassInfo;
@@ -43,15 +42,14 @@ public final class StandardAccumulator1 implements Accumulator {
         this.predicate = requireNonNull(predicate);
     }
 
-    @Override
     /**
      * Returns the label used for this aggregation.
      */
+    @Override
     public List<String> aggregationNames() {
         return Collections.singletonList(columnName);
     }
 
-    @Override
     /**
      * Adds the metric to the accumulation if it satisfies the predicate.
      *
@@ -59,6 +57,7 @@ public final class StandardAccumulator1 implements Accumulator {
      * @param classInfo  class information for context
      * @param leaf       the method or field being measured
      */
+    @Override
     public void accept(Metric<?> metric, ClassInfo classInfo, HasName leaf) {
         if (Boolean.TRUE.equals(predicate.apply(metric, classInfo, leaf))) {
             final String key = keyExtractor.apply(metric, classInfo, leaf);
@@ -66,38 +65,38 @@ public final class StandardAccumulator1 implements Accumulator {
         }
     }
 
-    @Override
     /**
      * Returns the sum of all accumulated weights.
      */
+    @Override
     public Double result() {
         return map.values().stream()
                 .mapToDouble(d -> d)
                 .sum();
     }
 
-    @Override
     /**
      * Provides an unmodifiable view of the per-key totals.
      */
+    @Override
     public Map<String, Double> result1() {
         return Collections.unmodifiableMap(map);
     }
 
-    @Override
     /**
      * This accumulator does not support a second level of grouping.
      *
      * @throws UnsupportedOperationException always
      */
+    @Override
     public Map<String, Map<String, Double>> result2() {
         throw new UnsupportedOperationException("This aggregation is of level 1");
     }
 
-    @Override
     /**
      * Produces a textual summary of the accumulation.
      */
+    @Override
     public String toString() {
         final int maxCol = map.keySet().stream()
                 .mapToInt(String::length)

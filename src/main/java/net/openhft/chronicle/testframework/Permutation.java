@@ -1,7 +1,6 @@
-//
-// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
-//
-
+/*
+ * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+ */
 /*
  *
  * Copyright (c) 2006-2020, Speedment, Inc. All Rights Reserved.
@@ -38,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * sizes. Consider sampling when dealing with larger collections.
  * <p>
  * General permutation support from
- * http://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html
+ * https://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html
  *
  * @author Per Minborg
  */

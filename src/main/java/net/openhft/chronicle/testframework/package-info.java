@@ -1,7 +1,6 @@
-//
-// Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
-//
-
+/*
+ * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+ */
 /**
  * The {@code net.openhft.chronicle.testframework} package provides a collection of utility classes and enums
  * for various common programming tasks, such as handling closeable resources, generating combinations and permutations,
