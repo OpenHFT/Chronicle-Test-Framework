@@ -22,7 +22,7 @@ Chronicle Test Framework provides test-data generators and API metrics tools for
 
 Permutations work like this:
 
-[source, java]
+[source,java]
 ----
 @Test
 void print() {
@@ -33,7 +33,7 @@ void print() {
 
 This will produce the following output:
 
-[source, text]
+[source,text]
 ----
 [A, B, C]
 [A, C, B]
@@ -45,7 +45,7 @@ This will produce the following output:
 
 Testing using permutations:
 
-[source, java]
+[source,java]
 ----
 @TestFactory
 // Exhaustively verifies that any order of setter invocation yields the same result
@@ -68,10 +68,8 @@ Stream<DynamicTest> demo() {
 
 == API Metrics Builder
 
-The API metrics feature analyses the public and internal surface of your
-packages. Create the builder via `ApiMetrics.builder()` then supply the
-packages to scan, the metrics to apply and the accumulators that gather the
-results.
+The API metrics feature analyses the public and internal surface of your packages.
+Create the builder via `ApiMetrics.builder()` then supply the packages to scan, the metrics to apply and the accumulators that gather the results.
 
 [source,java]
 ----
@@ -82,18 +80,16 @@ ApiMetrics metrics = ApiMetrics.builder()
         .build();
 ----
 
-The builder applies no defaults. If you omit metrics or accumulators the
-result will be empty. Default metrics and accumulators are only added when you
-call the relevant `addStandard` methods. Packages with `.internal.` in the
-name, or those ending in `.internal`, are collected in a separate internal
-group.
-
+The builder applies no defaults.
+If you omit metrics or accumulators the result will be empty.
+Default metrics and accumulators are only added when you call the relevant `addStandard` methods.
+Packages with `.internal.` in the name, or those ending in `.internal`, are collected in a separate internal group.
 
 == Combinations
 
 Combinations work like this:
 
-[source, java]
+[source,java]
 ----
 @Test
 void print() {
@@ -104,7 +100,7 @@ void print() {
 
 This will produce the following output:
 
-[source, text]
+[source,text]
 ----
 []
 [A]
@@ -118,7 +114,7 @@ This will produce the following output:
 
 Testing using combinations:
 
-[source, java]
+[source,java]
 ----
 @TestFactory // Try all combinations of cosmic ray interference for the Robot state machine
 Stream<DynamicTest> demo() {
@@ -139,7 +135,7 @@ Stream<DynamicTest> demo() {
 
 Combinations and Permutations can be combined to create powerful exhaustive test vectors:
 
-[source, java]
+[source,java]
 ----
     @Test
     void demo() {
@@ -151,7 +147,7 @@ Combinations and Permutations can be combined to create powerful exhaustive test
 
 This will produce the following output:
 
-[source, text]
+[source,text]
 ----
 []
 [A]
@@ -175,7 +171,7 @@ This will produce the following output:
 
 Products are equivalent to nested loops but are easier to convert to a `Stream` of `DynamicTest` objects:
 
-[source, java]
+[source,java]
 ----
     @Test
     void print() {
@@ -186,7 +182,7 @@ Products are equivalent to nested loops but are easier to convert to a `Stream` 
 
 This will produce the following output:
 
-[source, text]
+[source,text]
 ----
 Product2Impl{first=A, second=1}
 Product2Impl{first=A, second=2}
@@ -200,11 +196,9 @@ Product2Impl{first=C, second=3}
 ----
 
 Products can use built-in tuples like `Product2Impl` or we can provide custom constructors to use our own.
-
-
 Testing using products:
 
-[source, java]
+[source,java]
 ----
 @TestFactory
 // Exhaustively tests if various empty collections invariants holds
@@ -231,7 +225,8 @@ Stream<DynamicTest> demo() {
 
 == API Metrics Accumulators
 
-The framework includes a small set of predefined accumulator suppliers used by the API metrics analysis. They help to group metric counts in common ways.
+The framework includes a small set of predefined accumulator suppliers used by the API metrics analysis.
+They help to group metric counts in common ways.
 
 * `perMethod()` groups by the full method signature so that overloaded methods are reported separately.
 * `perClassAndMetric()` groups first by class and then by metric, giving a table of metric totals for each class.
@@ -240,4 +235,5 @@ The framework includes a small set of predefined accumulator suppliers used by t
 * `PER_PACKAGE` reports a single total for each package.
 * `PER_METHOD_REFERENCE` groups by method name only, ignoring parameter types, so all overloads are counted as one.
 
-The convenience factories in `Accumulator` expose the first two suppliers for general use. The others are mainly for internal analyses but may be reused when custom behaviour is needed.
+The convenience factories in `Accumulator` expose the first two suppliers for general use.
+The others are mainly for internal analyses but may be reused when custom behaviour is needed.
