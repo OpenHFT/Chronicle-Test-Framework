@@ -121,8 +121,7 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         }
         return this;
     }
-/*
-
+    /*
     @Override
     @NotNull
     public DtoTester.Builder<T> addValidationRule(@NotNull final String ruleName,
@@ -130,7 +129,6 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         validations.add(new NamedPredicate<>(ruleName, validator));
         return this;
     }
-
     */
 
     /**
