@@ -5,6 +5,8 @@ package net.openhft.chronicle.testframework.dto;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 import static net.openhft.chronicle.testframework.dto.DtoTester.MutatorType.MANDATORY;
 import static net.openhft.chronicle.testframework.dto.DtoTester.MutatorType.OPTIONAL;
 
@@ -101,7 +103,7 @@ class DtoTesterDemoTest {
             MyDtoImpl myDto = (MyDtoImpl) o;
 
             if (shoeSize != myDto.shoeSize) return false;
-            return name != null ? name.equals(myDto.name) : myDto.name == null;
+            return Objects.equals(name, myDto.name);
         }
 
         @Override

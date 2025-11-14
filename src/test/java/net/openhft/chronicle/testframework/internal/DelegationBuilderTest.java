@@ -3,7 +3,6 @@
  */
 package net.openhft.chronicle.testframework.internal;
 
-import net.openhft.chronicle.testframework.Delegation;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

@@ -40,24 +40,18 @@ final class PermutationTest {
         return IntStream.range(0, 10)
             .mapToObj(i ->
                 DynamicTest.dynamicTest("factorial(" + i + ")",
-                    () -> {
-                        assertEquals(Permutation.factorial(i), fac(i));
-                    })
+                    () -> assertEquals(Permutation.factorial(i), fac(i)))
             );
     }
 
     @Test
     void factorialTooLarge() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Permutation.factorial(21);
-        });
+        assertThrows(IllegalArgumentException.class, () -> Permutation.factorial(21));
     }
 
     @Test
     void factorialNegative() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Permutation.factorial(-1);
-        });
+        assertThrows(IllegalArgumentException.class, () -> Permutation.factorial(-1));
     }
 
     private static final List<Integer> LIST = Arrays.asList(1,2,3);

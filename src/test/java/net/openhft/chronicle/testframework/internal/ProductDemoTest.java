@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class ProductDemoTest {
 
+    @SuppressWarnings("MappingBeforeCount")
     @Test
     void print() {
         assertEquals(9,

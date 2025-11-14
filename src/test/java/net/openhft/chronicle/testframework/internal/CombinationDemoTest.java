@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 final class CombinationDemoTest {
 
+    @SuppressWarnings("MappingBeforeCount")
     @Test
     void print() {
         assertEquals(8,

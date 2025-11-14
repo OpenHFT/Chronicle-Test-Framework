@@ -121,15 +121,6 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
         }
         return this;
     }
-    /*
-    @Override
-    @NotNull
-    public DtoTester.Builder<T> addValidationRule(@NotNull final String ruleName,
-                                                  @NotNull final Predicate<? super T> validator) {
-        validations.add(new NamedPredicate<>(ruleName, validator));
-        return this;
-    }
-    */
 
     /**
      * Creates a {@link DtoTester} using the information added so far.

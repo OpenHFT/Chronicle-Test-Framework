@@ -55,6 +55,7 @@ final class StandardDtoTester<T> implements DtoTester {
     }
 
     private void assertConstructorNonReuse() {
+        //noinspection ObjectEquality
         if (createInstance() == createInstance())
             throw new AssertionError("The constructor must produce new fresh instances");
     }

@@ -4,7 +4,8 @@
 package net.openhft.chronicle.testframework.codestructure.internal;
 
 public class ExampleInternal {
+    @SuppressWarnings("unused")
     public static void example() {
-
+        // Intentional no-op
     }
 }
