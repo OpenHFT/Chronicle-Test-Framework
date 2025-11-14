@@ -1,5 +1,5 @@
 = Requirements Document: Enhancing Chronicle Test Framework with AI Support
-:toc: left
+:toc:
 :lang: en-GB
 :sectnums:
 :source-highlighter: rouge
@@ -53,17 +53,20 @@ This section details the functional requirements for enhancing CTF.
 
 These requirements focus on modernizing CTF's core capabilities, drawing inspiration from established testing frameworks.
 
+[[REQ-FR-CORE-001]]
 REQ-FR-CORE-001: Expanded Annotation Support ::
 **Description:** Introduce a suite of CTF-specific annotations for declarative configuration, lifecycle management, and metadata, tailored for OpenHFT contexts.
 **Rationale:** Reduce boilerplate, improve test readability and maintainability. Provides clear markers for AI to understand test structure and dependencies.
 **Examples:** `@ChronicleTestConfiguration`, `@DataSource`, specialized OpenHFT component lifecycle annotations.
 **Reference:** Research Sec 3.1, User Doc "Opportunities for Improvement - JUnit 5 Integration Enhancements".
 
+[[REQ-FR-CORE-002]]
 REQ-FR-CORE-002: Enhanced Parameterized and Dynamic Test Capabilities ::
 **Description:** Provide more integrated and intuitive mechanisms for parameter resolution and descriptive test naming for tests using CTF-generated data, akin to JUnit 5's `@ParameterizedTest` sources or TestNG's `@DataProvider`.
 **Rationale:** Simplify the creation and management of parameterized tests leveraging CTF's data generation.
 **Reference:** Research Sec 3.1.
 
+[[REQ-FR-CORE-003]]
 REQ-FR-CORE-003: Improved Assertion Capabilities ::
 **Description:** Enhance assertion capabilities through one or a combination of:
 * **Option A:** Deep, seamless integration with AssertJ.
@@ -71,12 +74,14 @@ REQ-FR-CORE-003: Improved Assertion Capabilities ::
 **Rationale:** Improve test readability, maintainability, and developer productivity. Fluent assertions are preferred by developers.
 **Reference:** Research Sec 3.1, User Doc "Fluent and Expressive Assertions", "Opportunities for Improvement - Leverage AssertJ".
 
+[[REQ-FR-CORE-004]]
 REQ-FR-CORE-004: Formal Extensibility Model ::
 **Description:** Design and implement a formal extension model (e.g., inspired by JUnit 5's `@ExtendWith` or TestNG's listeners).
 **Rationale:** Foster broader adoption, enable community contributions, allow tailoring to specific project needs, and provide clear integration points for AI-generated code or custom analysis.
 **Possible Extensions:** Custom parameter resolvers, lifecycle callbacks, test instance post-processors, custom test execution behavior.
 **Reference:** Research Sec 3.1.
 
+[[REQ-FR-CORE-005]]
 REQ-FR-CORE-005: TestNG Integration Support ::
 **Description:** Provide official support and examples for using CTF data generation capabilities with TestNG's `@DataProvider` mechanism.
 **Rationale:** Broaden CTF's user base beyond JUnit users and demonstrate its flexibility.
@@ -86,11 +91,13 @@ REQ-FR-CORE-005: TestNG Integration Support ::
 
 These requirements aim to make CTF more user-friendly and easier to adopt.
 
+[[REQ-FR-UX-001]]
 REQ-FR-UX-001: API Simplification for Common Scenarios ::
 **Description:** Identify common usage patterns of CTF's generators and provide convenience APIs, builders, or pre-configured generators to encapsulate complexity.
 **Rationale:** Lower the learning curve for new users and make CTF more readily applicable for simpler testing needs.
 **Reference:** Research Sec 3.2.
 
+[[REQ-FR-UX-002]]
 REQ-FR-UX-002: Comprehensive Documentation and Illustrative Examples ::
 **Description:** Significantly expand documentation to include:
 * "Getting Started" guide.
@@ -107,6 +114,7 @@ REQ-FR-UX-002: Comprehensive Documentation and Illustrative Examples ::
 
 These requirements focus on providing specialized testing utilities for core OpenHFT libraries.
 
+[[REQ-FR-OHFT-001]]
 REQ-FR-OHFT-001: Specialized Testing Utilities for Chronicle Queue ::
 **Description:** Develop utilities such as `TestAppender`, `TestTailer`, assertion helpers for message content, and utilities for programmatic setup/teardown of test queues. Include helpers for testing specific queue behaviors.
 **Rationale:** Simplify testing of Chronicle Queue, encapsulate common patterns, and reduce boilerplate.
@@ -132,6 +140,7 @@ REQ-FR-OHFT-001: Specialized Testing Utilities for Chronicle Queue ::
  }
 ----
 
+[[REQ-FR-OHFT-002]]
 REQ-FR-OHFT-002: Helpers for Chronicle Map Testing ::
 **Description:** Introduce fixtures/extensions for creating/managing test `ChronicleMap` instances, rich assertions for map properties and values (especially `BytesMarshallable`), and utilities for verifying concurrent access or common interaction patterns (`getUsing`, `acquireUsing`).
 **Rationale:** Simplify testing of Chronicle Map, provide powerful assertions for complex data types.
@@ -157,21 +166,25 @@ REQ-FR-OHFT-002: Helpers for Chronicle Map Testing ::
  }
 ----
 
+[[REQ-FR-OHFT-003]]
 REQ-FR-OHFT-003: Support for Chronicle Wire Serialization Testing ::
 **Description:** Create utilities for testing serialization/deserialization of `Marshallable` objects across different `WireTypes`, helpers for testing schema evolution, and assertions for inspecting raw `Bytes` content.
 **Rationale:** Ensure data integrity and interoperability for components using Chronicle Wire.
 **Reference:** Research Sec 3.3.
 
+[[REQ-FR-OHFT-004]]
 REQ-FR-OHFT-004: Leveraging Chronicle Threads for Concurrency Testing ::
 **Description:** Offer utilities for managing `EventLoop` instances in tests, helpers for testing `Pauser` strategies, and assertions/patterns for verifying thread safety and concurrent behavior.
 **Rationale:** Simplify the setup and verification of complex concurrent test scenarios.
 **Reference:** Research Sec 3.3.
 
+[[REQ-FR-OHFT-005]]
 REQ-FR-OHFT-005: Multi-Process Test Support ::
 **Description:** Provide documented, high-level utilities or patterns for creating and managing multi-process tests, including lifecycle management and output capture.
 **Rationale:** Facilitate testing of inter-process communication scenarios common with OpenHFT libraries.
 **Reference:** User Doc "Suitability for Low-Latency and Performance-Critical Tests".
 
+[[REQ-FR-OHFT-006]]
 REQ-FR-OHFT-006: Resource and Concurrency Test Utilities ::
 **Description:** Introduce utilities to aid in testing resource management and concurrency aspects critical for OpenHFT libraries:
 * **Thread Leak Detection:** A utility or extension to check for orphaned threads after test execution.
@@ -184,11 +197,13 @@ REQ-FR-OHFT-006: Resource and Concurrency Test Utilities ::
 
 These requirements are specifically aimed at designing CTF to effectively leverage and support AI tools.
 
+[[REQ-FR-AI-001]]
 REQ-FR-AI-001: AI-Identifiable Refactoring Opportunities ::
 **Description:** CTF's new utilities, annotations, and extensions (as defined in REQ-FR-CORE and REQ-FR-OHFT) must be designed to serve as clear, beneficial, higher-level abstractions that AI tools can refactor existing tests to use.
 **Rationale:** Enable AI to automate the modernization and simplification of test suites using CTF features.
 **Reference:** Research Sec 3.4.
 
+[[REQ-FR-AI-002]]
 REQ-FR-AI-002: Patterns for AI-Assisted Test Generation ::
 **Description:** CTF shall provide and document patterns for how AI can:
 * Use CTF's data generators (`Permutation`, `Combination`, `Product`) for method parameters or message payloads in AI-generated tests.
@@ -197,6 +212,7 @@ REQ-FR-AI-002: Patterns for AI-Assisted Test Generation ::
 **Rationale:** Combine CTF's structured generation and OpenHFT-specific knowledge with AI's code generation and analysis capabilities.
 **Reference:** Research Sec 3.4.
 
+[[REQ-FR-AI-003]]
 REQ-FR-AI-003: AI-Consumable API Design ::
 **Description:** All new CTF APIs (annotations, extension points, fluent builders, assertion methods) must be designed with AI consumption in mind, ensuring they are:
 * **Clearly Defined and Strongly Typed:** Minimize ambiguity, have clear contracts.
@@ -205,6 +221,7 @@ REQ-FR-AI-003: AI-Consumable API Design ::
 **Rationale:** Facilitate correct and effective use of CTF features by AI tools. Good API design for humans is critical for AI.
 **Reference:** Research Sec 3.4.
 
+[[REQ-FR-AI-004]]
 REQ-FR-AI-004: Semantic Information Conveyance for AI ::
 **Description:** CTF APIs, especially annotations, should be designed to carry semantic information about the test's intent or the configuration of the component under test, beyond syntactic structure.
 **Rationale:** Enable AI to make more intelligent suggestions, generate more effective tests, and understand the domain-specific (OpenHFT) context.
@@ -215,30 +232,36 @@ REQ-FR-AI-004: Semantic Information Conveyance for AI ::
 
 This section details the non-functional requirements for CTF.
 
+[[REQ-NFR-PERF-001]]
 REQ-NFR-PERF-001: Performance of CTF ::
 **Description:** CTF's data generation and utility functions should be performant and not add undue overhead to test execution. Guidance should be provided on managing test suite execution time when using exhaustive generation.
 **Rationale:** Ensure CTF itself does not become a bottleneck, especially in performance-sensitive OpenHFT testing environments.
 **Reference:** User Doc "Suitability for Low-Latency and Performance-Critical Tests".
 
-*REQ-NFR-USAB-001: Usability and Learnability ::
+[[REQ-NFR-USAB-001]]
+REQ-NFR-USAB-001: Usability and Learnability ::
 **Description:** The API should be intuitive, consistent, and easy to learn, particularly for developers familiar with Java and standard testing frameworks. The learning curve should be minimized.
 **Rationale:** Critical for adoption and effective use.
 **Reference:** User Doc "API Consistency and Learning Curve".
 
+[[REQ-NFR-MAIN-001]]
 REQ-NFR-MAIN-001: Maintainability ::
 **Description:** CTF's codebase should be well-structured, documented, and testable to ensure ease of maintenance and future enhancements. Design principles like SRP and ISP should be considered.
 **Rationale:** Long-term health and evolution of the framework.
 **Reference:** Research Sec 3.4.
 
+[[REQ-NFR-COMP-001]]
 REQ-NFR-COMP-001: Compatibility ::
 **Description:** CTF must maintain compatibility with JUnit 4 and JUnit 5. Integration with TestNG should be supported as a complementary approach. Compatibility with relevant Java versions must be clearly stated.
 **Rationale:** Support existing user bases and allow flexibility in framework choice.
 **Reference:** CTF Current State, User Doc "Test Lifecycle and Configuration Ease".
 
+[[REQ-NFR-DOC-001]]
 REQ-NFR-DOC-001: High-Quality Documentation ::
 **Description:** All features, APIs, extension points, and usage patterns must be thoroughly documented with clear examples. (Covered in REQ-FR-UX-002 but emphasized here as an NFR).
 **Rationale:** Essential for user adoption, understanding, and effective utilization.
 
+[[REQ-NFR-STAB-001]]
 REQ-NFR-STAB-001: Stability and Versioning ::
 **Description:** CTF should move towards stable versioning, with clear communication about the stability level of releases (e.g., milestones, RCs, GA). Compatibility between CTF versions and OpenHFT library versions should be indicated.
 **Rationale:** Improve developer confidence and simplify dependency management.
