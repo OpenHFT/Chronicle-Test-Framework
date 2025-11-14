@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CombPermDemoTest {
 
+    @SuppressWarnings("MappingBeforeCount")
     @Test
     void demo() {
         assertEquals(16,

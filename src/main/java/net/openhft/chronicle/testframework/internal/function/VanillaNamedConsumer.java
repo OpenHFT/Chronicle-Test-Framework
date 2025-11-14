@@ -4,6 +4,7 @@
 package net.openhft.chronicle.testframework.internal.function;
 
 import net.openhft.chronicle.testframework.function.NamedConsumer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -37,7 +38,7 @@ public final class VanillaNamedConsumer<T> implements NamedConsumer<T> {
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return name;
     }
 

@@ -15,7 +15,7 @@ public class ThrowingConsumerException extends RuntimeException {
     /**
      * The serial version UID for the serialization mechanism.
      */
-    static final long serialVersionUID = -8237762538281151227L;
+    private static final long serialVersionUID = -8237762538281151227L;
 
     /**
      * Constructs a new ThrowingConsumerException with the specified cause.

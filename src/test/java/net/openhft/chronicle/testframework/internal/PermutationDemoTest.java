@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class PermutationDemoTest {
 
+    @SuppressWarnings("MappingBeforeCount")
     @Test
     void print() {
         assertEquals(6,
