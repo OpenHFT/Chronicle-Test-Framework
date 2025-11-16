@@ -4,6 +4,8 @@
 :toc: macro
 :toclevels: 2
 :icons: font
+:lang: en-GB
+:source-highlighter: rouge
 
 image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework]
 image:https://javadoc.io/badge2/net.openhft/chronicle-test-framework/javadoc.svg[Javadoc,link="https://www.javadoc.io/doc/net.openhft/chronicle-test-framework/latest/index.html"]
