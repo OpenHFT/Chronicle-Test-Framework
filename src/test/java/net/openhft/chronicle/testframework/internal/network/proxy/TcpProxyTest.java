@@ -19,6 +19,7 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static net.openhft.chronicle.testframework.ExecutorServiceUtil.shutdownAndWaitForTermination;
 import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 import static net.openhft.chronicle.testframework.Waiters.waitForCondition;
@@ -106,7 +107,7 @@ class TcpProxyTest {
     }
 
     private void sendString(SocketChannel channel, String string) throws IOException {
-        final ByteBuffer helloBuffer = ByteBuffer.wrap(string.getBytes());
+        final ByteBuffer helloBuffer = ByteBuffer.wrap(string.getBytes(ISO_8859_1));
         channel.write(helloBuffer);
     }
 
@@ -114,7 +115,7 @@ class TcpProxyTest {
         ByteBuffer recvBuf = ByteBuffer.allocate(128);
         channel.read(recvBuf);
         recvBuf.flip();
-        return new String(recvBuf.array(), recvBuf.position(), recvBuf.remaining());
+        return new String(recvBuf.array(), recvBuf.position(), recvBuf.remaining(), ISO_8859_1);
     }
 
     private void startServerAndProxyAnd(ServerAndProxyBody serverAndProxyConsumer) throws IOException {

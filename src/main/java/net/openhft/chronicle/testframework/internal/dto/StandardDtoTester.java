@@ -169,22 +169,6 @@ final class StandardDtoTester<T> implements DtoTester {
         }
     }
 
-    private Collection<String> check(final Consumer<? super T> postMutatorAction,
-                                     final BiFunction<T, T, Boolean> tester) {
-
-        final T fresh = createInstance();
-        final List<String> failed = newList();
-        for (NamedMutator<T> namedMutator : builder.allMutators()) {
-            final T t = createInstance();
-            namedMutator.mutator().accept(t);
-            postMutatorAction.accept(t);
-            if (tester.apply(fresh, t)) {
-                failed.add(namedMutator.name());
-            }
-        }
-        return failed;
-    }
-
     private T createInstance() {
         return builder.supplier().get();
     }
