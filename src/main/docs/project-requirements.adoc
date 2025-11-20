@@ -1,0 +1,35 @@
+= Chronicle Test Framework Project Requirements (Summary)
+:toc:
+:sectnums:
+:lang: en-GB
+:source-highlighter: rouge
+
+This document summarises the higher-level requirements for Chronicle Test Framework (CTF) in a format aligned with the repository-wide ISO 9001 checklist.
+The authoritative, detailed requirements remain in `src/main/adoc/project-requirements.adoc`.
+
+== Scope
+
+CTF provides test utilities for exhaustive data generation, AI-assisted testing workflows and specialised support for Chronicle components.
+Requirements are identified using the `REQ-*` identifiers in the main project requirements file and can be mapped to Nine-Box tags (`TEST`, `FN`, `NF-*`) where appropriate.
+
+== Functional Requirements (Summary)
+
+The main functional requirements are:
+
+* enhanced annotation and parameterisation support for tests (`REQ-FR-CORE-*`);
+* improved assertion capabilities and interoperability with existing assertion libraries;
+* OpenHFT-specific helpers for testing Chronicle Queue, Chronicle Map, Chronicle Wire and Chronicle Threads;
+* multi-process and concurrency-focused testing utilities.
+
+Verification for these requirements is described in the full project requirements document and associated examples.
+
+== Non-Functional Requirements (Summary)
+
+Non-functional requirements include:
+
+* usability and adoption goals for the framework;
+* performance considerations for generated tests and data;
+* integration with AI-assisted development and analysis workflows.
+
+These are captured and elaborated in `src/main/adoc/project-requirements.adoc`.
+

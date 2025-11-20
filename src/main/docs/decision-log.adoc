@@ -1,0 +1,13 @@
+= Chronicle Test Framework Decision Log (Summary)
+:toc:
+:sectnums:
+:lang: en-GB
+:source-highlighter: rouge
+
+The primary design and roadmap decisions for Chronicle Test Framework are captured in the existing research and project requirements documents.
+This summary log serves as a pointer for ISO 9001 alignment and future decision records.
+
+== Decision Index
+
+* Use separate `src/main/adoc/project-requirements.adoc` as the detailed requirements artefact for CTF.
+
