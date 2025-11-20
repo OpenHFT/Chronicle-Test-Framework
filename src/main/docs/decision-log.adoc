@@ -1,0 +1,91 @@
+= Decision Log
+:toc: left
+:icons: font
+
+This document records the significant architectural and design decisions for the Chronicle Test Framework (CTF).
+It serves as a historical record and a context provider for developers and AI agents.
+
+== Decisions
+
+=== [CTF-DOC-001] Adoption of Architecture Decision Records
+
+- Date: 2025-11-20
+- Context:
+* As the framework evolves, especially with the integration of AI-driven development, it is crucial to maintain a clear history of *why* decisions were made.
+* We need a standardized format that is easily parseable by both humans and AI agents.
+- Decision Statement:
+* We will maintain a `decision-log.adoc` file in the `src/main/adoc/` directory.
+* We will use the "Nine-Box" taxonomy for tagging decisions (FN, NF-P, NF-S, etc.) as defined in `AGENTS.md`.
+* We will follow the decision record template defined in `AGENTS.md`.
+- **Alternatives Considered:**
+* [No formal log]:
+** *Description:* Rely on Git commit messages and PR descriptions.
+** *Pros:* Less overhead during development.
+** *Cons:* Hard to find high-level reasoning later; context is lost over time; difficult for AI to query systematically.
+* [External Wiki]:
+** *Description:* Store decisions in Confluence or GitHub Wiki.
+** *Pros:* Rich formatting, easier collaboration for non-developers.
+** *Cons:* Disconnected from the code (prone to drift); harder for AI agents analyzing the repository to access context.
+- **Rationale for Decision:**
+* Keeping the decision log co-located with the code (`docs-as-code`) ensures that the documentation stays in sync with the codebase.
+* The structured AsciiDoc format allows for automated parsing and better context injection for LLMs.
+- **Impact & Consequences:**
+* Developers must remember to update this file when making significant changes.
+* Provides a single source of truth for architectural intent.
+- What are the trade-offs made?
+* Slight increase in contribution friction (updating docs) in exchange for long-term clarity.
+- **Notes/Links:**
+** See `AGENTS.md` for the full template and tagging structure.
+
+=== [CTF-FN-002] Strategy for AI-Driven Enhancement
+
+- Date: 2025-11-20
+- Context:
+* The Chronicle Test Framework is being modernized to support high-performance testing in the OpenHFT ecosystem.
+* There is a strategic goal to leverage AI for test generation, refactoring, and analysis.
+- Decision Statement:
+* We will adopt the requirements and strategy outlined in `project-requirements.adoc`.
+* New APIs will be designed to be "AI-consumable" (strongly typed, clear contracts, semantic annotations).
+* We will introduce "AI-Identifiable Refactoring Opportunities" as a core functional requirement.
+- **Alternatives Considered:**
+* [Status Quo]:
+** *Description:* Continue with the existing feature set (Combinations/Permutations only).
+** *Pros:* Stable, no new development effort.
+** *Cons:* Misses the opportunity to standardize testing across OpenHFT; fails to leverage modern AI capabilities.
+* [Complete Rewrite]:
+** *Description:* Build a new framework from scratch.
+** *Pros:* No technical debt.
+** *Cons:* Breaks compatibility for existing users; high effort; discards proven components like the `Permutation` generator.
+- **Rationale for Decision:**
+* Enhancing the existing framework allows us to build on its unique strengths (data generation) while addressing its limitations (lack of broader utilities).
+* Explicitly designing for AI ensures the framework remains relevant and useful in an AI-assisted development landscape.
+- **Impact & Consequences:**
+* The API surface will grow significantly to support OpenHFT-specific testing utilities (e.g., for Chronicle Queue and Map).
+* Deprecation of older, less "AI-friendly" patterns may be necessary over time.
+- What are the trade-offs made?
+* Complexity of the library increases to support the new abstraction layers.
+- **Notes/Links:**
+** See `src/main/adoc/project-requirements.adoc` for full details.
+
+=== [CTF-NF-P-003] Performance-First Design for Data Generators
+
+- Date: 2025-11-20
+- Context:
+* OpenHFT libraries are performance-critical.
+* Exhaustive testing using permutations and combinations can easily lead to exponential runtimes.
+- Decision Statement:
+* CTF's data generation utilities (`Permutation`, `Combination`, `Product`) must remain highly performant.
+* Guidance must be provided to users on managing test suite execution time (e.g., using `limit()`, sampling, or `@Tag` for slow tests).
+- **Alternatives Considered:**
+* [Lazy Evaluation Only]:
+** *Description:* Enforce strict lazy evaluation streams for all generators.
+** *Pros:* Minimal memory footprint.
+** *Cons:* Already largely implemented, but requires careful API design to ensure users don't accidentally materialize massive sets.
+- **Rationale for Decision:**
+* To ensure CTF does not become a bottleneck in performance-sensitive OpenHFT testing environments.
+- **Impact & Consequences:**
+* Internal implementations of generators must be optimized for low allocation and high throughput.
+- What are the trade-offs made?
+* API usage might require more care from the developer to avoid long-running tests.
+- **Notes/Links:**
+** Reference `REQ-NFR-PERF-001`.
