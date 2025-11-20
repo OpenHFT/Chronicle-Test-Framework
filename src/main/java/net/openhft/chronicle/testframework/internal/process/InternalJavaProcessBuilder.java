@@ -8,10 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.charset.Charset;
@@ -74,12 +71,10 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      */
     public static void printProcessOutput(String processName, Process process) {
         if (LOGGER.isInfoEnabled())
-            LOGGER.info(
-                    String.format("%n Output for %s%n stdout:%n%s stderr:%n%s",
-                            processName,
-                            getProcessStdOut(process),
-                            getProcessStdErr(process))
-            );
+            LOGGER.info("\n Output for {}\n stdout:\n{} stderr:\n{}",
+                    processName,
+                    getProcessStdOut(process),
+                    getProcessStdErr(process));
     }
 
     /**
@@ -175,7 +170,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
         if (classpathEntries == null || classpathEntries.length == 0) {
             classPath = System.getProperty("java.class.path");
         } else {
-            classPath = String.join(System.getProperty("path.separator"), classpathEntries);
+            classPath = String.join(File.pathSeparator, classpathEntries);
         }
 
         String className = mainClass.getName();

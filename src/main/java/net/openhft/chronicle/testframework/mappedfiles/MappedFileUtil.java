@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +56,9 @@ public enum MappedFileUtil {
         final Set<String> fileList = new HashSet<>();
 
         if (Files.exists(PROC_SELF_MAPS) && Files.isReadable(PROC_SELF_MAPS)) {
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(PROC_SELF_MAPS)))) {
+            try (InputStream inputStream = Files.newInputStream(PROC_SELF_MAPS);
+                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                 BufferedReader reader = new BufferedReader(inputStreamReader)) {
                 processProcSelfMaps(fileList, reader);
             } catch (IOException e) {
                 throw new IllegalStateException("Getting mapped files failed", e);

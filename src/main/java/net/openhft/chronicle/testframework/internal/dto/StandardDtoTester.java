@@ -9,8 +9,6 @@ import net.openhft.chronicle.testframework.internal.dto.DtoTesterBuilder.NamedMu
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -55,6 +53,7 @@ final class StandardDtoTester<T> implements DtoTester {
     }
 
     private void assertConstructorNonReuse() {
+        //noinspection ObjectEquality,ExpressionComparedToItself
         if (createInstance() == createInstance())
             throw new AssertionError("The constructor must produce new fresh instances");
     }
@@ -166,22 +165,6 @@ final class StandardDtoTester<T> implements DtoTester {
                 // Happy path
             }
         }
-    }
-
-    private Collection<String> check(final Consumer<? super T> postMutatorAction,
-                                     final BiFunction<T, T, Boolean> tester) {
-
-        final T fresh = createInstance();
-        final List<String> failed = newList();
-        for (NamedMutator<T> namedMutator : builder.allMutators()) {
-            final T t = createInstance();
-            namedMutator.mutator().accept(t);
-            postMutatorAction.accept(t);
-            if (tester.apply(fresh, t)) {
-                failed.add(namedMutator.name());
-            }
-        }
-        return failed;
     }
 
     private T createInstance() {
