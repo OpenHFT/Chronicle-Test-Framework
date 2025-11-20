@@ -11,5 +11,6 @@ class DtoAlias {
     }
 
     public static void init() {
+        // Intentional no-op
     }
 }

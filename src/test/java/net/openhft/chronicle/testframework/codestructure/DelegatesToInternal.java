@@ -7,6 +7,7 @@ import net.openhft.chronicle.testframework.codestructure.internal.ExampleInterna
 
 class DelegatesToInternal {
 
+    @SuppressWarnings({"unused", "InstantiationOfUtilityClass"})
     private final ExampleInternal delegate = new ExampleInternal();
 
 }
