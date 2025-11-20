@@ -115,7 +115,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
         if (hasExceptions()) {
             dumpException();
 
-            final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
+            final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor).collect(Collectors.joining(", "));
             throw new AssertionError(msg);
         }
         resetRunnable.run();

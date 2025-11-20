@@ -105,6 +105,7 @@ public class TcpProxy implements Closeable, Runnable {
                 }
                 for (int i = 0; i < connections.size(); i++) {
                     if (connections.get(i).isFinished()) {
+                        //noinspection resource
                         connections.remove(i);
                         i--;
                     }

@@ -67,7 +67,7 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      * <p>
      * ProcessBuilder.inheritIO() didn't play nicely with Maven failsafe plugin
      * <p>
-     * https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream
+     * <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream">...</a>
      */
     public static void printProcessOutput(String processName, Process process) {
         if (LOGGER.isInfoEnabled())

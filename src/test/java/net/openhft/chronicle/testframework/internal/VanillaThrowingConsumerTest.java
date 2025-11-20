@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class VanillaThrowingConsumerTest {
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void accept() {
         // Guaranteed to fail (Invalid file path)
