@@ -75,5 +75,4 @@ final class CombinationDemoTest {
             return true;
         }
     }
-
 }

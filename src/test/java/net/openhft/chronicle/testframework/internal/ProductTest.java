@@ -103,5 +103,4 @@ final class ProductTest {
         }
         assertEquals(expected, actual);
     }
-
 }

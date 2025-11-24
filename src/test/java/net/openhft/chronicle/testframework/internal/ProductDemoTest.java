@@ -63,5 +63,4 @@ final class ProductDemoTest {
                 tuple -> tuple.second().accept(tuple.first())
         );
     }
-
 }

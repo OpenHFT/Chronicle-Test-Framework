@@ -5,7 +5,7 @@
 :source-highlighter: rouge
 
 This document provides a high-level overview of the Chronicle Test Framework (CTF).
-It complements the existing requirements under `src/main/adoc/project-requirements.adoc` and the README.
+It complements the existing requirements under `src/main/docs/project-requirements.adoc` and the README.
 
 == Context and Role
 
@@ -22,5 +22,5 @@ CTF exposes:
 * helper classes and extensions for JUnit-based tests (for example dynamic test support via `@TestFactory`);
 * OpenHFT-focused utilities for testing Chronicle components (as described in the existing project requirements).
 
-Detailed requirements, including AI-driven and OpenHFT-specific testing enhancements, are specified in `src/main/adoc/project-requirements.adoc`.
+Detailed requirements, including AI-driven and OpenHFT-specific testing enhancements, are specified in `src/main/docs/project-requirements.adoc`.
 

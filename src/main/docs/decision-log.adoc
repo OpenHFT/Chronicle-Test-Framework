@@ -9,5 +9,5 @@ This summary log serves as a pointer for ISO 9001 alignment and future decision 
 
 == Decision Index
 
-* Use separate `src/main/adoc/project-requirements.adoc` as the detailed requirements artefact for CTF.
+* Use separate `src/main/docs/project-requirements.adoc` as the detailed requirements artefact for CTF.
 

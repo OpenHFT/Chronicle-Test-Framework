@@ -44,7 +44,6 @@ public class ProxyConnection implements Closeable, Runnable {
      * @param inboundChannel The accepted client channel, closed when the run loop terminates
      * @param remoteAddress  Upstream host and port to connect to
      */
-
     public ProxyConnection(SocketChannel inboundChannel, InetSocketAddress remoteAddress) {
         this.inboundChannel = inboundChannel;
         this.remoteAddress = remoteAddress;

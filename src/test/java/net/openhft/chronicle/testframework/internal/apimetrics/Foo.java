@@ -21,5 +21,4 @@ class Foo {
     protected int zero() {
         return 0;
     }
-
 }
