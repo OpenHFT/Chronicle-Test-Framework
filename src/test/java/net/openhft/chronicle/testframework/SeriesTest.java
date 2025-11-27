@@ -48,5 +48,4 @@ class SeriesTest {
                 .toArray();
         assertArrayEquals(expected, actual);
     }
-
 }
