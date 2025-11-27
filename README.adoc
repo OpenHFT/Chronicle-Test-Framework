@@ -1,10 +1,10 @@
 = Chronicle Test Framework
-
-:css-signature: demo
+:toc:
 :toc: macro
-:toclevels: 2
 :icons: font
 :lang: en-GB
+:toclevels: 2
+:css-signature: demo
 :source-highlighter: rouge
 
 image:https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/net.openhft/chronicle-test-framework]
@@ -245,4 +245,3 @@ The others are mainly for internal analyses but may be reused when custom behavi
 Chronicle Test Framework uses the shared Chronicle quality configuration provided by the parent POMs.
 
 * From an aggregator that includes this module, run `mvn -P quality clean verify` to execute Checkstyle and SpotBugs with coverage checks.
-* For a module-focused SpotBugs run on Java 11 or newer, run `mvn -P module-quality clean verify` in the `Chronicle-Test-Framework` project.
