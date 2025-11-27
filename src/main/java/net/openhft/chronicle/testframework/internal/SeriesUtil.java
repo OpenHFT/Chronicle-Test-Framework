@@ -6,6 +6,13 @@ package net.openhft.chronicle.testframework.internal;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+/**
+ * Helper methods for generating number series used in property-based or parameterised tests.
+ * <p>
+ * The sequences include powers of two and their neighbours, Fibonacci numbers and primes,
+ * all exposed as {@link LongStream} instances so that tests can consume them lazily and
+ * compose them with additional filters or bounds as required.
+ */
 public final class SeriesUtil {
 
     private SeriesUtil() {
@@ -51,5 +58,4 @@ public final class SeriesUtil {
         return LongStream.rangeClosed(2, (int) (Math.sqrt(number)))
                 .allMatch(n -> number % n != 0);
     }
-
 }

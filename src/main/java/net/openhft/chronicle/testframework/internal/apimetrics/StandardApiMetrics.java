@@ -28,7 +28,6 @@ import static java.util.Objects.requireNonNull;
  * internal analysis. Both methods supply the accumulators in the order they
  * were added to the builder.
  */
-
 public final class StandardApiMetrics implements ApiMetrics {
 
     private final Set<Accumulator> accumulators;

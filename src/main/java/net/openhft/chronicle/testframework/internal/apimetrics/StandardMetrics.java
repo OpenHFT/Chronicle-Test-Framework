@@ -40,7 +40,6 @@ import java.util.stream.Stream;
  * </ul>
  * This class cannot be instantiated.
  */
-
 final class StandardMetrics {
 
     static final Metric<ClassInfo> CLASS_PUBLIC = Metric.of(ClassInfo.class, predicateOfClass(Modifier::isPublic), "Class Public", 10);

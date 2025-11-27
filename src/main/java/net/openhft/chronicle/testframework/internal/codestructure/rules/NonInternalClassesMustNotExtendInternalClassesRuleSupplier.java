@@ -41,5 +41,4 @@ public class NonInternalClassesMustNotExtendInternalClassesRuleSupplier implemen
                     }
                 }).allowEmptyShould(true);
     }
-
 }

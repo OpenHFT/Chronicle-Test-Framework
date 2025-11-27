@@ -83,5 +83,4 @@ public class DtoAliasMustInvokeBootstrapRuleSupplier implements Supplier<ArchRul
             return totalCount;
         }
     }
-
 }

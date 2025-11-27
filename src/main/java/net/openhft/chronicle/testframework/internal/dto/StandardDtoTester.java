@@ -9,8 +9,6 @@ import net.openhft.chronicle.testframework.internal.dto.DtoTesterBuilder.NamedMu
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -28,7 +26,6 @@ import static java.util.Objects.requireNonNull;
  * <li>validation fails until all mandatory mutators are used and then passes.</li>
  * </ul>
  */
-
 final class StandardDtoTester<T> implements DtoTester {
 
     private static final int MAX_COMBINATION_INPUT = 14;
@@ -176,5 +173,4 @@ final class StandardDtoTester<T> implements DtoTester {
     private <E> List<E> newList() {
         return new ArrayList<>();
     }
-
 }
