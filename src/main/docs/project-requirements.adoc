@@ -1,7 +1,7 @@
 = Requirements Document: Enhancing Chronicle Test Framework with AI Support
 :toc:
-:lang: en-GB
 :sectnums:
+:lang: en-GB
 :source-highlighter: rouge
 
 == Introduction and Purpose
