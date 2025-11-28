@@ -62,12 +62,15 @@ final class CombinationDemoTest {
 
     private static class FaultTolerantBitSet {
 
+        @SuppressWarnings("EmptyMethod")
         void cosmicRayBit3() {
         }
 
+        @SuppressWarnings("EmptyMethod")
         void cosmicRayBit23() {
         }
 
+        @SuppressWarnings("EmptyMethod")
         void cosmicRayBit13() {
         }
 

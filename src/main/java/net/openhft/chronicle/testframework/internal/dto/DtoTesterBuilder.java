@@ -104,7 +104,7 @@ public final class DtoTesterBuilder<T> implements DtoTester.Builder<T> {
      */
     @Override
     @NotNull
-    public <R> DtoTester.Builder<T> addMutator(@NotNull final DtoTester.MutatorType type,
+    public DtoTester.Builder<T> addMutator(@NotNull final DtoTester.MutatorType type,
                                                @NotNull final String mutatorName,
                                                @NotNull final Consumer<? super T> mutator) {
         switch (type) {

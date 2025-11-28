@@ -26,6 +26,7 @@ import static java.util.Objects.requireNonNull;
  * <li>validation fails until all mandatory mutators are used and then passes.</li>
  * </ul>
  */
+
 final class StandardDtoTester<T> implements DtoTester {
 
     private static final int MAX_COMBINATION_INPUT = 14;
@@ -52,7 +53,7 @@ final class StandardDtoTester<T> implements DtoTester {
     }
 
     private void assertConstructorNonReuse() {
-        //noinspection ObjectEquality
+        //noinspection ObjectEquality,ExpressionComparedToItself
         if (createInstance() == createInstance())
             throw new AssertionError("The constructor must produce new fresh instances");
     }
@@ -173,4 +174,5 @@ final class StandardDtoTester<T> implements DtoTester {
     private <E> List<E> newList() {
         return new ArrayList<>();
     }
+
 }

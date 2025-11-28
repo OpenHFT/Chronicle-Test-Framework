@@ -94,7 +94,7 @@ public interface DtoTester {
          * @param mutator     mutation logic
          * @return this builder for chaining
          */
-        @NotNull <R> Builder<T> addMutator(@NotNull MutatorType type,
+        @NotNull Builder<T> addMutator(@NotNull MutatorType type,
                                            @NotNull String mutatorName,
                                            @NotNull Consumer<? super T> mutator);
 

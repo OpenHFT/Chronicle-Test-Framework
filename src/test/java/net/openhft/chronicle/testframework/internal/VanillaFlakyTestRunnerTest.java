@@ -72,6 +72,7 @@ class VanillaFlakyTestRunnerTest {
         assertDoesNotThrow(runner::run);
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void foo() {
         // Do nothing and throw nothing
     }

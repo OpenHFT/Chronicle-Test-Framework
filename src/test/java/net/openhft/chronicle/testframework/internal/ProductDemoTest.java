@@ -43,6 +43,7 @@ final class ProductDemoTest {
     }
 
     // Exhaustively tests if various empty collections invariants holds
+    @SuppressWarnings("ReplaceInefficientStreamCount")
     @TestFactory
     Stream<DynamicTest> demo() {
         // Operations
