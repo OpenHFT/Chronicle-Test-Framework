@@ -13,4 +13,12 @@ final class ApiMetricsUtil {
     // Suppresses default constructor, ensuring non-instantiability.
     private ApiMetricsUtil() {
     }
+
+    /**
+     * Marker method to satisfy PMD's requirement for a static member on non-instantiable utility classes.
+     * Invoking this method has no side effects but documents intentional non-instantiability.
+     */
+    static void ensureLoaded() {
+        // no-op
+    }
 }

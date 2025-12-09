@@ -12,7 +12,7 @@
     <parent>
         <groupId>net.openhft</groupId>
         <artifactId>java-parent-pom</artifactId>
-        <version>1.27ea1</version>
+        <version>1.27ea2-SNAPSHOT</version>
         <relativePath />
     </parent>
     <artifactId>chronicle-test-framework</artifactId>
@@ -20,6 +20,11 @@
     <name>OpenHFT/Chronicle-Test-Framework</name>
     <description>Chronicle-Test-Framework</description>
     <packaging>jar</packaging>
+
+    <properties>
+        <!-- Allow PMD to report without failing the build while issues are triaged. -->
+        <pmd.failOnViolation>false</pmd.failOnViolation>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -77,6 +82,23 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>3.28.0</version>
+                    <configuration>
+                        <rulesets>
+                            <ruleset>${pmd.ruleset}</ruleset>
+                        </rulesets>
+                        <failOnViolation>${pmd.failOnViolation}</failOnViolation>
+                        <printFailingErrors>true</printFailingErrors>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

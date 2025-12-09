@@ -69,13 +69,13 @@ class VanillaExceptionTrackerTest {
     @Test
     void missingExceptedExceptionsWillFailCheck() {
         vet.expectException("foobar");
-        assertThrows(AssertionError.class, () -> vet.checkExceptions());
+        assertThrows(AssertionError.class, vet::checkExceptions);
     }
 
     @Test
     void unexpectedExceptionsWillFailCheck() {
         exceptionCounts.put(new ExceptionHolder("unexpected exception", new IllegalStateException(), false), 1);
-        assertThrows(AssertionError.class, () -> vet.checkExceptions());
+        assertThrows(AssertionError.class, vet::checkExceptions);
     }
 
     @Test
@@ -96,7 +96,7 @@ class VanillaExceptionTrackerTest {
     void ignoredAndExpectedExceptionsWillFailCheckWhenNotPresent() {
         vet.expectException("test test");
         vet.ignoreException("test test");
-        assertThrows(AssertionError.class, () -> vet.checkExceptions());
+        assertThrows(AssertionError.class, vet::checkExceptions);
     }
 
     @Test
@@ -127,7 +127,7 @@ class VanillaExceptionTrackerTest {
     @Test
     void cannotCheckExceptionsAfterFinalised() {
         vet.checkExceptions();
-        assertThrows(IllegalStateException.class, () -> vet.checkExceptions());
+        assertThrows(IllegalStateException.class, vet::checkExceptions);
     }
 
     @Test

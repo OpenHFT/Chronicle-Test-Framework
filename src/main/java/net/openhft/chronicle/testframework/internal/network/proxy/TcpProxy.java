@@ -37,7 +37,6 @@ public class TcpProxy implements Closeable, Runnable {
     private volatile boolean running;
     private volatile boolean finished = false;
     private volatile boolean acceptingNewConnections = true;
-    private volatile boolean isOpen = false;
     private ServerSocketChannel serverSocket;
 
     /**
@@ -93,7 +92,6 @@ public class TcpProxy implements Closeable, Runnable {
             serverSocket.bind(socketAddress, 10);
             serverSocket.configureBlocking(false);
             while (running) {
-                isOpen = true;
                 if (acceptingNewConnections) {
                     final SocketChannel newConnection = serverSocket.accept();
                     if (newConnection != null) {
@@ -119,7 +117,6 @@ public class TcpProxy implements Closeable, Runnable {
             LOGGER.error("proxy run failed", e);
         } finally {
             closeQuietly(serverSocket);
-            isOpen = false;
         }
         LOGGER.info("TCP proxy from {} proxying to {} terminated", socketAddress, connectAddress);
         finished = true;
@@ -170,6 +167,6 @@ public class TcpProxy implements Closeable, Runnable {
      * @return true if open
      */
     public boolean isOpen() {
-        return isOpen;
+        return serverSocket != null && serverSocket.isOpen();
     }
 }

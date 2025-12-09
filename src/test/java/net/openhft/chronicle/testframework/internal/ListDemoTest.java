@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ListDemoTest {
+class ListDemoTest {
 
     private static final Predicate<Integer> ODD = v -> v % 2 == 1;
 
@@ -40,7 +40,7 @@ public class ListDemoTest {
                     LinkedList::new,
                     CopyOnWriteArrayList::new,
                     Stack::new,
-                    Vector::new);
+                    () -> Collections.synchronizedList(new ArrayList<>()));
 
     @TestFactory
     Stream<DynamicTest> validate() {

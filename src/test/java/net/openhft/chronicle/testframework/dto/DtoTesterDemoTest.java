@@ -60,18 +60,22 @@ class DtoTesterDemoTest {
         private String name;
         private int shoeSize;
 
+        @Override
         public String name() {
             return name;
         }
 
+        @Override
         public void name(String name) {
             this.name = name;
         }
 
+        @Override
         public int shoeSize() {
             return shoeSize;
         }
 
+        @Override
         public void shoeSize(int shoeSize) {
             this.shoeSize = shoeSize;
         }
