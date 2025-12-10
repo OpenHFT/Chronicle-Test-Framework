@@ -29,6 +29,7 @@ public interface ExceptionTracker<T> {
      * @param exceptions         Map to populate with T as the key and count of occurrences as value
      * @param ignorePredicate    Predicate to exclude T's from consideration
      * @param exceptionRenderer  Function to render T as a String (used when dumping exceptions)
+     * @param <T>                type representing a tracked exception event
      * @return An instance of ExceptionTracker
      */
     static <T> ExceptionTracker<T> create(@NotNull final Function<T, String> messageExtractor,

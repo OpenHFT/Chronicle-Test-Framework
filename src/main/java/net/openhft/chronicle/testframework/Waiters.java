@@ -20,6 +20,12 @@ import static net.openhft.chronicle.testframework.ThreadUtil.pause;
  */
 public class Waiters {
 
+    /**
+     * Utility holder; do not instantiate.
+     */
+    private Waiters() {
+    }
+
     // Default maximum time to wait for a condition in milliseconds
     private static final int DEFAULT_MAX_WAIT_TIME_MS = 5_000;
     // Default time interval to check the condition in milliseconds
@@ -80,6 +86,8 @@ public class Waiters {
      * Created via the {@code Waiters.builder()} methods. Adjust the timing with
      * {@link #maxTimeToWaitMs(long)} and {@link #checkIntervalMs(long)} then
      * invoke {@link #run()} to perform the wait.
+     *
+     * @param <T> the type supplied and checked by the condition
      */
     public static class WaiterBuilder<T> implements Runnable {
         // Supplier that provides a value
@@ -178,6 +186,9 @@ public class Waiters {
      */
     public static class ConditionNotMetException extends RuntimeException {
         private static final long serialVersionUID = 2827672436814649510L;
+        /**
+         * Last value observed before the timeout expired.
+         */
         @SuppressWarnings("serial")
         private final Object lastValue;
 

@@ -6,6 +6,7 @@ package net.openhft.chronicle.testframework.internal;
 import net.openhft.chronicle.testframework.FlakyTestRunner;
 import net.openhft.chronicle.testframework.FlakyTestRunner.RunnableThrows;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ class VanillaFlakyTestRunnerTest {
         final RunnableThrows<?> runner = FlakyTestRunner.builder(this::foo)
                 .build();
 
-        assertDoesNotThrow(() -> runner.runOrThrow());
+        assertDoesNotThrow((Executable) runner::runOrThrow);
     }
 
     @Test

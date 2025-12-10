@@ -25,6 +25,7 @@ public interface NamedConsumer<T> extends HasName, Consumer<T> {
      *
      * @param consumer the Consumer instance
      * @param name     the name to associate with the consumer
+     * @param <T>      input type accepted by the consumer
      * @return a NamedConsumer wrapping the given consumer and name
      * @throws NullPointerException if either consumer or name is null
      */
@@ -42,6 +43,7 @@ public interface NamedConsumer<T> extends HasName, Consumer<T> {
      *
      * @param consumer the ThrowingConsumer instance
      * @param name     the name to associate with the consumer
+     * @param <T>      input type accepted by the consumer
      * @return a NamedConsumer wrapping the given ThrowingConsumer and name
      * @throws NullPointerException if either consumer or name is null
      */

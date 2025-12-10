@@ -92,7 +92,7 @@ public enum MappedFileUtil {
         }
         if (filename.startsWith("/")) {
             fileList.add(filename);
-        } else if (!filename.trim().isEmpty()) {
+        } else if (!isBlank(filename)) {
             LOGGER.debug("Ignoring non-file {}", filename);
         }
     }
@@ -126,5 +126,14 @@ public enum MappedFileUtil {
      */
     public static String getAddress(Matcher matcher) {
         return matcher.group(ADDRESS_INDEX);
+    }
+
+    private static boolean isBlank(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            if (!Character.isWhitespace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

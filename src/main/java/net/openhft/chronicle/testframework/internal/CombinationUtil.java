@@ -21,6 +21,7 @@ package net.openhft.chronicle.testframework.internal;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -56,17 +57,17 @@ public final class CombinationUtil {
     /**
      * Convenience wrapper that generates combinations for a collection.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Stream<Set<T>> of(final Collection<T> items) {
-        return of((T[]) items.toArray());
+        @SuppressWarnings("unchecked") final T[] array = items.toArray((T[]) new Object[items.size()]);
+        return of(array);
     }
 
     /**
      * Convenience wrapper that generates combinations for a stream.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Stream<Set<T>> of(final Stream<T> items) {
-        return of((T[]) items.toArray());
+        final List<T> collected = items.collect(Collectors.toList());
+        return of(collected);
     }
 
     /**

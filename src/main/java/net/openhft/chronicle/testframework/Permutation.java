@@ -63,6 +63,7 @@ public final class Permutation {
      * This method is an overload of {@link #of(Collection)} that accepts an array instead of
      * a collection.
      *
+     * @param no    zero-based permutation index to generate
      * @param items Array of items to create permutations for
      * @param <T>   Type of the elements
      * @return Stream containing all permutations of the given {@code items}

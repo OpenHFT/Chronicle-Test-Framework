@@ -42,6 +42,7 @@ public interface DtoTester {
      *
      * @param type        class of the DTO
      * @param constructor supplier creating fresh instances
+     * @param <T>         DTO type under test
      * @return builder used to configure the tester
      */
     @NotNull
@@ -64,6 +65,7 @@ public interface DtoTester {
          *
          * @param getter property read function
          * @param setter property write function
+         * @param <R>    property type
          * @return this builder for chaining
          */
         @NotNull <R> Builder<T> withAccessors(@NotNull Function<? super T, ? extends R> getter,
@@ -105,6 +107,7 @@ public interface DtoTester {
          * @param mutatorName descriptive name of the mutator
          * @param setter      setter to apply
          * @param value       value to pass to the setter
+         * @param <R>         property type set by the mutator
          * @return this builder for chaining
          */
         default @NotNull <R> Builder<T> addMutator(@NotNull final MutatorType mutatorType,

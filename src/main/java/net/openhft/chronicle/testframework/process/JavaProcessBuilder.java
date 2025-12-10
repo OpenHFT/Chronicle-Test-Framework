@@ -86,6 +86,9 @@ public interface JavaProcessBuilder {
      * failsafe plugin.
      * <p>
      * <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream">...</a>
+     *
+     * @param processName human-readable name for log messages
+     * @param process     process to drain
      */
     static void printProcessOutput(String processName, Process process) {
         requireNonNull(processName);
@@ -97,6 +100,7 @@ public interface JavaProcessBuilder {
      * Get process stderr
      *
      * @param process The process
+     * @return stderr content as a String
      */
     static String getProcessStdErr(Process process) {
         requireNonNull(process);
@@ -107,6 +111,7 @@ public interface JavaProcessBuilder {
      * Get process stdout
      *
      * @param process The process
+     * @return stdout content as a String
      */
     static String getProcessStdOut(Process process) {
         requireNonNull(process);
