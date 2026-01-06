@@ -1,0 +1,155 @@
+/*
+ * Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+ */
+package net.openhft.chronicle.testframework.internal;
+
+import net.openhft.chronicle.testframework.Combination;
+import net.openhft.chronicle.testframework.Permutation;
+import net.openhft.chronicle.testframework.function.NamedConsumer;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class ListDemoTest {
+
+    private static final Predicate<Integer> ODD = v -> v % 2 == 1;
+
+    private static final Collection<NamedConsumer<List<Integer>>> OPERATIONS =
+            Arrays.asList(
+                    NamedConsumer.of(List::clear, "clear()"),
+                    NamedConsumer.of(list -> list.add(1), "add(1)"),
+                    NamedConsumer.of(list -> list.remove((Integer) 1), "remove(1)"),
+                    NamedConsumer.of(list -> list.addAll(Arrays.asList(2, 3, 4, 5)), "addAll(2,3,4,5)"),
+                    NamedConsumer.of(list -> list.removeIf(ODD), "removeIf(ODD)")
+            );
+
+    private static final Collection<Supplier<List<Integer>>> CONSTRUCTORS =
+            Arrays.asList(
+                    ArrayList::new,
+                    LinkedList::new,
+                    CopyOnWriteArrayList::new,
+                    Stack::new,
+                    () -> Collections.synchronizedList(new ArrayList<>()));
+
+    @TestFactory
+    Stream<DynamicTest> validate() {
+        assertEquals(326, Combination.of(OPERATIONS).flatMap(Permutation::of).count(), "validate dynamic test count");
+        return DynamicTest.stream(Combination.of(OPERATIONS)
+                        .flatMap(Permutation::of),
+                Object::toString,
+                operations -> {
+                    List<Integer> first = new ArrayList<>();
+                    List<Integer> second = new LinkedList<>();
+                    operations.forEach(op -> {
+                        op.accept(first);
+                        op.accept(second);
+                    });
+                    assertEquals(first, second, "operations produce equivalent list state");
+                });
+    }
+
+    @TestFactory
+    Stream<DynamicTest> validateMany() {
+        assertEquals(326, Combination.of(OPERATIONS).flatMap(Permutation::of).count(), "validateMany dynamic test count");
+        return DynamicTest.stream(Combination.of(OPERATIONS)
+                        .flatMap(Permutation::of),
+                Object::toString,
+                operations -> {
+
+                    // Create a fresh list of List implementations
+                    List<List<Integer>> lists = CONSTRUCTORS.stream()
+                            .map(Supplier::get)
+                            .collect(Collectors.toList());
+
+                    // For each operation, apply the operation on each list
+                    operations.forEach(lists::forEach);
+
+                    // Test the lists pairwise
+                    Combination.of(lists)
+
+                            // Filter out only combinations with two lists
+                            .filter(set -> set.size() == 2)
+
+                            // Convert the Set to a List for easy access below
+                            .map(ArrayList::new)
+
+                            // Assert the pair equals
+                            .forEach(pair -> assertEquals(pair.get(0), pair.get(1),
+                                    () -> "lists equal: " + pair.get(0).getClass().getSimpleName() + " vs " + pair.get(1).getClass().getSimpleName()));
+                });
+    }
+
+    @SuppressWarnings("MappingBeforeCount")
+    @Test
+    void print() {
+        assertEquals(10, Combination.of(CONSTRUCTORS)
+                .filter(l -> l.size() == 2)
+                .map(this::toTuple)
+                .map(t -> t.map(Supplier::get))
+                .map(t -> t.map(Object::getClass))
+                .map(t -> t.map(Class::getSimpleName))
+                .peek(System.out::println)
+                        .count(),
+                "constructor pair count");
+    }
+
+    @Test
+    void count() {
+
+        long poc6 = Combination.of(1, 2, 3, 4, 5, 6)
+                .flatMap(Permutation::of)
+                .count();
+
+        System.out.println("poc6 = " + poc6);
+        assertEquals(1957, poc6, "combination/permutation count for 6 elements");
+
+    }
+
+    private static final class Tuple<T> {
+        private final T first;
+        private final T second;
+
+        Tuple(T first, T second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        T first() {
+            return first;
+        }
+
+        T second() {
+            return second;
+        }
+
+        <R> Tuple<R> map(Function<? super T, ? extends R> mapper) {
+            requireNonNull(mapper);
+            return new Tuple<>(mapper.apply(first), mapper.apply(second));
+        }
+
+        @Override
+        public String toString() {
+            return "[" + first +
+                    ", " + second +
+                    ']';
+        }
+    }
+
+    private <T> Tuple<T> toTuple(Set<T> set) {
+        if (set.size() != 2)
+            throw new IllegalArgumentException("Set must contain exactly two elements");
+        final Iterator<T> iterator = set.iterator();
+        return new Tuple<>(iterator.next(), iterator.next());
+    }
+}

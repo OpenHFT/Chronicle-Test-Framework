@@ -5,7 +5,9 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,16 +17,12 @@
         <version>1.27ea2-SNAPSHOT</version>
         <relativePath />
     </parent>
-    <artifactId>chronicle-test-framework</artifactId>
-    <version>2.27ea3-SNAPSHOT</version>
-    <name>OpenHFT/Chronicle-Test-Framework</name>
-    <description>Chronicle-Test-Framework</description>
-    <packaging>jar</packaging>
 
-    <properties>
-        <!-- Allow PMD to report without failing the build while issues are triaged. -->
-        <pmd.failOnViolation>false</pmd.failOnViolation>
-    </properties>
+    <artifactId>chronicle-test-framework-parent</artifactId>
+    <version>2.27ea3-SNAPSHOT</version>
+    <name>OpenHFT/Chronicle-Test-Framework (Parent)</name>
+    <description>Build parent for Chronicle Test Framework and JUnit adapters</description>
+    <packaging>pom</packaging>
 
     <dependencyManagement>
         <dependencies>
@@ -38,193 +36,13 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-        </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.28.0</version>
-                    <configuration>
-                        <rulesets>
-                            <ruleset>${pmd.ruleset}</ruleset>
-                        </rulesets>
-                        <failOnViolation>${pmd.failOnViolation}</failOnViolation>
-                        <printFailingErrors>true</printFailingErrors>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
-                            <Automatic-Module-Name>chronicle.test.framework</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- This will give each test class its own JVM so you can safely set
-                         e.g. system properties per test class but not method -->
-                    <forkCount>4</forkCount>
-                    <reuseForks>true</reuseForks>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-            </plugin>
-
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>quality</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.6.0</version>
-                        <executions>
-                            <execution>
-                                <id>validate</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <configLocation>${checkstyle.config.location}</configLocation>
-                            <failOnViolation>true</failOnViolation>
-                            <logViolationsToConsole>true</logViolationsToConsole>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                            <violationSeverity>${checkstyle.violationSeverity}</violationSeverity>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.puppycrawl.tools</groupId>
-                                <artifactId>checkstyle</artifactId>
-                                <version>10.26.1</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>net.openhft</groupId>
-                                <artifactId>chronicle-quality-rules</artifactId>
-                                <version>1.27.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs-maven-plugin</artifactId>
-                        <!-- SpotBugs 4.x line that requires Java 11+ -->
-                        <version>4.9.8.1</version>
-                        <configuration>
-                            <effort>Max</effort>
-                            <threshold>Low</threshold>
-                            <includeTests>true</includeTests>
-                            <failOnError>true</failOnError>
-                            <!-- Shared SpotBugs filters from chronicle-quality-rules -->
-                            <includeFilterFile>net/openhft/quality/spotbugs27/chronicle-spotbugs-include.xml</includeFilterFile>
-                            <excludeFilterFile>net/openhft/quality/spotbugs27/chronicle-spotbugs-exclude.xml</excludeFilterFile>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>net.openhft</groupId>
-                                <artifactId>chronicle-quality-rules</artifactId>
-                                <version>1.27.0-SNAPSHOT</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>spotbugs-main</id>
-                                <!-- Run after compilation of main and test classes, and gate on findings -->
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    <modules>
+        <module>core</module>
+        <module>junit4</module>
+        <module>junit5</module>
+        <module>consumer-simulations/junit4-consumer</module>
+        <module>consumer-simulations/junit5-consumer</module>
+    </modules>
 
     <repositories>
         <repository>
@@ -257,3 +75,4 @@
     </scm>
 
 </project>
+

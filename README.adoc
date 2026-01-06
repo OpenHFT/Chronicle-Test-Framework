@@ -20,6 +20,51 @@ toc::[]
 
 Chronicle Test Framework provides test-data generators and API metrics tools for JUnit 4 and JUnit 5. Use the combinators to create permutations, combinations and products, or analyse your packages with the metrics builder.
 
+== JUnit integration
+
+The core artefact (`net.openhft:chronicle-test-framework`) is JUnit-agnostic and does not expose `org.junit.*` types in its public API.
+JUnit-specific adapters are provided as opt-in artefacts:
+
+* JUnit 5 (Jupiter): `net.openhft:chronicle-test-framework-junit5`
+* JUnit 4: `net.openhft:chronicle-test-framework-junit4`
+
+Minimal examples:
+
+[source,java]
+----
+// JUnit 5
+import net.openhft.chronicle.testframework.junit5.ChronicleTest;
+import org.junit.jupiter.api.Test;
+
+class ExampleJunit5Test {
+    @Test
+    @ChronicleTest(systemProperties = {@ChronicleTest.SystemProperty(key = "ctf.example", value = "true")})
+    void demo() {
+        // test code
+    }
+}
+----
+
+[source,java]
+----
+// JUnit 4
+import net.openhft.chronicle.testframework.junit4.ChronicleTest;
+import net.openhft.chronicle.testframework.junit4.ChronicleTestRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+public class ExampleJunit4Test {
+    @Rule
+    public final ChronicleTestRule ctf = ChronicleTestRule.create();
+
+    @Test
+    @ChronicleTest(systemProperties = {@ChronicleTest.SystemProperty(key = "ctf.example", value = "true")})
+    public void demo() {
+        // test code
+    }
+}
+----
+
 == Permutations
 
 Permutations work like this:
@@ -60,12 +105,12 @@ Stream<DynamicTest> demo() {
     // DynamicTests
     return DynamicTest.stream(Permutation.of(setA, setB, setC),
             Objects::toString,
-            operations -> {
-                final MyBean actual = new MyBean();
-                operations.forEach(oper -> oper.accept(actual));
-                assertEquals(expected, actual);
-            });
-}
+	            operations -> {
+	                final MyBean actual = new MyBean();
+	                operations.forEach(oper -> oper.accept(actual));
+	                assertEquals(expected, actual, "setter order yields identical bean state");
+	            });
+	}
 ----
 
 == API Metrics Builder
@@ -125,12 +170,12 @@ Stream<DynamicTest> demo() {
                         FaultTolerantBitSet::cosmicRayBit23,
                         FaultTolerantBitSet::cosmicRayBit13),
                 Objects::toString,
-                operations -> {
-                    final FaultTolerantBitSet bitSet = new FaultTolerantBitSet();
-                    operations.forEach(oper -> oper.accept(bitSet));
-                    assertTrue(bitSet.isValid());
-                });
-    }
+	                operations -> {
+	                    final FaultTolerantBitSet bitSet = new FaultTolerantBitSet();
+	                    operations.forEach(oper -> oper.accept(bitSet));
+	                    assertTrue(bitSet.isValid(), "bit set remains valid");
+	                });
+	    }
 ----
 
 == Combinations and Permutations
