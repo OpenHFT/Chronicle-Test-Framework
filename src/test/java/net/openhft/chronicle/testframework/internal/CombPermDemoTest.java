@@ -7,7 +7,7 @@ import net.openhft.chronicle.testframework.Combination;
 import net.openhft.chronicle.testframework.Permutation;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CombPermDemoTest {
 

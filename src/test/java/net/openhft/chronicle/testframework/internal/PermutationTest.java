@@ -30,20 +30,19 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class PermutationTest {
 
     @TestFactory
     Stream<DynamicTest> factorial() {
         return IntStream.range(0, 10)
-            .mapToObj(i ->
-                DynamicTest.dynamicTest("factorial(" + i + ")",
-                    () -> {
-                        assertEquals(Permutation.factorial(i), fac(i));
-                    })
-            );
+                .mapToObj(i ->
+                        DynamicTest.dynamicTest("factorial(" + i + ")",
+                                () -> {
+                                    assertEquals(Permutation.factorial(i), fac(i));
+                                })
+                );
     }
 
     @Test
@@ -60,7 +59,7 @@ final class PermutationTest {
         });
     }
 
-    private static final List<Integer> LIST = Arrays.asList(1,2,3);
+    private static final List<Integer> LIST = Arrays.asList(1, 2, 3);
 
     /*
         1, 2, 3
@@ -105,8 +104,8 @@ final class PermutationTest {
     void of() {
         final List<List<Integer>> expected = expectedFor123();
         final List<List<Integer>> actual =
-            Permutation.of(1,2,3)
-            .collect(toList());
+                Permutation.of(1, 2, 3)
+                        .collect(toList());
 
         assertEquals(expected, actual);
     }
@@ -116,7 +115,7 @@ final class PermutationTest {
         final List<List<Integer>> expected = expectedFor123();
         final List<List<Integer>> actual =
                 Permutation.of(Stream.of(1, 2, 3))
-            .collect(toList());
+                        .collect(toList());
 
         assertEquals(expected, actual);
     }
@@ -125,20 +124,20 @@ final class PermutationTest {
     void ofList() {
         final List<List<Integer>> expected = expectedFor123();
         final List<List<Integer>> actual =
-            Permutation.of(LIST)
-                .collect(toList());
+                Permutation.of(LIST)
+                        .collect(toList());
 
         assertEquals(expected, actual);
     }
 
     private List<List<Integer>> expectedFor123() {
         return Stream.of(
-            Arrays.asList(1,2,3),
-            Arrays.asList(1,3,2),
-            Arrays.asList(2,1,3),
-            Arrays.asList(2,3,1),
-            Arrays.asList(3,1,2),
-            Arrays.asList(3,2,1)
+                Arrays.asList(1, 2, 3),
+                Arrays.asList(1, 3, 2),
+                Arrays.asList(2, 1, 3),
+                Arrays.asList(2, 3, 1),
+                Arrays.asList(3, 1, 2),
+                Arrays.asList(3, 2, 1)
         ).collect(toList());
     }
 
