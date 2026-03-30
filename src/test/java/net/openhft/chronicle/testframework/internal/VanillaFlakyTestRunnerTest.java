@@ -115,5 +115,4 @@ class VanillaFlakyTestRunnerTest {
             throw new IllegalStateException("" + countDown--);
         }
     }
-
 }

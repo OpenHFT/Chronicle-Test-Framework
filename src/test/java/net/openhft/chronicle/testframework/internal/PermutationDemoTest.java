@@ -129,5 +129,4 @@ final class PermutationDemoTest {
                     '}';
         }
     }
-
 }

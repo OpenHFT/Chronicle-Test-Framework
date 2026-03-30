@@ -51,5 +51,4 @@ public final class SeriesUtil {
         return LongStream.rangeClosed(2, (int) (Math.sqrt(number)))
                 .allMatch(n -> number % n != 0);
     }
-
 }

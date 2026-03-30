@@ -36,5 +36,4 @@ class VanillaNamedConsumerTest {
     void nullInConstructorName() {
         assertThrows(NullPointerException.class, () -> new VanillaNamedConsumer<>(v -> {}, null));
     }
-
 }

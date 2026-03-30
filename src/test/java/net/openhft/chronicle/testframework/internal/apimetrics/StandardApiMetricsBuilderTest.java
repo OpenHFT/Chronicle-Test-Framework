@@ -23,5 +23,4 @@ final class StandardApiMetricsBuilderTest {
                 .forEach(System.out::println);
 
     }
-
 }

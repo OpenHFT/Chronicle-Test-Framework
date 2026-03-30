@@ -147,5 +147,4 @@ public class ListDemoTest {
         final Iterator<T> iterator = set.iterator();
         return new Tuple<>(iterator.next(), iterator.next());
     }
-
 }

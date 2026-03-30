@@ -36,5 +36,4 @@ public final class VanillaThrowingConsumer<T> implements Consumer<T> {
             throw new ThrowingConsumerException(e);
         }
     }
-
 }
