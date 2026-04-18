@@ -21,6 +21,10 @@
     <description>Chronicle-Test-Framework</description>
     <packaging>jar</packaging>
 
+    <properties>
+        <license.year>2013-2026</license.year>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
