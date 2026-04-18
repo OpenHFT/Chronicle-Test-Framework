@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 /**
  * The ExceptionTracker interface provides a set of methods to record, track, and assert exceptions
  * in a testing context. By defining rules to expect or ignore certain exceptions, it helps in
- * systematically verifying the correct exception handling behavior of code under test.
+ * systematically verifying the correct exception handling behaviour of code under test.
  *
  * @param <T> The class used to represent thrown exceptions
  */

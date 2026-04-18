@@ -61,7 +61,7 @@ public class Waiters {
     }
 
     /**
-     * Creates a builder for waiting on a generic condition, allowing customization of the condition testing.
+     * Creates a builder for waiting on a generic condition, allowing customisation of the condition testing.
      * <p>
      * This method provides more flexibility for defining complex waiting conditions.
      *

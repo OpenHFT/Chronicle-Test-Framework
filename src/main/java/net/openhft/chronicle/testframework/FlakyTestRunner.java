@@ -55,7 +55,7 @@ public final class FlakyTestRunner {
 
         /**
          * Performs the action wrapping any thrown Throwable using the provided {@code exceptionMapper}.
-         * This allows customization of how exceptions should be handled and converted.
+         * This allows customisation of how exceptions should be handled and converted.
          *
          * @param exceptionMapper A function mapping a caught Throwable to a RuntimeException
          * @throws RuntimeException if an underlying Throwable is thrown
@@ -73,7 +73,7 @@ public final class FlakyTestRunner {
     /**
      * Creates a builder for constructing a flaky test runner for an action that might throw checked exceptions.
      * <p>
-     * The flaky test runner can be customized to handle various testing scenarios where a test may fail intermittently.
+     * The flaky test runner can be customised to handle various testing scenarios where a test may fail intermittently.
      *
      * @param action Action to perform, potentially throwing checked exceptions
      * @param <X>    Type of exception that can be thrown
@@ -193,14 +193,14 @@ public final class FlakyTestRunner {
         Builder<X> withErrorLogger(Consumer<? super String> errorLogger);
 
         /**
-         * Constructs a runnable object that encapsulates the configured flaky test behavior.
+         * Constructs a runnable object that encapsulates the configured flaky test behaviour.
          * <p>
          * This method finalizes the builder and constructs a new runnable object to handle
-         * the flaky test behavior based on the configured settings.
+         * the flaky test behaviour based on the configured settings.
          * <p>
          * This method can only be called once per builder instance.
          *
-         * @return A new RunnableThrows object that encapsulates the flaky test behavior
+         * @return A new RunnableThrows object that encapsulates the flaky test behaviour
          */
         RunnableThrows<X> build();
     }
