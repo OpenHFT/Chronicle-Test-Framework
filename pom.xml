@@ -5,7 +5,9 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,13 +15,23 @@
         <groupId>net.openhft</groupId>
         <artifactId>java-parent-pom</artifactId>
         <version>2026.0</version>
-        <relativePath />
+        <relativePath/>
     </parent>
-    <artifactId>chronicle-test-framework</artifactId>
+
+    <artifactId>chronicle-test-framework-parent</artifactId>
     <version>2026.3-SNAPSHOT</version>
-    <name>OpenHFT/Chronicle-Test-Framework</name>
-    <description>Chronicle-Test-Framework</description>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
+
+    <name>OpenHFT/Chronicle-Test-Framework-Parent</name>
+    <description>Chronicle-Test-Framework parent build</description>
+
+    <modules>
+        <module>core</module>
+        <module>junit4</module>
+        <module>junit5</module>
+        <module>consumer-simulations/junit4-consumer</module>
+        <module>consumer-simulations/junit5-consumer</module>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -32,77 +44,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-        </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
-                            <Automatic-Module-Name>chronicle.test.framework</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- This will give each test class its own JVM so you can safely set
-                         e.g. system properties per test class but not method -->
-                    <forkCount>4</forkCount>
-                    <reuseForks>true</reuseForks>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <repositories>
         <repository>
@@ -129,8 +70,7 @@
     <scm>
         <url>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git</url>
         <connection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git</connection>
-        <developerConnection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git
-        </developerConnection>
+        <developerConnection>scm:git:git@github.com:OpenHFT/Chronicle-Test-Framework.git</developerConnection>
         <tag>master</tag>
     </scm>
 
