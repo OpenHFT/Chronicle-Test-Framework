@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class CombinationDemoTest {
 
-    @SuppressWarnings("MappingBeforeCount")
     @Test
     void print() {
         assertEquals(8,
@@ -61,15 +60,12 @@ final class CombinationDemoTest {
 
     private static class FaultTolerantBitSet {
 
-        @SuppressWarnings("EmptyMethod")
         void cosmicRayBit3() {
         }
 
-        @SuppressWarnings("EmptyMethod")
         void cosmicRayBit23() {
         }
 
-        @SuppressWarnings("EmptyMethod")
         void cosmicRayBit13() {
         }
 

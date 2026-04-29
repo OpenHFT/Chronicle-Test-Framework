@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ProductDemoTest {
 
-    @SuppressWarnings("MappingBeforeCount")
     @Test
     void print() {
         assertEquals(9,
@@ -42,7 +41,6 @@ final class ProductDemoTest {
     }
 
     // Exhaustively tests if various empty collections invariants holds
-    @SuppressWarnings("ReplaceInefficientStreamCount")
     @TestFactory
     Stream<DynamicTest> demo() {
         // Operations
@@ -52,7 +50,6 @@ final class ProductDemoTest {
                 c -> assertTrue(c.isEmpty(), c.getClass() + ".empty() was false");
         final Consumer<Collection<Integer>> size =
                 c -> assertEquals(0, c.size(), c.getClass() + ".size() != 0");
-        @SuppressWarnings("ReplaceInefficientStreamCount")
         final Consumer<Collection<Integer>> streamCount =
                 c -> assertEquals(0, c.stream().count(), c.getClass() + ".stream().count() != 0");
         final List<Consumer<Collection<Integer>>> operations = Arrays.asList(empty, size, streamCount);

@@ -87,7 +87,6 @@ public class ListDemoTest {
                 });
     }
 
-    @SuppressWarnings("MappingBeforeCount")
     @Test
     void print() {
         assertEquals(10, Combination.of(CONSTRUCTORS)

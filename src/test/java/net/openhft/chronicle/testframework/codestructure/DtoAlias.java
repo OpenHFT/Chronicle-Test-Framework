@@ -10,7 +10,6 @@ class DtoAlias {
         net.openhft.chronicle.core.Bootstrap.bootstrap();
     }
 
-    @SuppressWarnings("EmptyMethod")
     public static void init() {
         // Intentional no-op
     }

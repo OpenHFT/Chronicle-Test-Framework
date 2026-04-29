@@ -7,7 +7,6 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 @VisibleForTesting
 class Bootstrap {
-    @SuppressWarnings("EmptyMethod")
     public static void bootstrap() {
         // Intentional no-op
     }

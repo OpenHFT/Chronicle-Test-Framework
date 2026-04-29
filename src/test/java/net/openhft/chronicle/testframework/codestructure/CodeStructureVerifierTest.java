@@ -59,7 +59,6 @@ class CodeStructureVerifierTest {
                     .build()
                     .verify();
         }
-
     }
 
     @Nested
@@ -77,7 +76,6 @@ class CodeStructureVerifierTest {
                     "NonCompliantMainNoStaticBlock does not contain exactly one static block that calls DtoAlias.init()"
             );
         }
-
     }
 
     @Nested
@@ -95,7 +93,6 @@ class CodeStructureVerifierTest {
         void shouldBeAbleToDelegateToInternalClass() {
             CodeStructureVerifier.builder().importClass(DelegatesToInternal.class).build().verify();
         }
-
     }
 
     @Nested
@@ -115,6 +112,5 @@ class CodeStructureVerifierTest {
                             "The class net.openhft.chronicle.testframework.codestructure.broken.DtoAlias does not contain one call to net.openhft.chronicle.testframework.codestructure.broken.Bootstrap.bootstrap()"
             );
         }
-
     }
 }

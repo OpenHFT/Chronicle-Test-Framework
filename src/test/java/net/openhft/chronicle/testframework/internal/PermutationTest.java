@@ -63,6 +63,7 @@ final class PermutationTest {
         3, 1, 2
         3, 2, 1
     */
+
     @Test
     void permutation0() {
         assertEquals(Arrays.asList(1, 2, 3), Permutation.permutation(0, LIST));
