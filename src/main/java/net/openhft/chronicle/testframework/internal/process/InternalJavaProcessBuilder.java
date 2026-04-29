@@ -8,7 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.charset.Charset;
@@ -67,14 +71,16 @@ public final class InternalJavaProcessBuilder implements JavaProcessBuilder {
      * <p>
      * ProcessBuilder.inheritIO() didn't play nicely with Maven failsafe plugin
      * <p>
-     * <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream">...</a>
+     * <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream">See the failsafe FAQ on corrupted streams</a>.
      */
     public static void printProcessOutput(String processName, Process process) {
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("\n Output for {}\n stdout:\n{} stderr:\n{}",
-                    processName,
-                    getProcessStdOut(process),
-                    getProcessStdErr(process));
+            LOGGER.info(
+                    String.format("%n Output for %s%n stdout:%n%s stderr:%n%s",
+                            processName,
+                            getProcessStdOut(process),
+                            getProcessStdErr(process))
+            );
     }
 
     /**

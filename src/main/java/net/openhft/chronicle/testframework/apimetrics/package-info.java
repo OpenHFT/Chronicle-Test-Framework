@@ -16,8 +16,8 @@
  * instance with the builder. That instance can be applied to the chosen
  * packages.
  *
- * <p>Example usage might include creating customised {@link net.openhft.chronicle.testframework.apimetrics.Metric} instances and
- * a tailored {@link net.openhft.chronicle.testframework.apimetrics.Accumulator}, followed by the builder workflow to analyse
+ * <p>Example usage might include creating customised {@link Metric} instances and
+ * a tailored {@link Accumulator}, followed by the builder workflow to analyse
  * packages for compliance with specific coding standards, detecting patterns, or
  * generating reports for code quality assurance. Typical use cases include
  * maintaining API consistency across releases.

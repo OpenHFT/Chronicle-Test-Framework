@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * sizes. Consider sampling when dealing with larger collections.
  * <p>
  * General permutation support from
- * <a href="https://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html">...</a>
+ * <a href="https://minborgsjavapot.blogspot.com/2015/07/java-8-master-permutations.html">Java 8: Master Permutations</a>.
  *
  * @author Per Minborg
  */

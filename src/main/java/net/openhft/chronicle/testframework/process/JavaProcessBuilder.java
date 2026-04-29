@@ -85,7 +85,7 @@ public interface JavaProcessBuilder {
      * streams. ProcessBuilder.inheritIO() did not play nicely with the Maven
      * failsafe plugin.
      * <p>
-     * <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream">...</a>
+     * <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/faq.html#corruptedstream">See the failsafe FAQ on corrupted streams</a>.
      */
     static void printProcessOutput(String processName, Process process) {
         requireNonNull(processName);
