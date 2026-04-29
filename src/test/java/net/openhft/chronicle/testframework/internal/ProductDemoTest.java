@@ -28,8 +28,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class ProductDemoTest {
 
@@ -61,5 +60,4 @@ final class ProductDemoTest {
                 tuple -> tuple.second().accept(tuple.first())
         );
     }
-
 }

@@ -7,7 +7,7 @@ import net.openhft.chronicle.testframework.apimetrics.Accumulator;
 import net.openhft.chronicle.testframework.apimetrics.ApiMetrics;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ApiMetricsTest {
 

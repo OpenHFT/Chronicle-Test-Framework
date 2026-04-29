@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.LongStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SeriesDemoTest {
 

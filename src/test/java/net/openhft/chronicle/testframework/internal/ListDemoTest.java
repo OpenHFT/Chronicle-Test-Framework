@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ListDemoTest {
 
@@ -147,5 +147,4 @@ public class ListDemoTest {
         final Iterator<T> iterator = set.iterator();
         return new Tuple<>(iterator.next(), iterator.next());
     }
-
 }

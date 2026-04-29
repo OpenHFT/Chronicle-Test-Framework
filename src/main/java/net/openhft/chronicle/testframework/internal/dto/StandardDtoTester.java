@@ -191,5 +191,4 @@ final class StandardDtoTester<T> implements DtoTester {
     private <E> List<E> newList() {
         return new ArrayList<>();
     }
-
 }

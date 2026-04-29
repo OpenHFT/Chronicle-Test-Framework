@@ -64,5 +64,4 @@ public final class Series {
     public static LongStream primes() {
         return SeriesUtil.primes(); // Delegating to internal utility
     }
-
 }

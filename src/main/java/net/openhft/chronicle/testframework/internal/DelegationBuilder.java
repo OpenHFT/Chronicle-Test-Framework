@@ -81,5 +81,4 @@ public final class DelegationBuilder<T, D> implements Delegation.Builder<T, D> {
                     return method.invoke(delegate, args);
                 });
     }
-
 }
