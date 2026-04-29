@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2013-2025 chronicle.software; SPDX-License-Identifier: Apache-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.openhft</groupId>
+        <artifactId>chronicle-test-framework-parent</artifactId>
+        <version>2026.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>chronicle-test-framework-consumer-junit4</artifactId>
+    <name>OpenHFT/Chronicle-Test-Framework-Consumer-JUnit4</name>
+    <description>Build-only consumer simulation for chronicle-test-framework-junit4</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.openhft</groupId>
+            <artifactId>chronicle-test-framework-junit4</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <failIfNoTests>true</failIfNoTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
