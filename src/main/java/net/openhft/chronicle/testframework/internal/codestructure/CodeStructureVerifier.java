@@ -107,6 +107,11 @@ public class CodeStructureVerifier {
         private Class<?> clazz;
         private String[] packages;
 
+        public Builder() {
+            // jar:file URIs cannot be resolved via Paths.get without mounting zipfs; skip them.
+            importOptions.add(location -> !"jar".equalsIgnoreCase(location.asURI().getScheme()));
+        }
+
         /**
          * Add additional arch rules to the test runner
          */
@@ -179,8 +184,6 @@ public class CodeStructureVerifier {
         }
 
         private JavaClasses getJavaClasses() {
-            // Skip archive URIs entirely; jar:file schemes cannot be resolved via Paths.get without mounting zipfs.
-            importOptions.add(location -> !"jar".equalsIgnoreCase(location.asURI().getScheme()));
             skipClasses();
             ClassFileImporter classFileImporter = new ClassFileImporter(importOptions);
             if (clazz != null) {
