@@ -23,7 +23,7 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static net.openhft.chronicle.testframework.ExecutorServiceUtil.shutdownAndWaitForTermination;
 import static net.openhft.chronicle.testframework.ThreadUtil.pause;
 import static net.openhft.chronicle.testframework.Waiters.waitForCondition;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledOnOs(value = OS.MAC, disabledReason = "MacOS loopback strangeness causes intermittent failures")
 class TcpProxyTest {

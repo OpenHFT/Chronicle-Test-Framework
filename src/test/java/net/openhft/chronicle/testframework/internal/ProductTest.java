@@ -9,7 +9,7 @@
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class ProductTest {
 
@@ -47,6 +47,7 @@ final class ProductTest {
         }
         assertEquals(expected, actual);
     }
+
     @Test
     void product2Stream() {
         final List<String> strings = Arrays.asList("A", "B", "C");
@@ -76,7 +77,7 @@ final class ProductTest {
         final List<Product.Product3<String, Integer, Long>> expected = new ArrayList<>();
         for (String s : strings) {
             for (Integer i : integers) {
-                for (Long l:longs) {
+                for (Long l : longs) {
                     expected.add(new ProductUtil.Product3Impl<>(s, i, l));
                 }
             }
@@ -96,7 +97,7 @@ final class ProductTest {
         final List<Product.Product3<String, Integer, Long>> expected = new ArrayList<>();
         for (String s : strings) {
             for (Integer i : integers) {
-                for (Long l:longs) {
+                for (Long l : longs) {
                     expected.add(new ProductUtil.Product3Impl<>(s, i, l));
                 }
             }
