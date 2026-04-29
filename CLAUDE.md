@@ -7,7 +7,7 @@ CTF-specific notes for Claude Code. House rules and Javadoc/PR conventions live 
 - PRs target the `ea` branch, not `main`.
 - Surefire is configured by the parent POM with `forkCount=4` and `reuseForks=true`. System properties can be set per test class but not per method.
 - Run `mvn -P quality clean verify` to execute Checkstyle and SpotBugs locally (the profile lives in this module's `pom.xml`).
-- Reference docs live under `src/main/docs/` (currently `project-requirements.adoc`).
+- Reference docs live under `core/src/main/docs/` (currently `project-requirements.adoc`).
 
 ## Build commands
 
