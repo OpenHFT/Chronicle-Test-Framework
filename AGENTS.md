@@ -11,9 +11,8 @@ LLM-based agents can accelerate development only if they respect our house rules
 | Requirement  | Rationale |
 |--------------|-----------|
 | **British English** spelling (`organisation`, `licence`, *not* `organization`, `license`) except technical US spellings like `synchronized` | Keeps wording consistent with Chronicle's London HQ and existing docs. See the [University of Oxford style guide](https://www.ox.ac.uk/public-affairs/style-guide) for reference. |
-| **ISO-8859-1** (code-points 0-255). Avoid smart quotes, non-breaking spaces and accented characters. | ISO-8859-1 survives every toolchain Chronicle uses. |
-| If a symbol is not available in ISO-8859-1, use a textual form such as `>=`, `:alpha:`, `:yes:`. This is the preferred approach and Unicode must not be inserted. | Extended or '8-bit ASCII' variants are *not* portable and are therefore disallowed. |
-| Tools to check ASCII compliance include `iconv -f ascii -t ascii` and IDE settings that flag non-ASCII characters. | These help catch stray Unicode characters before code review. |
+| **ISO-8859-1** only (code-points 0-255). Avoid smart quotes, non-breaking spaces, multi-byte characters and code-points above 255. | ISO-8859-1 is single-byte and round-trips through every toolchain Chronicle uses, including low-latency binary wire formats that assume one byte per character. |
+| If a symbol is not available in ISO-8859-1, spell it out (`micro-second`, `>=`, `:alpha:`, `:yes:`) rather than inserting Unicode. | Multi-byte UTF-8 sequences and code-points above 255 are *not* portable through these formats and are therefore disallowed. |
 
 ## Javadoc guidelines
 
@@ -30,27 +29,14 @@ noise and slows readers down.
 The principle that Javadoc should only explain what is *not* manifest from the
 signature is well-established in the wider Java community.
 
-Inline comments should also avoid noise. The following example shows the
-difference:
-
-```java
-// BAD: adds no value
-int count; // the count
-
-// GOOD: explains a subtlety
-// count of messages pending flush
-int count;
-```
-
 ## Build & test commands
 
-Agents must verify that the project still compiles and all unit tests pass before opening a PR. Running from a clean checkout avoids stale artifacts:
+Agents must verify that the project still compiles and all unit tests pass before opening a PR:
 
 ```bash
 # From repo root
-mvn -q clean verify
+mvn -q verify
 ```
-The command should exit with code `0` to indicate success.
 
 ## Commit-message & PR etiquette
 
@@ -59,32 +45,13 @@ The command should exit with code `0` to indicate success.
 3. In *body*: *root cause -> fix -> measurable impact* (latency, allocation, etc.). Use ASCII bullet points.
 4. **Run `mvn verify`** again after rebasing.
 
-### When to open a PR
-
-* Open a pull request once your branch builds and tests pass with `mvn -q clean verify`.
-* Link the PR to the relevant issue or decision record.
-* Keep PRs focused: avoid bundling unrelated refactoring with new features.
-* Re-run the build after addressing review comments to ensure nothing broke.
-
 ## What to ask the reviewers
 
 * *Is this AsciiDoc documentation precise enough for a clean-room re-implementation?*
 * Does the Javadoc explain the code's *why* and *how* that a junior developer would not be expected to work out?
-* Are the documentation, tests and code updated together so the change is clear?
-* Does the commit point back to the relevant requirement or decision tag?
-* Would an example or small diagram help future maintainers?
-
-### Security checklist (review **after every change**)
-
-**Run a security review on *every* PR**: Walk through the diff looking for input validation, authentication, authorisation, encoding/escaping, overflow, resource exhaustion and timing-attack issues.
-
-**Never commit secrets or credentials**: tokens, passwords, private keys, TLS materials, internal hostnames, Use environment variables, HashiCorp Vault, AWS/GCP Secret Manager, etc.
-
-**Document security trade-offs**: Chronicle prioritises low-latency systems; sometimes we relax safety checks for specific reasons. Future maintainers must find these hot-spots quickly, In Javadoc and `.adoc` files call out *why* e.g. "Unchecked cast for performance - assumes trusted input".
 
 ## Project requirements
 
-See the [Decision Log](src/main/docs/decision-log.adoc) for the latest project decisions.
 See the [Project Requirements](src/main/docs/project-requirements.adoc) for details on project requirements.
 
 ## Elevating the Workflow with Real-Time Documentation
@@ -93,84 +60,28 @@ Building upon our existing Iterative Workflow, the newest recommendation is to e
 Ensure the relevant `.adoc` files are updated when features, requirements, implementation details, or tests change.
 This tight loop informs the AI accurately and creates immediate clarity for all team members.
 
-### Benefits of Real-Time Documentation
+### Benefits
 
-* **Confidence in documentation**: Accurate docs prevent miscommunications that derail real-world outcomes.
 * **Reduced drift**: Real-time updates keep requirements, tests and code aligned.
 * **Faster feedback**: AI can quickly highlight inconsistencies when everything is in sync.
 * **Better quality**: Frequent checks align the implementation with the specified behaviour.
 * **Smoother onboarding**: Up-to-date AsciiDoc clarifies the system for new developers.
-* **Incremental changes**: AIDE flags newly updated files so you can keep the documentation synchronised.
 
 ### Best Practices
 
 * **Maintain Sync**: Keep documentation (AsciiDoc), tests, and code synchronised in version control. Changes in one area should prompt reviews and potential updates in the others.
 * **Doc-First for New Work**: For *new* features or requirements, aim to update documentation first, then use AI to help produce or refine corresponding code and tests. For refactoring or initial bootstrapping, updates might flow from code/tests back to documentation, which should then be reviewed and finalised.
 * **Small Commits**: Each commit should ideally relate to a single requirement or coherent change, making reviews easier for humans and AI analysis tools.
-- **Team Buy-In**: Encourage everyone to review AI outputs critically and contribute to maintaining the synchronicity of all artefacts.
+* **Team Buy-In**: Encourage everyone to review AI outputs critically and contribute to maintaining the synchronicity of all artefacts.
 
 ## AI Agent Guidelines
 
 When using AI agents to assist with development, please adhere to the following guidelines:
 
 * **Respect the Language & Character-set Policy**: Ensure all AI-generated content follows the British English and ISO-8859-1 guidelines outlined above.
-Focus on Clarity: AI-generated documentation should be clear and concise and add value beyond what is already present in the code or existing documentation.
+* **Focus on Clarity**: AI-generated documentation should be clear and concise and add value beyond what is already present in the code or existing documentation.
 * **Avoid Redundancy**: Do not generate content that duplicates existing documentation or code comments unless it provides additional context or clarification.
 * **Review AI Outputs**: Always review AI-generated content for accuracy, relevance, and adherence to the project's documentation standards before committing it to the repository.
-
-## Company-Wide Tagging
-
-This section records **company-wide** decisions that apply to *all* Chronicle projects. All identifiers use the <Scope>-<Tag>-xxx prefix. The `xxx` are unique across in the same Scope even if the tags are different. Component-specific decisions live in their xxx-decision-log.adoc files.
-
-### Tag Taxonomy (Nine-Box Framework)
-
-To improve traceability, we adopt the Nine-Box taxonomy for requirement and decision identifiers. These tags are used in addition to the existing ALL prefix, which remains reserved for global decisions across every project.
-
-.Adopt a Nine-Box Requirement Taxonomy
-
-|Tag | Scope | Typical examples |
-|----|-------|------------------|
-|FN |Functional user-visible behaviour | Message routing, business rules |
-|NF-P |Non-functional - Performance | Latency budgets, throughput targets |
-|NF-S |Non-functional - Security | Authentication method, TLS version |
-|NF-O |Non-functional - Operability | Logging, monitoring, health checks |
-|TEST |Test / QA obligations | Chaos scenarios, benchmarking rigs |
-|DOC |Documentation obligations | Sequence diagrams, user guides |
-|OPS |Operational / DevOps concerns | Helm values, deployment checklist |
-|UX |Operator or end-user experience | CLI ergonomics, dashboard layouts |
-|RISK |Compliance / risk controls | GDPR retention, audit trail |
-
-`ALL-*` stays global, case-exact tags. Pick one primary tag if multiple apply.
-
-### Decision Record Template
-
-```asciidoc
-=== [Identifier] Title of Decision
-
-Date :: YYYY-MM-DD
-Context ::
-* What is the issue that this decision addresses?
-* What are the driving forces, constraints, and requirements?
-Decision Statement :: What is the change that is being proposed or was decided?
-Alternatives Considered ::
-* [Alternative 1 Name/Type]:
-** *Description:* Brief description of the alternative.
-** *Pros:* ...
-** *Cons:* ...
-* [Alternative 2 Name/Type]:
-** *Description:* Brief description of the alternative.
-** *Pros:* ...
-** *Cons:* ...
-Rationale for Decision ::
-* Why was the chosen decision selected?
-* How does it address the context and outweigh the cons of alternatives?
-Impact & Consequences ::
-* What are the positive and negative consequences of this decision?
-* How does this decision affect the system, developers, users, or operations?
-- What are the trade-offs made?
-Notes/Links ::
-** (Optional: Links to relevant issues, discussions, documentation, proof-of-concepts)
-```
 
 ## Asciidoc formatting guidelines
 
@@ -179,31 +90,11 @@ Notes/Links ::
 Do not rely on indentation for list items in AsciiDoc documents. Use the following pattern instead:
 
 ```asciidoc
-section :: Top Level Section (Optional)
-* first level
-  ** nested level
+- top level
+* second level
+  ** third level
 ```
 
 ### Emphasis and Bold Text
 
 In AsciiDoc, an underscore `_` is _emphasis_; `*text*` is *bold*.
-
-### Section Numbering
-
-Use automatic section numbering for all `.adoc` files.
-
-* Add `:sectnums:` to the document header.
-* Do not prefix section titles with manual numbers to avoid duplication.
-
-```asciidoc
-= Document Title
-Chronicle Software
-:toc:
-:sectnums:
-:lang: en-GB
-:source-highlighter: rouge
-
-The document overview goes here.
-
-== Section 1 Title
-```
