@@ -5,9 +5,16 @@ package net.openhft.chronicle.testframework.internal;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.AbstractSet;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -156,21 +163,37 @@ class VanillaExceptionTrackerTest {
     }
 
     @Test
-    void concurrentRecordingDuringRenderingUsesOneSnapshot() throws InterruptedException {
+    @ResourceLock(Resources.SYSTEM_ERR)
+    void concurrentRecordingDuringRenderingUsesOneSnapshot() throws Exception {
         Map<String, Integer> counts = Collections.synchronizedMap(new LinkedHashMap<>());
         counts.put("first", 1);
         counts.put("second", 2);
         ExecutorService writer = Executors.newSingleThreadExecutor();
-        try {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (PrintStream captured = new PrintStream(output, true, StandardCharsets.UTF_8.name())) {
             VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
                     resetCounter::incrementAndGet, counts, s -> false, s -> {
                         if ("first".equals(s))
-                            recordOnWorker(writer, counts);
+                            recordOnWorker(writer, () -> {
+                                counts.merge("late", 1, Integer::sum);
+                                counts.merge("second", 10, Integer::sum);
+                            });
                         return s;
                     });
-            AssertionError failure = assertThrows(AssertionError.class, tracker::checkExceptions);
+            PrintStream original = System.err;
+            AssertionError failure;
+            try {
+                System.setErr(captured);
+                failure = assertThrows(AssertionError.class, tracker::checkExceptions);
+            } finally {
+                System.setErr(original);
+            }
             assertEquals("2 exceptions were detected: first, second", failure.getMessage());
             assertEquals(3, counts.size());
+            assertEquals(Integer.valueOf(12), counts.get("second"));
+            String diagnostics = new String(output.toByteArray(), StandardCharsets.UTF_8);
+            assertTrue(diagnostics.contains("Repeated 2 times"), diagnostics);
+            assertFalse(diagnostics.contains("Repeated 12 times"), diagnostics);
             assertEquals(1, resetCounter.get());
         } finally {
             writer.shutdownNow();
@@ -188,11 +211,11 @@ class VanillaExceptionTrackerTest {
             VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
                     resetCounter::incrementAndGet, counts, s -> false);
             assertFalse(tracker.hasException(s -> {
-                recordOnWorker(writer, counts);
+                recordOnWorker(writer, () -> counts.merge("late", 1, Integer::sum));
                 return false;
             }));
             tracker.expectException(s -> {
-                recordOnWorker(writer, counts);
+                recordOnWorker(writer, () -> counts.merge("late", 1, Integer::sum));
                 return "first".equals(s);
             }, "first");
             tracker.ignoreException(s -> true, "remaining");
@@ -204,9 +227,9 @@ class VanillaExceptionTrackerTest {
         }
     }
 
-    private static void recordOnWorker(ExecutorService writer, Map<String, Integer> counts) {
+    private static void recordOnWorker(ExecutorService writer, Runnable record) {
         try {
-            writer.submit(() -> counts.merge("late", 1, Integer::sum)).get(2, TimeUnit.SECONDS);
+            writer.submit(record).get(2, TimeUnit.SECONDS);
         } catch (Exception e) {
             throw new AssertionError("Recording must not be blocked by a tracker callback", e);
         }
@@ -238,10 +261,37 @@ class VanillaExceptionTrackerTest {
     @Test
     void snapshotCopiesEntriesWhileHoldingRecordingMonitor() {
         Map<String, Integer> counts = new LinkedHashMap<String, Integer>() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public Set<Map.Entry<String, Integer>> entrySet() {
                 assertTrue(Thread.holdsLock(this), "Copying live entries must use the recorders' monitor");
-                return super.entrySet();
+                Map<String, Integer> recordingMap = this;
+                Set<Map.Entry<String, Integer>> entries = super.entrySet();
+                return new AbstractSet<Map.Entry<String, Integer>>() {
+                    @Override
+                    public Iterator<Map.Entry<String, Integer>> iterator() {
+                        Iterator<Map.Entry<String, Integer>> delegate = entries.iterator();
+                        return new Iterator<Map.Entry<String, Integer>>() {
+                            @Override
+                            public boolean hasNext() {
+                                assertTrue(Thread.holdsLock(recordingMap), "Iterator.hasNext must use the recorders' monitor");
+                                return delegate.hasNext();
+                            }
+
+                            @Override
+                            public Map.Entry<String, Integer> next() {
+                                assertTrue(Thread.holdsLock(recordingMap), "Iterator.next must use the recorders' monitor");
+                                return delegate.next();
+                            }
+                        };
+                    }
+
+                    @Override
+                    public int size() {
+                        return entries.size();
+                    }
+                };
             }
         };
         counts.put("expected", 1);

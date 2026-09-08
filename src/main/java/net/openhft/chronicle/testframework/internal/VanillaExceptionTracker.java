@@ -116,7 +116,7 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
                 resetRunnable.run();
             } catch (RuntimeException | Error resetFailure) {
                 //! #renderingFailureIsPreservedWhenResetAlsoFails preserves the diagnostic failure instead of masking it with cleanup.
-                //! #resetFailureAfterSuccessfulCheckIsPropagated is integration evidence for the existing successful-check behaviour.
+                //! #resetFailureAfterSuccessfulCheckIsPropagated is preservation evidence for the existing successful-check behaviour.
                 if (failure == null)
                     throw resetFailure;
                 if (failure != resetFailure)
