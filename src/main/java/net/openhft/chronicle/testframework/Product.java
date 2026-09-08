@@ -60,7 +60,7 @@ public final class Product {
         requireNonNull(ts, "The first collection (ts) must not be null");
         requireNonNull(us, "The second collection (us) must not be null");
 
-        // Utilize a helper method from ProductUtil to generate the Cartesian product and return as a stream
+        // Utilise a helper method from ProductUtil to generate the Cartesian product and return as a stream
         return of(ts, us, ProductUtil.Product2Impl::new);
     }
 
@@ -95,7 +95,7 @@ public final class Product {
         requireNonNull(us, "The second collection (us) must not be null");
         requireNonNull(constructor, "The constructor function must not be null");
 
-        // Utilize a helper method from ProductUtil to generate the Cartesian product and return as a stream
+        // Utilise a helper method from ProductUtil to generate the Cartesian product and return as a stream
         return ProductUtil.of(ts, us, constructor);
     }
 
@@ -308,7 +308,7 @@ public final class Product {
         /**
          * Applies this function to the given arguments, creating a result of type {@code R}.
          * <p>
-         * This functional interface is used to apply custom behavior to tuples within the cartesian
+         * This functional interface is used to apply custom behaviour to tuples within the cartesian
          * product, allowing for flexible creation of objects to represent those tuples.
          *
          * @param t the first function argument

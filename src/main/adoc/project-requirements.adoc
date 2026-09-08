@@ -72,7 +72,7 @@ REQ-FR-CORE-003: Improved Assertion Capabilities ::
 REQ-FR-CORE-004: Formal Extensibility Model ::
 **Description:** Design and implement a formal extension model (e.g., inspired by JUnit 5's `@ExtendWith` or TestNG's listeners).
 **Rationale:** Foster broader adoption, enable community contributions, allow tailoring to specific project needs, and provide clear integration points for AI-generated code or custom analysis.
-**Possible Extensions:** Custom parameter resolvers, lifecycle callbacks, test instance post-processors, custom test execution behavior.
+**Possible Extensions:** Custom parameter resolvers, lifecycle callbacks, test instance post-processors, custom test execution behaviour.
 **Reference:** Research Sec 3.1.
 
 REQ-FR-CORE-005: TestNG Integration Support ::
@@ -106,7 +106,7 @@ REQ-FR-UX-002: Comprehensive Documentation and Illustrative Examples ::
 These requirements focus on providing specialized testing utilities for core OpenHFT libraries.
 
 REQ-FR-OHFT-001: Specialized Testing Utilities for Chronicle Queue ::
-**Description:** Develop utilities such as `TestAppender`, `TestTailer`, assertion helpers for message content, and utilities for programmatic setup/teardown of test queues. Include helpers for testing specific queue behaviors.
+**Description:** Develop utilities such as `TestAppender`, `TestTailer`, assertion helpers for message content, and utilities for programmatic setup/teardown of test queues. Include helpers for testing specific queue behaviours.
 **Rationale:** Simplify testing of Chronicle Queue, encapsulate common patterns, and reduce boilerplate.
 **Reference:** Research Sec 3.3.
 **Conceptual Example:**
@@ -161,7 +161,7 @@ REQ-FR-OHFT-003: Support for Chronicle Wire Serialization Testing ::
 **Reference:** Research Sec 3.3.
 
 REQ-FR-OHFT-004: Leveraging Chronicle Threads for Concurrency Testing ::
-**Description:** Offer utilities for managing `EventLoop` instances in tests, helpers for testing `Pauser` strategies, and assertions/patterns for verifying thread safety and concurrent behavior.
+**Description:** Offer utilities for managing `EventLoop` instances in tests, helpers for testing `Pauser` strategies, and assertions/patterns for verifying thread safety and concurrent behaviour.
 **Rationale:** Simplify the setup and verification of complex concurrent test scenarios.
 **Reference:** Research Sec 3.3.
 
@@ -197,7 +197,7 @@ REQ-FR-AI-002: Patterns for AI-Assisted Test Generation ::
 
 REQ-FR-AI-003: AI-Consumable API Design ::
 **Description:** All new CTF APIs (annotations, extension points, fluent builders, assertion methods) must be designed with AI consumption in mind, ensuring they are:
-* **Clearly Defined and Strongly Typed:** Minimize ambiguity, have clear contracts.
+* **Clearly Defined and Strongly Typed:** Minimise ambiguity, have clear contracts.
 * **Discoverable:** Comprehensive Javadoc, consistent naming, logical structure.
 * **Composable:** Designed as smaller, composable units of functionality.
 **Rationale:** Facilitate correct and effective use of CTF features by AI tools. Good API design for humans is critical for AI.
@@ -219,7 +219,7 @@ REQ-NFR-PERF-001: Performance of CTF ::
 **Reference:** User Doc "Suitability for Low-Latency and Performance-Critical Tests".
 
 *REQ-NFR-USAB-001: Usability and Learnability ::
-**Description:** The API should be intuitive, consistent, and easy to learn, particularly for developers familiar with Java and standard testing frameworks. The learning curve should be minimized.
+**Description:** The API should be intuitive, consistent, and easy to learn, particularly for developers familiar with Java and standard testing frameworks. The learning curve should be minimised.
 **Rationale:** Critical for adoption and effective use.
 **Reference:** User Doc "API Consistency and Learning Curve".
 
@@ -234,7 +234,7 @@ REQ-NFR-COMP-001: Compatibility ::
 **Reference:** CTF Current State, User Doc "Test Lifecycle and Configuration Ease".
 
 REQ-NFR-DOC-001: High-Quality Documentation ::
-**Description:** All features, APIs, extension points, and usage patterns must be thoroughly documented with clear examples. (Covered in REQ-FR-UX-002 but emphasized here as an NFR).
+**Description:** All features, APIs, extension points, and usage patterns must be thoroughly documented with clear examples. (Covered in REQ-FR-UX-002 but emphasised here as an NFR).
 **Rationale:** Essential for user adoption, understanding, and effective utilization.
 
 REQ-NFR-STAB-001: Stability and Versioning ::
@@ -247,7 +247,7 @@ REQ-NFR-STAB-001: Stability and Versioning ::
 The enhancement of CTF will proactively incorporate AI in two main ways:
 
 === 6.1. AI in the Development *of* CTF ===
-AI-DEV-CTF-001: Suggesting Refinements :: AI tools may be used to analyze the existing CTF codebase and the proposed APIs to suggest refinements, identify potential inconsistencies, or propose alternative designs based on common Java and testing framework patterns.
+AI-DEV-CTF-001: Suggesting Refinements :: AI tools may be used to analyse the existing CTF codebase and the proposed APIs to suggest refinements, identify potential inconsistencies, or propose alternative designs based on common Java and testing framework patterns.
 I-DEV-CTF-002: Boilerplate Code Generation :: For implementing well-defined, repetitive structures within CTF (e.g., new assertion methods following a pattern, boilerplate for new OpenHFT utility classes), AI can assist in generating initial code.
 AI-DEV-CTF-003: Documentation Assistance:** AI tools can help in generating Javadoc stubs, summarizing features for release notes, or even drafting initial sections of user guides based on code and requirements.
 
@@ -258,7 +258,7 @@ AI-APP-CTF-001: AI can understand CTF test structures :: Semantic annotations an
 AI-APP-CTF-002: AI can leverage CTF features for test generation :: AI tools can be guided to use CTF's data generators and OpenHFT-specific utilities to create more comprehensive and relevant tests.
 *  _Example:_ An AI agent, using `ChronicleQueueTestUtil` and `Permutation.of()`, could generate tests that try every ordering of different message types written to a queue, verifying that each ordering is processed correctly.
 I-APP-CTF-003: AI can assist in refactoring tests to use CTF :: As CTF evolves with more powerful utilities, AI can help migrate older tests (or tests not using CTF optimally) to leverage these new features, improving test quality and conciseness.
-AI-APP-CTF-004: AI can perform advanced test analysis :: With richer semantic information from CTF tests, AI might be able to perform more sophisticated analyses, such as identifying redundant tests, suggesting coverage improvements for specific OpenHFT behaviors, or even predicting flaky tests based on patterns.
+AI-APP-CTF-004: AI can perform advanced test analysis :: With richer semantic information from CTF tests, AI might be able to perform more sophisticated analyses, such as identifying redundant tests, suggesting coverage improvements for specific OpenHFT behaviours, or even predicting flaky tests based on patterns.
 
 By embedding AI considerations into the design of CTF, the framework will not only be improved by AI but will also empower its users to leverage AI for more effective testing within the OpenHFT ecosystem.
 

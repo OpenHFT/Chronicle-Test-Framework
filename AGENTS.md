@@ -10,7 +10,7 @@ LLM-based agents can accelerate development only if they respect our house rules
 
 | Requirement  | Rationale |
 |--------------|-----------|
-| **British English** spelling (`organisation`, `licence`, *not* `organization`, `license`) except technical US spellings like `synchronized` | Keeps wording consistent with Chronicle's London HQ and existing docs. See the University of Oxford style guide for reference. |
+| **British English** spelling (`organisation`, `licence`, *not* `organisation`, `license`) except technical US spellings like `synchronized` | Keeps wording consistent with Chronicle's London HQ and existing docs. See the University of Oxford style guide for reference. |
 | **ASCII-7 only** (code-points 0-127). Avoid smart quotes, non-breaking spaces and accented characters. | ASCII-7 survives every toolchain Chronicle uses, incl. low-latency binary wire formats that expect the 8th bit to be 0. |
 | If you must show a symbol that does not exist in ASCII-7, spell it out (`micro-second`, `>=`, `:alpha:`, `:yes:`) rather than inserting Unicode. | Extended or '8-bit ASCII' variants are *not* portable and are therefore disallowed. |
 

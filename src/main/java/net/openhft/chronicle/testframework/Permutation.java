@@ -75,7 +75,7 @@ public final class Permutation {
         }
         // Check if the provided items list is null
         requireNonNull(items, "items must not be null");
-        // Utilize PermutationUtil to compute the permutation and return the result
+        // Utilise PermutationUtil to compute the permutation and return the result
         return PermutationUtil.permutation(no, items);
     }
 
