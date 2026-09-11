@@ -22,10 +22,12 @@ public interface ExceptionTracker<T> {
     /**
      * Factory method to create an instance of the exception tracker. This method encapsulates
      * the construction of a concrete implementation of the ExceptionTracker interface.
+     * Concurrent recorders must synchronise on the supplied map, for example by using
+     * {@link java.util.Collections#synchronizedMap(Map)}. Tracker configuration and checks are single-threaded.
      *
      * @param messageExtractor   Function to extract the String message or description from T
      * @param throwableExtractor Function to extract the Throwable from T
-     * @param resetRunnable      Runnable that will be called at the end of {@link #checkExceptions()}
+     * @param resetRunnable      called once when the first check finishes, including on assertion or callback failure
      * @param exceptions         Map to populate with T as the key and count of occurrences as value
      * @param ignorePredicate    Predicate to exclude T's from consideration
      * @param exceptionRenderer  Function to render T as a String (used when dumping exceptions)
@@ -103,6 +105,10 @@ public interface ExceptionTracker<T> {
      *     <li>Assert there is an exception matching each of the expected predicates</li>
      * </ul>
      * Implementations should throw an exception and print a summary if the assertion(s) are violated.
+     * The default implementation checks one snapshot taken at the start of this call, invoking predicates and renderers
+     * without holding the recording map's monitor. Stop/join producers before checking when all their records must be included.
+     * Matched entries are removed from the live map only if their counts still match the snapshot; later repeats are retained.
+     * Reset still runs on failure, with any reset failure suppressed on the original exception rather than replacing it.
      */
     void checkExceptions();
 }

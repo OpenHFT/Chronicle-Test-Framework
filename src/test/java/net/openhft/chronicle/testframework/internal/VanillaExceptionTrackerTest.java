@@ -5,9 +5,22 @@ package net.openhft.chronicle.testframework.internal;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.AbstractSet;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,6 +122,184 @@ class VanillaExceptionTrackerTest {
     @Test
     void resetRunnableIsCalledInCheck() {
         vet.checkExceptions();
+        assertEquals(1, resetCounter.get());
+    }
+
+    @Test
+    void missingExpectationStillResetsHandlers() {
+        vet.expectException("missing");
+        assertThrows(AssertionError.class, vet::checkExceptions);
+        assertEquals(1, resetCounter.get());
+        assertThrows(IllegalStateException.class, vet::checkExceptions);
+        assertEquals(1, resetCounter.get());
+    }
+
+    @Test
+    void unexpectedExceptionStillResetsHandlers() {
+        exceptionCounts.put(new ExceptionHolder("unexpected", null, false), 1);
+        AssertionError failure = assertThrows(AssertionError.class, vet::checkExceptions);
+        assertEquals("1 exceptions were detected: unexpected", failure.getMessage());
+        assertEquals(1, resetCounter.get());
+    }
+
+    @Test
+    void renderingFailureIsPreservedWhenResetAlsoFails() {
+        IllegalStateException renderingFailure = new IllegalStateException("renderer failed");
+        AssertionError resetFailure = new AssertionError("reset failed");
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        counts.put("unexpected", 1);
+        VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
+                () -> { throw resetFailure; }, counts, s -> false, s -> { throw renderingFailure; });
+        assertSame(renderingFailure, assertThrows(IllegalStateException.class, tracker::checkExceptions));
+        assertArrayEquals(new Throwable[]{resetFailure}, renderingFailure.getSuppressed());
+    }
+
+    @Test
+    void resetFailureAfterSuccessfulCheckIsPropagated() {
+        IllegalStateException resetFailure = new IllegalStateException("reset failed");
+        VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
+                () -> { throw resetFailure; }, new HashMap<>(), s -> false);
+        assertSame(resetFailure, assertThrows(IllegalStateException.class, tracker::checkExceptions));
+    }
+
+    @Test
+    @ResourceLock(Resources.SYSTEM_ERR)
+    void concurrentRecordingDuringRenderingUsesOneSnapshot() throws Exception {
+        Map<String, Integer> counts = Collections.synchronizedMap(new LinkedHashMap<>());
+        counts.put("first", 1);
+        counts.put("second", 2);
+        ExecutorService writer = Executors.newSingleThreadExecutor();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (PrintStream captured = new PrintStream(output, true, StandardCharsets.UTF_8.name())) {
+            VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
+                    resetCounter::incrementAndGet, counts, s -> false, s -> {
+                        if ("first".equals(s))
+                            recordOnWorker(writer, () -> {
+                                counts.merge("late", 1, Integer::sum);
+                                counts.merge("second", 10, Integer::sum);
+                            });
+                        return s;
+                    });
+            PrintStream original = System.err;
+            AssertionError failure;
+            try {
+                System.setErr(captured);
+                failure = assertThrows(AssertionError.class, tracker::checkExceptions);
+            } finally {
+                System.setErr(original);
+            }
+            assertEquals("2 exceptions were detected: first, second", failure.getMessage());
+            assertEquals(3, counts.size());
+            assertEquals(Integer.valueOf(12), counts.get("second"));
+            String diagnostics = new String(output.toByteArray(), StandardCharsets.UTF_8);
+            assertTrue(diagnostics.contains("Repeated 2 times"), diagnostics);
+            assertFalse(diagnostics.contains("Repeated 12 times"), diagnostics);
+            assertEquals(1, resetCounter.get());
+        } finally {
+            writer.shutdownNow();
+            assertTrue(writer.awaitTermination(2, TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
+    void concurrentRecordingDuringPredicateDoesNotMutateTraversal() throws InterruptedException {
+        Map<String, Integer> counts = Collections.synchronizedMap(new LinkedHashMap<>());
+        counts.put("first", 1);
+        counts.put("second", 2);
+        ExecutorService writer = Executors.newSingleThreadExecutor();
+        try {
+            VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
+                    resetCounter::incrementAndGet, counts, s -> false);
+            assertFalse(tracker.hasException(s -> {
+                recordOnWorker(writer, () -> counts.merge("late", 1, Integer::sum));
+                return false;
+            }));
+            tracker.expectException(s -> {
+                recordOnWorker(writer, () -> counts.merge("late", 1, Integer::sum));
+                return "first".equals(s);
+            }, "first");
+            tracker.ignoreException(s -> true, "remaining");
+            tracker.checkExceptions();
+            assertEquals(1, resetCounter.get());
+        } finally {
+            writer.shutdownNow();
+            assertTrue(writer.awaitTermination(2, TimeUnit.SECONDS));
+        }
+    }
+
+    private static void recordOnWorker(ExecutorService writer, Runnable record) {
+        try {
+            writer.submit(record).get(2, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new AssertionError("Recording must not be blocked by a tracker callback", e);
+        }
+    }
+
+    @Test
+    void filteringPreservesRepeatsRecordedAfterTheSnapshot() {
+        Map<String, Integer> counts = Collections.synchronizedMap(new LinkedHashMap<>());
+        counts.put("expected", 1);
+        counts.put("ignored", 1);
+        VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
+                resetCounter::incrementAndGet, counts, s -> false);
+        tracker.expectException(s -> {
+            if (!"expected".equals(s))
+                return false;
+            counts.merge(s, 1, Integer::sum);
+            return true;
+        }, "expected");
+        tracker.ignoreException(s -> {
+            counts.merge(s, 1, Integer::sum);
+            return true;
+        }, "ignored");
+        tracker.checkExceptions();
+        assertEquals(Integer.valueOf(2), counts.get("expected"));
+        assertEquals(Integer.valueOf(2), counts.get("ignored"));
+        assertEquals(1, resetCounter.get());
+    }
+
+    @Test
+    void snapshotCopiesEntriesWhileHoldingRecordingMonitor() {
+        Map<String, Integer> counts = new LinkedHashMap<String, Integer>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Set<Map.Entry<String, Integer>> entrySet() {
+                assertTrue(Thread.holdsLock(this), "Copying live entries must use the recorders' monitor");
+                Map<String, Integer> recordingMap = this;
+                Set<Map.Entry<String, Integer>> entries = super.entrySet();
+                return new AbstractSet<Map.Entry<String, Integer>>() {
+                    @Override
+                    public Iterator<Map.Entry<String, Integer>> iterator() {
+                        Iterator<Map.Entry<String, Integer>> delegate = entries.iterator();
+                        return new Iterator<Map.Entry<String, Integer>>() {
+                            @Override
+                            public boolean hasNext() {
+                                assertTrue(Thread.holdsLock(recordingMap), "Iterator.hasNext must use the recorders' monitor");
+                                return delegate.hasNext();
+                            }
+
+                            @Override
+                            public Map.Entry<String, Integer> next() {
+                                assertTrue(Thread.holdsLock(recordingMap), "Iterator.next must use the recorders' monitor");
+                                return delegate.next();
+                            }
+                        };
+                    }
+
+                    @Override
+                    public int size() {
+                        return entries.size();
+                    }
+                };
+            }
+        };
+        counts.put("expected", 1);
+        VanillaExceptionTracker<String> tracker = new VanillaExceptionTracker<>(s -> s, s -> null,
+                resetCounter::incrementAndGet, counts, s -> false);
+        assertTrue(tracker.hasException("expected"));
+        tracker.expectException("expected");
+        tracker.checkExceptions();
         assertEquals(1, resetCounter.get());
     }
 

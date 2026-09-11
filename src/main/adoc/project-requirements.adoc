@@ -178,6 +178,20 @@ REQ-FR-OHFT-006: Resource and Concurrency Test Utilities ::
 **Rationale:** Address common pain points in testing high-performance, resource-intensive applications and ensure test reliability.
 **Reference:** User Doc "Opportunities for Improvement - Resource and Concurrency Utilities".
 
+CTF-FN-001: Exception-check snapshot and cleanup ::
+Concurrent recording must not invalidate exception inspection, filtering or failure diagnostics.
+Each check uses one detached snapshot, with callbacks outside the recording map's monitor.
+Recorders must use that same monitor, for example through `Collections.synchronizedMap`.
+Producers must be stopped/joined before the check when their complete output must be included; late records are outside its snapshot.
+Filtering must not erase a later repeat whose count differs from the captured count.
+The first check must always reset handlers, including on missing expectations, unexpected exceptions and callback failures.
+A reset failure must not mask an earlier failure, and the tracker remains single-use after any outcome.
+Evidence: `VanillaExceptionTrackerTest#concurrentRecordingDuringRenderingUsesOneSnapshot`,
+`#concurrentRecordingDuringPredicateDoesNotMutateTraversal`, `#filteringPreservesRepeatsRecordedAfterTheSnapshot`,
+`#snapshotCopiesEntriesWhileHoldingRecordingMonitor`,
+`#missingExpectationStillResetsHandlers`, `#unexpectedExceptionStillResetsHandlers` and
+`#renderingFailureIsPreservedWhenResetAlsoFails`.
+
 === 4.4. AI-Specific Functional Requirements ===
 
 These requirements are specifically aimed at designing CTF to effectively leverage and support AI tools.
@@ -264,4 +278,10 @@ By embedding AI considerations into the design of CTF, the framework will not on
 
 == 7. Conclusion ==
 
-The Chronicle Test Framework has a solid foundation in test data generation. By implementing the requirements outlined in this document, CTF will evolve into a more comprehensive, user-friendly, and powerful testing tool, especially for the OpenHFT ecosystem. The strategic incorporation of AI-support features will position CTF as a forward-looking framework, enabling new levels of efficiency and intelligence in software testing. The key is to build upon its unique strengths while addressing current limitations and embracing modern testing paradigms, all while ensuring it remains a valuable complement to mainstream testing frameworks.
+The Chronicle Test Framework has a solid foundation in test data generation.
+By implementing the requirements outlined in this document, CTF will evolve into a more comprehensive, user-friendly,
+and powerful testing tool, especially for the OpenHFT ecosystem.
+The strategic incorporation of AI-support features will position CTF as a forward-looking framework,
+enabling new levels of efficiency and intelligence in software testing.
+The key is to build upon its unique strengths while addressing current limitations and embracing modern testing paradigms,
+all while ensuring it remains a valuable complement to mainstream testing frameworks.

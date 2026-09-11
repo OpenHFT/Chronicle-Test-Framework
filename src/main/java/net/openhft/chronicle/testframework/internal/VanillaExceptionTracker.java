@@ -91,34 +91,81 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
 
     @Override
     public boolean hasException(Predicate<T> predicate) {
-        return exceptions.keySet().stream().anyMatch(predicate);
+        return snapshot().keySet().stream().anyMatch(predicate);
     }
 
     @Override
     public boolean hasException(String message) {
-        return exceptions.keySet().stream().anyMatch(k -> containsString(k, message));
+        return hasException(k -> containsString(k, message));
     }
 
     @Override
     public void checkExceptions() {
         checkFinalised();
         finalised = true;
+        Throwable failure = null;
+        try {
+            checkExceptions(snapshot());
+        } catch (RuntimeException | Error e) {
+            failure = e;
+            throw e;
+        } finally {
+            //! VanillaExceptionTrackerTest#missingExpectationStillResetsHandlers and #unexpectedExceptionStillResetsHandlers
+            //! prevent a failed test from retaining recording handlers into the next test. Reset on success alone misses both paths.
+            try {
+                resetRunnable.run();
+            } catch (RuntimeException | Error resetFailure) {
+                //! #renderingFailureIsPreservedWhenResetAlsoFails preserves the diagnostic failure instead of masking it with cleanup.
+                //! #resetFailureAfterSuccessfulCheckIsPropagated is preservation evidence for the existing successful-check behaviour.
+                if (failure == null)
+                    throw resetFailure;
+                if (failure != resetFailure)
+                    failure.addSuppressed(resetFailure);
+            }
+        }
+    }
+
+    private void checkExceptions(Map<T, Integer> snapshot) {
         for (Map.Entry<Predicate<T>, String> expectedException : expectedExceptions.entrySet()) {
-            if (!exceptions.keySet().removeIf(expectedException.getKey()))
+            if (!removeMatching(snapshot, expectedException.getKey()))
                 throw new AssertionError("No error for " + expectedException.getValue());
         }
         for (Map.Entry<Predicate<T>, String> ignoredException : ignoredExceptions.entrySet()) {
-            if (exceptions.keySet().removeIf(ignoredException.getKey()))
+            if (removeMatching(snapshot, ignoredException.getKey()))
                 LOGGER.debug("Ignored {}", ignoredException.getValue());
         }
 
-        if (hasExceptions()) {
-            dumpException();
+        if (hasExceptions(snapshot)) {
+            dumpException(snapshot);
 
-            final String msg = exceptions.size() + " exceptions were detected: " + exceptions.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
+            final String msg = snapshot.size() + " exceptions were detected: "
+                    + snapshot.keySet().stream().map(messageExtractor::apply).collect(Collectors.joining(", "));
             throw new AssertionError(msg);
         }
-        resetRunnable.run();
+    }
+
+    private Map<T, Integer> snapshot() {
+        //! VanillaExceptionTrackerTest#concurrentRecordingDuringRenderingUsesOneSnapshot prevents a late recording from invalidating
+        //! diagnostic iteration or changing its summary. #snapshotCopiesEntriesWhileHoldingRecordingMonitor checks the copy's lock:
+        //! a synchronizedMap does not synchronise its iterators on its own.
+        //! #concurrentRecordingDuringPredicateDoesNotMutateTraversal also requires callbacks outside the map lock, so a callback can
+        //! wait for a recording worker without deadlock. One detached copy supplies all phases of a check, including the repeat counts.
+        synchronized (exceptions) {
+            return new LinkedHashMap<>(exceptions);
+        }
+    }
+
+    private boolean removeMatching(Map<T, Integer> snapshot, Predicate<T> predicate) {
+        return snapshot.entrySet().removeIf(entry -> {
+            if (!predicate.test(entry.getKey()))
+                return false;
+            //! #filteringPreservesRepeatsRecordedAfterTheSnapshot exercises a late repeat while filtering. Preserve records
+            //! whose counts changed after the snapshot; unconditional removal would erase those later observations from the live map.
+            synchronized (exceptions) {
+                exceptions.remove(entry.getKey(), entry.getValue());
+            }
+            return true;
+        });
     }
 
     /**
@@ -175,8 +222,8 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
      * Determines whether any recorded exceptions remain after applying the
      * ignore predicate.
      */
-    private boolean hasExceptions() {
-        for (T k : exceptions.keySet()) {
+    private boolean hasExceptions(Map<T, Integer> snapshot) {
+        for (T k : snapshot.keySet()) {
             if (!ignorePredicate.test(k))
                 return true;
         }
@@ -188,8 +235,8 @@ public final class VanillaExceptionTracker<T> implements ExceptionTracker<T> {
      * Logs all remaining exceptions and their repeat counts. Used when the
      * test is about to fail.
      */
-    private void dumpException() {
-        for (@NotNull Map.Entry<T, Integer> entry : exceptions.entrySet()) {
+    private void dumpException(Map<T, Integer> snapshot) {
+        for (@NotNull Map.Entry<T, Integer> entry : snapshot.entrySet()) {
             final T key = entry.getKey();
             LOGGER.warn(exceptionRenderer.apply(key), throwableExtractor.apply(key));
             final Integer value = entry.getValue();
