@@ -1,0 +1,2 @@
+# Provisional resource-lifecycle exception: accepted sockets are not explicitly closed by the fixture.
+net/openhft/chronicle/testframework/internal/network/proxy/TcpProxyTest.java
