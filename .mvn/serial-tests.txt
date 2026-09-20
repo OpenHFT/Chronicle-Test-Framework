@@ -1,2 +1,3 @@
-# Provisional resource-lifecycle exception: accepted sockets are not explicitly closed by the fixture.
-net/openhft/chronicle/testframework/internal/network/proxy/TcpProxyTest.java
+# FIX-292: develop already runs this suite with four reused workers.
+# Only demonstrated exceptions belong here. This non-matching sentinel keeps an empty serial execution empty.
+%regex[^$]
