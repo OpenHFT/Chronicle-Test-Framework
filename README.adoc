@@ -237,3 +237,10 @@ They help to group metric counts in common ways.
 
 The convenience factories in `Accumulator` expose the first two suppliers for general use.
 The others are mainly for internal analyses but may be reused when custom behaviour is needed.
+
+== TCP proxy readiness
+
+`TcpProxy.socketAddress()` waits for binding and non-blocking configuration to finish,
+including when a fixed port is requested. Start the proxy before requesting its address.
+Bind failures retain their cause, the wait is bounded to ten seconds, and interruption
+preserves the caller's interrupt flag. An open but unbound channel is not ready.
