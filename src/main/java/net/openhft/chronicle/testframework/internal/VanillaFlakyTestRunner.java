@@ -34,7 +34,8 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
      * <p>If the action fails on an intermediate attempt the error logger is
      * invoked, optional garbage collection is requested and the thread pauses
      * for the configured delay. The method rethrows the final exception if all
-     * attempts fail.
+     * attempts fail. A failure in the success logger is propagated without
+     * repeating an action that has already passed.
      *
      * @throws X if the action fails on the last try
      */
@@ -43,27 +44,29 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
         if (!inRun.compareAndSet(false, true))
             throw new AssertionError("Can't run nested");
         try {
-            for (int i = 0; i < builder.maxIterations; i++) {
-                try {
-                    builder.action.run();
-                    if (i > 0) {
-                        builder.infoLogger.accept("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
-                    }
-                    break;
-                } catch (Throwable x) {
-                    // Using Throwable above allows AssertionError to be retried
-                    if (i == (builder.maxIterations - 1)) {
-                        throw x;
-                    }
-                    builder.errorLogger.accept("Rerunning failing test run " + (i + 2));
-                    if (builder.interIterationGc) {
-                        System.gc();
-                    }
-                    pause(builder.delayMs);
-                }
-            }
+            runWithRetries();
         } finally {
             inRun.set(false);
+        }
+    }
+
+    private void runWithRetries() throws X {
+        for (int i = 0; i < builder.maxIterations; i++) {
+            try {
+                builder.action.run();
+            } catch (Throwable x) {
+                // Using Throwable above allows AssertionError to be retried.
+                if (i == builder.maxIterations - 1)
+                    throw x;
+                builder.errorLogger.accept("Rerunning failing test run " + (i + 2));
+                if (builder.interIterationGc)
+                    System.gc();
+                pause(builder.delayMs);
+                continue;
+            }
+            if (i > 0)
+                builder.infoLogger.accept("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
+            return;
         }
     }
 }
