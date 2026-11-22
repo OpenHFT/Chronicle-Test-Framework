@@ -42,7 +42,8 @@ class TcpProxyReadinessTest {
     void bindFailureReachesAddressCaller() throws Exception {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try (ServerSocketChannel occupied = ServerSocketChannel.open()) {
-            occupied.bind(new InetSocketAddress("localhost", 0));
+            // Match the proxy's wildcard bind, including its address family on macOS.
+            occupied.bind(new InetSocketAddress(0));
             TcpProxy proxy = new TcpProxy(((InetSocketAddress) occupied.getLocalAddress()).getPort(),
                     new InetSocketAddress("localhost", 1), executor);
             Future<?> run = executor.submit(proxy);
