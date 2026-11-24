@@ -61,7 +61,7 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
                 if (i > 0) {
                     builder.infoLogger.accept("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
                 }
-                break;
+                return;
             }
         } finally {
             inRun.set(false);
