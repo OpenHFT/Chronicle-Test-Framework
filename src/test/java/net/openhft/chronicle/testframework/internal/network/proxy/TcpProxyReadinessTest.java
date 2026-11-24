@@ -61,6 +61,8 @@ class TcpProxyReadinessTest {
     }
 
     @Test
+    // ExecutorService is not AutoCloseable on Java 8; the finally block shuts it down.
+    @SuppressWarnings("java:S2093")
     void interruptionIsPreserved() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {

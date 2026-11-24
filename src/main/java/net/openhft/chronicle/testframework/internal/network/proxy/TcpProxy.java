@@ -116,13 +116,16 @@ public class TcpProxy implements Closeable, Runnable {
         LOGGER.info("Received inbound connection from {}", newConnection.socket().getRemoteSocketAddress());
         final ProxyConnection connection = new ProxyConnection(newConnection, connectAddress);
         connections.add(connection);
+        boolean submitted = false;
         try {
             executorService.submit(connection);
-        } catch (RuntimeException | Error failure) {
-            connections.remove(connection);
-            // A rejected task never runs the connection's channel cleanup or finishes its close wait.
-            closeQuietly(newConnection);
-            throw failure;
+            submitted = true;
+        } finally {
+            if (!submitted) {
+                connections.remove(connection);
+                // A rejected task never runs the connection's channel cleanup or finishes its close wait.
+                closeQuietly(newConnection);
+            }
         }
     }
 
