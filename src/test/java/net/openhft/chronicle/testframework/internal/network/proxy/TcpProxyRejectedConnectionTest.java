@@ -25,7 +25,7 @@ class TcpProxyRejectedConnectionTest {
         try {
             long deadline = System.nanoTime() + 5_000_000_000L;
             while (!proxy.isOpen() && thread.isAlive() && System.nanoTime() < deadline)
-                Thread.sleep(1);
+                net.openhft.chronicle.testframework.ThreadUtil.pause(1);
             assertTrue(proxy.isOpen());
             try (Socket client = new Socket()) {
                 client.connect(new InetSocketAddress("127.0.0.1", proxy.socketAddress().getPort()), 3000);
