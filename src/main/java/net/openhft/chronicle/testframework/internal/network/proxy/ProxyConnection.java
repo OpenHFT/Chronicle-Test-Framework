@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
@@ -25,7 +26,8 @@ import static net.openhft.chronicle.testframework.ThreadUtil.pause;
  * {@link #stopForwardingTraffic()} without closing the sockets.
  *
  * <p>Invoking {@link #close()} stops the run loop and waits for it to finish so
- * that both channels are closed cleanly.
+ * that both channels are closed cleanly. Completion is also published if the
+ * run loop fails with an unchecked exception or error.
  */
 public class ProxyConnection implements Closeable, Runnable {
 
@@ -73,16 +75,20 @@ public class ProxyConnection implements Closeable, Runnable {
         } catch (IOException e) {
             LOGGER.error("Connection failed", e);
         } finally {
-            closeQuietly(inboundChannel);
+            try {
+                closeQuietly(inboundChannel);
+            } finally {
+                finished = true;
+            }
         }
-        finished = true;
     }
 
     private void relayTraffic(SocketChannel sourceChannel, SocketChannel destinationChannel) throws IOException {
-        byteBuffer.clear();
+        // Bind to the Java 8 signatures even when compiled on a newer JDK.
+        ((Buffer) byteBuffer).clear();
         int read = sourceChannel.read(byteBuffer);
         if (read > 0) {
-            byteBuffer.flip();
+            ((Buffer) byteBuffer).flip();
             destinationChannel.write(byteBuffer);
         }
     }
