@@ -46,10 +46,6 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
             for (int i = 0; i < builder.maxIterations; i++) {
                 try {
                     builder.action.run();
-                    if (i > 0) {
-                        builder.infoLogger.accept("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
-                    }
-                    break;
                 } catch (Throwable x) {
                     // Using Throwable above allows AssertionError to be retried
                     if (i == (builder.maxIterations - 1)) {
@@ -60,7 +56,12 @@ public final class VanillaFlakyTestRunner<X extends Throwable>
                         System.gc();
                     }
                     pause(builder.delayMs);
+                    continue;
                 }
+                if (i > 0) {
+                    builder.infoLogger.accept("Flaky test threw an error " + i + " run(s), but passed on run " + (i + 1));
+                }
+                return;
             }
         } finally {
             inRun.set(false);

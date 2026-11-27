@@ -80,6 +80,8 @@ REQ-FR-CORE-005: TestNG Integration Support ::
 **Rationale:** Broaden CTF's user base beyond JUnit users and demonstrate its flexibility.
 **Reference:** User Doc "Test Lifecycle and Configuration Ease", "Opportunities for Improvement - TestNG Support".
 
+Flaky test retries (SERVICES-45) :: If the success logger throws, `FlakyTestRunner` propagates the exception without repeating the successful action. The runner remains reusable.
+
 === 4.2. Developer Experience and Usability Improvements ===
 
 These requirements aim to make CTF more user-friendly and easier to adopt.
@@ -285,3 +287,18 @@ The strategic incorporation of AI-support features will position CTF as a forwar
 enabling new levels of efficiency and intelligence in software testing.
 The key is to build upon its unique strengths while addressing current limitations and embracing modern testing paradigms,
 all while ensuring it remains a valuable complement to mainstream testing frameworks.
+
+
+=== Rejected proxy tasks (FIX-292)
+
+If the connection executor rejects an accepted socket, `TcpProxy` closes that
+socket and removes the unstarted task from its connection list. Proxy closure
+must not wait for a rejected task to finish. `TcpProxyRejectedConnectionTest`
+checks client EOF and subsequent proxy closure.
+
+=== Flaky runner logging failures (FIX-292)
+
+The flaky runner retries failed actions. Failure in the success logger is
+propagated without repeating an action that has already succeeded. The runner
+remains reusable after either an action or logger throws.
+`FlakyRunnerLoggingTest` checks both failure paths and the number of attempts.

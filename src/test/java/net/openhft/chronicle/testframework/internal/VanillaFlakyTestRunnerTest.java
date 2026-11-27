@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,12 +49,37 @@ class VanillaFlakyTestRunnerTest {
 
     @Test
     void runTry3() {
-        final RunnableThrows<IllegalStateException> action = new MyAction(2);
+        final AtomicInteger attempts = new AtomicInteger();
+        final IllegalStateException failure = new IllegalStateException();
+        final RunnableThrows<IllegalStateException> action = () -> {
+            attempts.incrementAndGet();
+            throw failure;
+        };
         final RunnableThrows<IllegalStateException> runner = FlakyTestRunner.builder(action)
                 .withMaxIterations(2)
+                .withIterationDelay(0)
+                .withInterIterationGc(false)
                 .build();
 
-        assertThrows(IllegalStateException.class, runner::run);
+        assertSame(failure, assertThrows(IllegalStateException.class, runner::run));
+        assertSame(failure, assertThrows(IllegalStateException.class, runner::run));
+        assertEquals(4, attempts.get());
+    }
+
+    @Test
+    void successLoggerFailureDoesNotRetryTheAction() {
+        AtomicInteger attempts = new AtomicInteger();
+        IllegalStateException failure = new IllegalStateException("logger unavailable");
+        RunnableThrows<RuntimeException> runner = FlakyTestRunner.builderUnchecked(() -> {
+            if (attempts.incrementAndGet() == 1)
+                throw new AssertionError("first attempt fails");
+        }).withMaxIterations(3).withIterationDelay(0).withInterIterationGc(false)
+                .withInfoLogger(message -> { throw failure; }).build();
+
+        assertSame(failure, assertThrows(IllegalStateException.class, runner::run));
+        assertEquals(2, attempts.get());
+        runner.run();
+        assertEquals(3, attempts.get());
     }
 
     @Test
